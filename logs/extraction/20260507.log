@@ -1,0 +1,180 @@
+[INFO] 2026-05-07T14:52:18.925075+00:00 Gemini extraction started: cct.txt
+[INFO] 2026-05-07T14:52:18.929545+00:00 Gemini extraction success: cct.txt
+[INFO] 2026-05-07T14:52:20.402475+00:00 Gemini extraction started: CCT_130_75.txt
+[INFO] 2026-05-07T14:52:20.403873+00:00 Gemini extraction success: CCT_130_75.txt
+[INFO] 2026-05-07T14:52:20.405539+00:00 Gemini extraction started: paritaria_2026.txt
+[INFO] 2026-05-07T14:52:20.406807+00:00 Gemini extraction success: paritaria_2026.txt
+[INFO] 2026-05-07T14:52:20.600564+00:00 Gemini extraction started: CCT_130_75.txt
+[INFO] 2026-05-07T14:52:20.602586+00:00 Gemini extraction success: CCT_130_75.txt
+[INFO] 2026-05-07T14:52:20.803121+00:00 Gemini extraction started: CCT_130_75.txt
+[INFO] 2026-05-07T14:52:20.806810+00:00 Gemini extraction success: CCT_130_75.txt
+[INFO] 2026-05-07T14:52:43.030898+00:00 Gemini extraction started: cct.txt
+[INFO] 2026-05-07T14:52:43.032906+00:00 Gemini extraction success: cct.txt
+[INFO] 2026-05-07T14:52:44.048723+00:00 Gemini extraction started: CCT_130_75.txt
+[INFO] 2026-05-07T14:52:44.049908+00:00 Gemini extraction success: CCT_130_75.txt
+[INFO] 2026-05-07T14:52:44.052218+00:00 Gemini extraction started: paritaria_2026.txt
+[INFO] 2026-05-07T14:52:44.053988+00:00 Gemini extraction success: paritaria_2026.txt
+[INFO] 2026-05-07T14:52:44.220720+00:00 Gemini extraction started: CCT_130_75.txt
+[INFO] 2026-05-07T14:52:44.221996+00:00 Gemini extraction success: CCT_130_75.txt
+[INFO] 2026-05-07T14:52:44.349549+00:00 Gemini extraction started: CCT_130_75.txt
+[INFO] 2026-05-07T14:52:44.351894+00:00 Gemini extraction success: CCT_130_75.txt
+[INFO] 2026-05-07T14:53:07.983736+00:00 Gemini extraction started: cct.txt
+[INFO] 2026-05-07T14:53:07.984755+00:00 Gemini extraction success: cct.txt
+[INFO] 2026-05-07T14:53:08.122762+00:00 Gemini extraction started: CCT_130_75.txt
+[INFO] 2026-05-07T14:53:08.124296+00:00 Gemini extraction success: CCT_130_75.txt
+[INFO] 2026-05-07T14:53:08.125434+00:00 Gemini extraction started: paritaria_2026.txt
+[INFO] 2026-05-07T14:53:08.126639+00:00 Gemini extraction success: paritaria_2026.txt
+[INFO] 2026-05-07T14:53:08.275080+00:00 Gemini extraction started: CCT_130_75.txt
+[INFO] 2026-05-07T14:53:08.276685+00:00 Gemini extraction success: CCT_130_75.txt
+[INFO] 2026-05-07T14:53:08.403296+00:00 Gemini extraction started: CCT_130_75.txt
+[INFO] 2026-05-07T14:53:08.405999+00:00 Gemini extraction success: CCT_130_75.txt
+[INFO] 2026-05-07T14:54:30.026928+00:00 Gemini extraction started: cct.txt
+[INFO] 2026-05-07T14:54:30.028465+00:00 Gemini extraction success: cct.txt
+[INFO] 2026-05-07T14:54:30.196271+00:00 Gemini extraction started: CCT_130_75.txt
+[INFO] 2026-05-07T14:54:30.198699+00:00 Gemini extraction success: CCT_130_75.txt
+[INFO] 2026-05-07T14:54:30.201367+00:00 Gemini extraction started: paritaria_2026.txt
+[INFO] 2026-05-07T14:54:30.202803+00:00 Gemini extraction success: paritaria_2026.txt
+[INFO] 2026-05-07T14:54:30.386743+00:00 Gemini extraction started: CCT_130_75.txt
+[INFO] 2026-05-07T14:54:30.388169+00:00 Gemini extraction success: CCT_130_75.txt
+[INFO] 2026-05-07T14:54:30.516832+00:00 Gemini extraction started: CCT_130_75.txt
+[INFO] 2026-05-07T14:54:30.518319+00:00 Gemini extraction success: CCT_130_75.txt
+[INFO] 2026-05-07T14:55:42.698526+00:00 Gemini extraction started: Manual de Liquidación de Sueldos_ CCT 40_89 (Edición Abril 2026).pdf
+[ERROR] 2026-05-07T14:55:54.580633+00:00 Gemini extraction unrecoverable failure: Manual de Liquidación de Sueldos_ CCT 40_89 (Edición Abril 2026).pdf: Gemini document extraction failed: 404 models/gemini-3.1-flash-lite-latest is not found for API version v1beta, or is not supported for generateContent. Call ListModels to see the list of available models and their supported methods.
+[INFO] 2026-05-07T14:56:45.283086+00:00 Gemini extraction started: Manual de Liquidación de Sueldos_ CCT 40_89 (Edición Abril 2026).pdf
+[ERROR] 2026-05-07T14:56:58.333737+00:00 Gemini extraction unrecoverable failure: Manual de Liquidación de Sueldos_ CCT 40_89 (Edición Abril 2026).pdf: Gemini document extraction failed: 404 models/gemini-3.1-flash-lite-latest is not found for API version v1beta, or is not supported for generateContent. Call ListModels to see the list of available models and their supported methods.
+[INFO] 2026-05-07T14:57:17.707293+00:00 Gemini extraction started: Manual de Liquidación de Sueldos_ CCT 40_89 (Edición Abril 2026).pdf
+[ERROR] 2026-05-07T14:57:26.835724+00:00 Gemini extraction unrecoverable failure: Manual de Liquidación de Sueldos_ CCT 40_89 (Edición Abril 2026).pdf: Gemini document extraction failed: 404 models/gemini-3.1-flash-lite-latest is not found for API version v1beta, or is not supported for generateContent. Call ListModels to see the list of available models and their supported methods.
+[INFO] 2026-05-07T14:58:24.065613+00:00 Gemini extraction started: Manual de Liquidación de Sueldos_ CCT 40_89 (Edición Abril 2026).pdf
+[INFO] 2026-05-07T14:59:39.696971+00:00 Gemini extraction success: Manual de Liquidación de Sueldos_ CCT 40_89 (Edición Abril 2026).pdf
+[INFO] 2026-05-07T14:59:39.699781+00:00 Gemini extraction started: Transporte de cargas, CCT 40_1989. Convenio colectivo.pdf
+[WARNING] 2026-05-07T15:01:19.025608+00:00 Gemini failed, switching to python parser: Transporte de cargas, CCT 40_1989. Convenio colectivo.pdf: Gemini document extraction failed: 504 Deadline Exceeded
+[INFO] 2026-05-07T15:01:53.633580+00:00 Python extraction success: Transporte de cargas, CCT 40_1989. Convenio colectivo.pdf
+[INFO] 2026-05-07T15:02:16.762243+00:00 Gemini extraction started: Manual de Liquidación de Sueldos_ CCT 40_89 (Edición Abril 2026).pdf
+[INFO] 2026-05-07T15:05:35.972730+00:00 Gemini extraction started: Transporte de cargas, CCT 40_1989. Convenio colectivo.pdf
+[INFO] 2026-05-07T15:08:42.718836+00:00 Gemini extraction started: cct.txt
+[INFO] 2026-05-07T15:08:42.720471+00:00 Gemini extraction success: cct.txt
+[INFO] 2026-05-07T15:08:42.851656+00:00 Gemini extraction started: CCT_130_75.txt
+[INFO] 2026-05-07T15:08:42.852591+00:00 Gemini extraction success: CCT_130_75.txt
+[INFO] 2026-05-07T15:08:42.853679+00:00 Gemini extraction started: paritaria_2026.txt
+[INFO] 2026-05-07T15:08:42.854743+00:00 Gemini extraction success: paritaria_2026.txt
+[INFO] 2026-05-07T15:08:43.011512+00:00 Gemini extraction started: CCT_130_75.txt
+[INFO] 2026-05-07T15:08:43.013065+00:00 Gemini extraction success: CCT_130_75.txt
+[INFO] 2026-05-07T15:08:43.140906+00:00 Gemini extraction started: CCT_130_75.txt
+[INFO] 2026-05-07T15:08:43.142663+00:00 Gemini extraction success: CCT_130_75.txt
+[INFO] 2026-05-07T15:09:34.990099+00:00 Gemini extraction started: Manual de Liquidación de Sueldos_ CCT 40_89 (Edición Abril 2026).pdf
+[WARNING] 2026-05-07T15:10:29.824363+00:00 Gemini failed, switching to python parser: Manual de Liquidación de Sueldos_ CCT 40_89 (Edición Abril 2026).pdf: Gemini document extraction failed: 504 Deadline expired before operation could complete.
+[INFO] 2026-05-07T15:10:31.595105+00:00 Python extraction success: Manual de Liquidación de Sueldos_ CCT 40_89 (Edición Abril 2026).pdf
+[INFO] 2026-05-07T15:10:31.596530+00:00 Gemini extraction started: Transporte de cargas, CCT 40_1989. Convenio colectivo.pdf
+[WARNING] 2026-05-07T15:11:24.348222+00:00 Gemini failed, switching to python parser: Transporte de cargas, CCT 40_1989. Convenio colectivo.pdf: Gemini document extraction failed: 504 Deadline Exceeded
+[INFO] 2026-05-07T15:12:04.172201+00:00 Python extraction success: Transporte de cargas, CCT 40_1989. Convenio colectivo.pdf
+[INFO] 2026-05-07T15:14:29.658431+00:00 Gemini extraction started: Manual de Liquidación de Sueldos_ CCT 40_89 (Edición Abril 2026).pdf
+[WARNING] 2026-05-07T15:15:23.757613+00:00 Gemini failed, switching to python parser: Manual de Liquidación de Sueldos_ CCT 40_89 (Edición Abril 2026).pdf: Gemini document extraction failed: 504 The request timed out. Please try again.
+[INFO] 2026-05-07T15:15:25.433998+00:00 Python extraction success: Manual de Liquidación de Sueldos_ CCT 40_89 (Edición Abril 2026).pdf
+[INFO] 2026-05-07T15:18:45.559654+00:00 Gemini extraction started: Manual de Liquidación de Sueldos_ CCT 40_89 (Edición Abril 2026).pdf
+[INFO] 2026-05-07T15:19:12.805676+00:00 Gemini extraction success: Manual de Liquidación de Sueldos_ CCT 40_89 (Edición Abril 2026).pdf
+[INFO] 2026-05-07T15:22:11.803704+00:00 Gemini extraction started: Manual de Liquidación de Sueldos_ CCT 40_89 (Edición Abril 2026).pdf
+[WARNING] 2026-05-07T15:23:11.716234+00:00 Gemini failed, switching to python parser: Manual de Liquidación de Sueldos_ CCT 40_89 (Edición Abril 2026).pdf: Gemini document extraction failed: 504 Deadline Exceeded
+[INFO] 2026-05-07T15:23:13.124793+00:00 Python extraction success: Manual de Liquidación de Sueldos_ CCT 40_89 (Edición Abril 2026).pdf
+[INFO] 2026-05-07T15:24:03.577402+00:00 Gemini extraction started: Manual de Liquidación de Sueldos_ CCT 40_89 (Edición Abril 2026).pdf
+[INFO] 2026-05-07T15:24:28.117952+00:00 Gemini extraction success: Manual de Liquidación de Sueldos_ CCT 40_89 (Edición Abril 2026).pdf
+[INFO] 2026-05-07T15:26:22.141610+00:00 Gemini extraction started: cct.txt
+[INFO] 2026-05-07T15:26:22.143222+00:00 Gemini extraction success: cct.txt
+[INFO] 2026-05-07T15:26:22.338689+00:00 Gemini extraction started: CCT_130_75.txt
+[INFO] 2026-05-07T15:26:22.339992+00:00 Gemini extraction success: CCT_130_75.txt
+[INFO] 2026-05-07T15:26:22.341608+00:00 Gemini extraction started: paritaria_2026.txt
+[INFO] 2026-05-07T15:26:22.343121+00:00 Gemini extraction success: paritaria_2026.txt
+[INFO] 2026-05-07T15:26:22.512658+00:00 Gemini extraction started: CCT_130_75.txt
+[INFO] 2026-05-07T15:26:22.514723+00:00 Gemini extraction success: CCT_130_75.txt
+[INFO] 2026-05-07T15:26:22.656310+00:00 Gemini extraction started: CCT_130_75.txt
+[INFO] 2026-05-07T15:26:22.657818+00:00 Gemini extraction success: CCT_130_75.txt
+[INFO] 2026-05-07T15:28:22.811086+00:00 Gemini extraction started: Manual de Liquidación de Sueldos_ CCT 40_89 (Edición Abril 2026).pdf
+[WARNING] 2026-05-07T15:29:29.286433+00:00 Gemini failed, switching to python parser: Manual de Liquidación de Sueldos_ CCT 40_89 (Edición Abril 2026).pdf: Gemini document extraction failed: 504 Deadline Exceeded
+[INFO] 2026-05-07T15:29:31.614925+00:00 Python extraction success: Manual de Liquidación de Sueldos_ CCT 40_89 (Edición Abril 2026).pdf
+[INFO] 2026-05-07T15:30:19.741738+00:00 Gemini extraction started: Manual de Liquidación de Sueldos_ CCT 40_89 (Edición Abril 2026).pdf
+[WARNING] 2026-05-07T15:31:19.591784+00:00 Gemini failed, switching to python parser: Manual de Liquidación de Sueldos_ CCT 40_89 (Edición Abril 2026).pdf: Gemini document extraction failed: 504 Deadline expired before operation could complete.
+[INFO] 2026-05-07T15:31:20.927803+00:00 Python extraction success: Manual de Liquidación de Sueldos_ CCT 40_89 (Edición Abril 2026).pdf
+[INFO] 2026-05-07T15:33:56.434710+00:00 Gemini extraction started: Manual de Liquidación de Sueldos_ CCT 40_89 (Edición Abril 2026).pdf
+[INFO] 2026-05-07T15:34:33.279081+00:00 Gemini extraction success: Manual de Liquidación de Sueldos_ CCT 40_89 (Edición Abril 2026).pdf
+[INFO] 2026-05-07T15:34:33.281450+00:00 Gemini extraction started: Transporte de cargas, CCT 40_1989. Convenio colectivo.pdf
+[WARNING] 2026-05-07T15:35:27.589182+00:00 Gemini failed, switching to python parser: Transporte de cargas, CCT 40_1989. Convenio colectivo.pdf: Gemini document extraction failed: 504 Deadline Exceeded
+[INFO] 2026-05-07T15:36:03.034864+00:00 Python extraction success: Transporte de cargas, CCT 40_1989. Convenio colectivo.pdf
+[INFO] 2026-05-07T15:38:58.945590+00:00 Gemini extraction started: Manual de Liquidación de Sueldos_ CCT 40_89 (Edición Abril 2026).pdf
+[WARNING] 2026-05-07T15:39:57.240858+00:00 Gemini failed, switching to python parser: Manual de Liquidación de Sueldos_ CCT 40_89 (Edición Abril 2026).pdf: Gemini document extraction failed: 504 Deadline expired before operation could complete.
+[INFO] 2026-05-07T15:39:58.799801+00:00 Python extraction success: Manual de Liquidación de Sueldos_ CCT 40_89 (Edición Abril 2026).pdf
+[INFO] 2026-05-07T15:39:58.801579+00:00 Gemini extraction started: Transporte de cargas, CCT 40_1989. Convenio colectivo.pdf
+[WARNING] 2026-05-07T15:40:54.466719+00:00 Gemini failed, switching to python parser: Transporte de cargas, CCT 40_1989. Convenio colectivo.pdf: Gemini document extraction failed: 504 Deadline Exceeded
+[INFO] 2026-05-07T15:41:27.142849+00:00 Python extraction success: Transporte de cargas, CCT 40_1989. Convenio colectivo.pdf
+[INFO] 2026-05-07T15:46:12.554692+00:00 Gemini extraction started: cct.txt
+[INFO] 2026-05-07T15:46:12.556116+00:00 Gemini extraction success: cct.txt
+[INFO] 2026-05-07T15:46:12.692457+00:00 Gemini extraction started: CCT_130_75.txt
+[INFO] 2026-05-07T15:46:12.694020+00:00 Gemini extraction success: CCT_130_75.txt
+[INFO] 2026-05-07T15:46:12.695485+00:00 Gemini extraction started: paritaria_2026.txt
+[INFO] 2026-05-07T15:46:12.696630+00:00 Gemini extraction success: paritaria_2026.txt
+[INFO] 2026-05-07T15:46:12.828854+00:00 Gemini extraction started: CCT_130_75.txt
+[INFO] 2026-05-07T15:46:12.829968+00:00 Gemini extraction success: CCT_130_75.txt
+[INFO] 2026-05-07T15:46:12.957461+00:00 Gemini extraction started: CCT_130_75.txt
+[INFO] 2026-05-07T15:46:12.958666+00:00 Gemini extraction success: CCT_130_75.txt
+[INFO] 2026-05-07T15:47:46.397023+00:00 Gemini extraction started: Manual de Liquidación de Sueldos_ CCT 40_89 (Edición Abril 2026).pdf
+[ERROR] 2026-05-07T15:48:44.236003+00:00 Gemini extraction failed: Manual de Liquidación de Sueldos_ CCT 40_89 (Edición Abril 2026).pdf: Gemini document extraction failed: 504 Deadline expired before operation could complete.
+[INFO] 2026-05-07T15:50:25.414636+00:00 Gemini extraction started: Manual de Liquidación de Sueldos_ CCT 40_89 (Edición Abril 2026).pdf
+[ERROR] 2026-05-07T15:51:19.583176+00:00 Gemini extraction failed: Manual de Liquidación de Sueldos_ CCT 40_89 (Edición Abril 2026).pdf: Gemini document extraction failed: 504 Deadline Exceeded
+[INFO] 2026-05-07T15:52:27.811748+00:00 Gemini extraction started: Manual de Liquidación de Sueldos_ CCT 40_89 (Edición Abril 2026).pdf
+[INFO] 2026-05-07T15:53:01.973039+00:00 Gemini extraction success: Manual de Liquidación de Sueldos_ CCT 40_89 (Edición Abril 2026).pdf
+[INFO] 2026-05-07T16:12:41.897125+00:00 Gemini extraction started: Informe Técnico_ Tabla de Liquidación Salarial Integral CCT 40_89 - Abril 2026.pdf
+[INFO] 2026-05-07T16:14:45.216907+00:00 Gemini extraction success: Informe Técnico_ Tabla de Liquidación Salarial Integral CCT 40_89 - Abril 2026.pdf
+[INFO] 2026-05-07T16:15:45.317910+00:00 Gemini extraction started: Informe Técnico_ Tabla de Liquidación Salarial Integral CCT 40_89 - Abril 2026.pdf
+[INFO] 2026-05-07T16:17:29.801834+00:00 Gemini extraction success: Informe Técnico_ Tabla de Liquidación Salarial Integral CCT 40_89 - Abril 2026.pdf
+[INFO] 2026-05-07T16:22:42.132411+00:00 Gemini extraction started: Informe Técnico_ Tabla de Liquidación Salarial Integral CCT 40_89 - Abril 2026.pdf
+[INFO] 2026-05-07T16:23:11.764567+00:00 Gemini extraction success: Informe Técnico_ Tabla de Liquidación Salarial Integral CCT 40_89 - Abril 2026.pdf
+[INFO] 2026-05-07T16:29:27.727315+00:00 Gemini extraction started: cct.txt
+[INFO] 2026-05-07T16:29:27.755115+00:00 Gemini extraction success: cct.txt
+[INFO] 2026-05-07T16:29:27.989240+00:00 Gemini extraction started: CCT_130_75.txt
+[INFO] 2026-05-07T16:29:27.991252+00:00 Gemini extraction success: CCT_130_75.txt
+[INFO] 2026-05-07T16:29:27.993342+00:00 Gemini extraction started: paritaria_2026.txt
+[INFO] 2026-05-07T16:29:27.994783+00:00 Gemini extraction success: paritaria_2026.txt
+[INFO] 2026-05-07T16:29:28.182562+00:00 Gemini extraction started: CCT_130_75.txt
+[INFO] 2026-05-07T16:29:28.183947+00:00 Gemini extraction success: CCT_130_75.txt
+[INFO] 2026-05-07T16:29:28.335425+00:00 Gemini extraction started: CCT_130_75.txt
+[INFO] 2026-05-07T16:29:28.337659+00:00 Gemini extraction success: CCT_130_75.txt
+[INFO] 2026-05-07T16:30:59.644635+00:00 Gemini extraction started: cct.txt
+[INFO] 2026-05-07T16:30:59.658952+00:00 Gemini extraction success: cct.txt
+[INFO] 2026-05-07T16:30:59.847023+00:00 Gemini extraction started: CCT_130_75.txt
+[INFO] 2026-05-07T16:30:59.848521+00:00 Gemini extraction success: CCT_130_75.txt
+[INFO] 2026-05-07T16:30:59.850203+00:00 Gemini extraction started: paritaria_2026.txt
+[INFO] 2026-05-07T16:30:59.851699+00:00 Gemini extraction success: paritaria_2026.txt
+[INFO] 2026-05-07T16:31:00.037246+00:00 Gemini extraction started: CCT_130_75.txt
+[INFO] 2026-05-07T16:31:00.039403+00:00 Gemini extraction success: CCT_130_75.txt
+[INFO] 2026-05-07T16:31:00.215271+00:00 Gemini extraction started: CCT_130_75.txt
+[INFO] 2026-05-07T16:31:00.216722+00:00 Gemini extraction success: CCT_130_75.txt
+[INFO] 2026-05-07T16:31:59.734845+00:00 Gemini extraction started: Informe Técnico_ Tabla de Liquidación Salarial Integral CCT 40_89 - Abril 2026.pdf
+[INFO] 2026-05-07T16:32:36.904004+00:00 Gemini extraction success: Informe Técnico_ Tabla de Liquidación Salarial Integral CCT 40_89 - Abril 2026.pdf
+[INFO] 2026-05-07T16:35:18.293109+00:00 Gemini extraction started: camioneros-marzo26.pdf
+[INFO] 2026-05-07T16:36:30.130228+00:00 Gemini extraction success: camioneros-marzo26.pdf
+[INFO] 2026-05-07T16:36:30.132187+00:00 Gemini extraction started: Informe Técnico_ Tabla de Liquidación Salarial Integral CCT 40_89 - Abril 2026.pdf
+[INFO] 2026-05-07T16:36:49.924620+00:00 Gemini extraction success: Informe Técnico_ Tabla de Liquidación Salarial Integral CCT 40_89 - Abril 2026.pdf
+[INFO] 2026-05-07T16:36:49.926244+00:00 Gemini extraction started: Transporte de cargas, CCT 40_1989. Convenio colectivo.pdf
+[INFO] 2026-05-07T16:38:05.544604+00:00 Gemini extraction success: Transporte de cargas, CCT 40_1989. Convenio colectivo.pdf
+[INFO] 2026-05-07T16:40:59.087848+00:00 Gemini extraction started: escala salarial.pdf
+[INFO] 2026-05-07T16:41:45.973390+00:00 Gemini extraction started: camioneros-marzo26.pdf
+[INFO] 2026-05-07T16:43:35.241332+00:00 Gemini extraction success: camioneros-marzo26.pdf
+[INFO] 2026-05-07T16:43:35.255901+00:00 Gemini extraction started: escala salarial.pdf
+[INFO] 2026-05-07T16:44:17.476916+00:00 Gemini extraction success: escala salarial.pdf
+[INFO] 2026-05-07T16:44:17.478755+00:00 Gemini extraction started: Transporte de cargas, CCT 40_1989. Convenio colectivo.pdf
+[ERROR] 2026-05-07T16:49:26.537706+00:00 Gemini extraction failed: Transporte de cargas, CCT 40_1989. Convenio colectivo.pdf: Gemini document extraction failed: 504 Deadline Exceeded
+[INFO] 2026-05-07T16:49:26.542417+00:00 Gemini extraction started: Informe Técnico_ Tabla de Liquidación Salarial Integral CCT 40_89 - Abril 2026.pdf
+[INFO] 2026-05-07T16:49:50.500990+00:00 Gemini extraction success: Informe Técnico_ Tabla de Liquidación Salarial Integral CCT 40_89 - Abril 2026.pdf
+[INFO] 2026-05-07T16:57:41.510990+00:00 Gemini extraction started: cct.txt
+[INFO] 2026-05-07T16:57:41.513216+00:00 Gemini extraction success: cct.txt
+[INFO] 2026-05-07T16:57:41.664730+00:00 Gemini extraction started: CCT_130_75.txt
+[INFO] 2026-05-07T16:57:41.666261+00:00 Gemini extraction success: CCT_130_75.txt
+[INFO] 2026-05-07T16:57:41.667482+00:00 Gemini extraction started: paritaria_2026.txt
+[INFO] 2026-05-07T16:57:41.668639+00:00 Gemini extraction success: paritaria_2026.txt
+[INFO] 2026-05-07T16:57:41.846464+00:00 Gemini extraction started: CCT_130_75.txt
+[INFO] 2026-05-07T16:57:41.848649+00:00 Gemini extraction success: CCT_130_75.txt
+[INFO] 2026-05-07T16:57:41.986563+00:00 Gemini extraction started: CCT_130_75.txt
+[INFO] 2026-05-07T16:57:41.988216+00:00 Gemini extraction success: CCT_130_75.txt
+[INFO] 2026-05-07T17:02:29.239764+00:00 Gemini extraction started: Informe Normativo_ Reglas y Condiciones Generales de Trabajo - CCT 40_89 (Camioneros).pdf
+[INFO] 2026-05-07T17:07:46.724074+00:00 Gemini extraction started: Informe Normativo_ Reglas y Condiciones Generales de Trabajo - CCT 40_89 (Camioneros).pdf
+[INFO] 2026-05-07T17:08:52.705285+00:00 Gemini extraction success: Informe Normativo_ Reglas y Condiciones Generales de Trabajo - CCT 40_89 (Camioneros).pdf
+[INFO] 2026-05-07T17:08:52.720403+00:00 Gemini extraction started: Informe Técnico_ Tabla de Liquidación Salarial Integral CCT 40_89 - Abril 2026.pdf
+[INFO] 2026-05-07T17:09:38.841851+00:00 Gemini extraction success: Informe Técnico_ Tabla de Liquidación Salarial Integral CCT 40_89 - Abril 2026.pdf

@@ -1,0 +1,22 @@
+{
+  "employee_id": "3",
+  "period": "2026-05",
+  "events": [
+    {
+      "type": "HOLIDAY_WORKED",
+      "subtype": "WORKED",
+      "days": 1.0,
+      "hours": null,
+      "amount": null,
+      "description": null
+    },
+    {
+      "type": "OVERTIME",
+      "subtype": "OT_50",
+      "days": null,
+      "hours": 3.0,
+      "amount": null,
+      "description": null
+    }
+  ]
+}

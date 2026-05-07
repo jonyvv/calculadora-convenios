@@ -1,0 +1,9 @@
+{
+  "status": "SUCCESS",
+  "agreement_id": "CCT_130_75",
+  "version": "2026_07",
+  "warnings": [],
+  "agent": "codex_structuring_agent",
+  "generated_test": "tests\\conventions\\test_cct_130_75_2026_07.py",
+  "processed_at": "2026-05-07T15:08:43.363243+00:00"
+}

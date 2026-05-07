@@ -1,0 +1,4 @@
+from app.infrastructure.persistence.json_agreement_repository import JsonAgreementRepository
+
+
+AgreementStorageRepository = JsonAgreementRepository

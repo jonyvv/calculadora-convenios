@@ -1,0 +1,385 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Liquidacion de Sueldos</title>
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="brand">
+      <span class="brand-icon">$</span>
+      <strong>Liquidacion<br>de Sueldos</strong>
+    </div>
+    <nav>
+      <button class="nav-item" data-tab="home"><span>IN</span>Inicio</button>
+      <button class="nav-item active" data-tab="agreements"><span>CV</span>Convenios</button>
+      <button class="nav-item" data-tab="payroll"><span>LQ</span>Liquidacion</button>
+      <button class="nav-item" data-tab="employees"><span>EM</span>Empleados</button>
+      <button class="nav-item" data-tab="events"><span>NV</span>Novedades</button>
+      <button class="nav-item" data-tab="audit"><span>AU</span>Auditoria</button>
+    </nav>
+    <div class="user-card">
+      <span>AD</span>
+      <div>
+        <strong>Admin</strong>
+        <small>Administrador</small>
+      </div>
+    </div>
+  </aside>
+
+  <main class="workspace">
+    <section id="home" class="view">
+      <header class="page-header">
+        <div>
+          <h1>Panel administrativo</h1>
+          <p>Gestiona convenios, empleados, novedades, liquidaciones y auditorias.</p>
+        </div>
+      </header>
+      <div class="metric-grid">
+        <article class="metric-card"><small>Convenios</small><strong id="metric-agreements">0</strong></article>
+        <article class="metric-card"><small>Motor</small><strong>Deterministico</strong></article>
+        <article class="metric-card"><small>Auditoria</small><strong>Gemini JSON</strong></article>
+      </div>
+    </section>
+
+    <section id="agreements" class="view active">
+      <header class="page-header">
+        <div>
+          <h1>Convenios</h1>
+          <p>Administra los convenios colectivos de trabajo.</p>
+        </div>
+        <form id="upload-form" class="inline-upload">
+          <label class="file-button">
+            <input id="agreement-files" type="file" name="files" accept=".pdf,.doc,.docx,.txt,.xlsx,.xls" multiple>
+            Agregar archivos
+          </label>
+          <button class="primary" id="create-agreement-button">Crear convenio</button>
+        </form>
+      </header>
+
+      <div class="panel">
+        <div class="upload-status" id="agreement-upload-status">
+          Selecciona uno o varios archivos del convenio: CCT, paritarias, escalas, resoluciones o acuerdos salariales.
+        </div>
+        <ol class="import-stages" id="agreement-import-stages">
+          <li data-stage="Archivo recibido">Archivo recibido</li>
+          <li data-stage="Extrayendo con Gemini">Extrayendo con Gemini</li>
+          <li data-stage="Codex estructurando">Codex estructurando</li>
+          <li data-stage="Validacion de schema">Validacion de schema</li>
+          <li data-stage="Convenio listo">Convenio listo</li>
+        </ol>
+        <div class="warnings-panel" id="agreement-warnings"></div>
+        <div class="table-toolbar">
+          <div class="search-box">
+            <input id="agreement-search" placeholder="Buscar convenio...">
+            <span>Buscar</span>
+          </div>
+          <button class="ghost" id="refresh-agreements">Todos los estados</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Codigo</th>
+                <th>Nombre del Convenio</th>
+                <th>Version</th>
+                <th>Vigencia Desde</th>
+                <th>Vigencia Hasta</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="agreements-table">
+              <tr><td colspan="7">Sin convenios cargados</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <footer class="table-footer">
+          <span id="agreements-count">Mostrando 0 convenios</span>
+          <div class="pager"><button class="icon-button">&lt;</button><button class="page-button">1</button><button class="icon-button">&gt;</button></div>
+        </footer>
+      </div>
+
+      <div class="panel split-panel">
+        <div>
+          <h2>Version activa</h2>
+          <div class="form-grid compact">
+            <label>Convenio<input id="agreement-id" placeholder="CCT_40_89"></label>
+            <label>Version<input id="agreement-version" placeholder="2026_01"></label>
+          </div>
+          <div class="actions-row">
+            <button class="secondary" id="load-agreement">Visualizar JSON</button>
+            <button class="primary" id="activate-agreement">Activar version</button>
+          </div>
+        </div>
+        <pre id="agreement-json" class="json-preview"></pre>
+      </div>
+
+      <div class="panel agreement-editor" id="agreement-friendly-editor">
+        <div class="table-toolbar">
+          <div>
+            <h2>Vista editable del convenio</h2>
+            <p>Conceptos liquidables del convenio seleccionado.</p>
+          </div>
+          <div class="actions-row">
+            <button class="secondary" id="add-category-row">Agregar puesto / rol</button>
+            <button class="secondary" id="add-remunerative-row">Agregar haber</button>
+            <button class="secondary" id="add-non-remunerative-row">Agregar no remunerativo</button>
+            <button class="secondary" id="add-deduction-row">Agregar descuento</button>
+            <button class="secondary" id="add-overtime-row">Agregar hora extra</button>
+            <button class="primary" id="save-agreement-friendly">Guardar cambios</button>
+            <button class="danger-button" id="delete-agreement-friendly">Eliminar convenio</button>
+          </div>
+        </div>
+        <div class="agreement-summary" id="agreement-summary"></div>
+        <div class="editor-grid">
+          <section>
+            <h3>Puestos / roles</h3>
+            <div class="table-wrap"><table><thead><tr><th>Codigo</th><th>Nombre</th><th>Basico</th><th></th></tr></thead><tbody id="editor-categories"></tbody></table></div>
+          </section>
+          <section>
+            <h3>Haberes remunerativos</h3>
+            <div class="table-wrap"><table><thead><tr><th>Codigo</th><th>Nombre</th><th>Tipo</th><th>Base</th><th>Importe/%</th><th></th></tr></thead><tbody id="editor-remunerative"></tbody></table></div>
+          </section>
+          <section>
+            <h3>Haberes no remunerativos</h3>
+            <div class="table-wrap"><table><thead><tr><th>Codigo</th><th>Nombre</th><th>Tipo</th><th>Base</th><th>Importe/%</th><th></th></tr></thead><tbody id="editor-non-remunerative"></tbody></table></div>
+          </section>
+          <section>
+            <h3>Descuentos</h3>
+            <div class="table-wrap"><table><thead><tr><th>Codigo</th><th>Nombre</th><th>Alicuota</th><th>Base</th><th></th></tr></thead><tbody id="editor-deductions"></tbody></table></div>
+          </section>
+          <section>
+            <h3>Horas extra</h3>
+            <div class="table-wrap"><table><thead><tr><th>Codigo</th><th>Multiplicador</th><th></th></tr></thead><tbody id="editor-overtime"></tbody></table></div>
+          </section>
+        </div>
+      </div>
+    </section>
+
+    <section id="employees" class="view">
+      <header class="page-header">
+        <div>
+          <h1>Empleados</h1>
+          <p>Alta y modificacion de empleados.</p>
+        </div>
+      </header>
+      <div class="panel">
+        <form id="employee-form" class="form-grid">
+          <input type="hidden" id="employee-editing-id">
+          <label>Empleado<input name="employee_id" placeholder="E1"></label>
+          <label>CUIL<input name="cuil" placeholder="20-12345678-9"></label>
+          <label>Fecha ingreso<input name="hire_date" type="date"></label>
+          <label>Convenio<select id="employee-agreement-select" name="agreement_id"></select></label>
+          <label>Puesto / rol<select id="employee-category-select" name="category_id"></select></label>
+          <label>Zona<input name="zone" placeholder="General"></label>
+          <label>Jornada<input name="workday" placeholder="Completa"></label>
+          <label>Antiguedad<input id="employee-seniority-preview" type="number" value="0" disabled></label>
+          <button class="primary" id="employee-save-button">Guardar empleado</button>
+          <button class="secondary" type="button" id="employee-cancel-edit">Cancelar edicion</button>
+        </form>
+        <pre id="employee-result" class="json-preview small"></pre>
+      </div>
+      <div class="panel">
+        <div class="table-toolbar">
+          <h2>Ver empleados</h2>
+          <button class="ghost" id="refresh-employees">Actualizar</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Empleado</th>
+                <th>CUIL</th>
+                <th>Convenio</th>
+                <th>Puesto</th>
+                <th>Ingreso</th>
+                <th>Antiguedad</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="employees-table">
+              <tr><td colspan="7">Sin empleados cargados</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section id="events" class="view">
+      <header class="page-header">
+        <div>
+          <h1>Novedades</h1>
+          <p>Carga mensual de ausencias, horas extra, bonos y licencias.</p>
+        </div>
+      </header>
+      <div class="panel">
+        <form id="events-form" class="form-grid">
+          <label>Empleado<input name="employee_id" placeholder="E1"></label>
+          <label>Periodo<input name="period" placeholder="2026-04"></label>
+          <label class="wide">Eventos JSON<textarea name="events" rows="8">[{"type":"OVERTIME","subtype":"OT_50","hours":8}]</textarea></label>
+          <button class="primary">Registrar novedades</button>
+        </form>
+        <pre id="events-result" class="json-preview small"></pre>
+      </div>
+    </section>
+
+    <section id="payroll" class="view">
+      <header class="page-header">
+        <div>
+          <h1>Calculadora de Liquidacion</h1>
+          <p>Wizard profesional guiado por convenio activo y novedades del periodo.</p>
+        </div>
+        <button class="ghost" id="clear-payroll">Limpiar</button>
+      </header>
+
+      <div class="wizard-shell">
+        <ol class="stepper" id="payroll-stepper">
+          <li class="active" data-step="1"><span>1</span>Trabajador</li>
+          <li data-step="2"><span>2</span>Periodo</li>
+          <li data-step="3"><span>3</span>Novedades</li>
+          <li data-step="4"><span>4</span>Adicionales</li>
+          <li data-step="5"><span>5</span>Horas extra</li>
+          <li data-step="6"><span>6</span>Resultado</li>
+        </ol>
+
+        <form id="payroll-wizard-form">
+          <section class="wizard-step active" data-step-panel="1">
+            <div class="panel wizard-panel">
+              <h2>Paso 1 - Trabajador</h2>
+              <div class="form-grid">
+                <label>Empleado<input id="wiz-employee-id" name="employee_id" placeholder="E1"></label>
+                <label>CUIL<input id="wiz-cuil" name="cuil" placeholder="20-12345678-9"></label>
+                <label>Fecha ingreso<input id="wiz-hire-date" name="hire_date" type="date"></label>
+                <label>Puesto / rol<select id="wiz-category-id" name="category_id" disabled></select></label>
+                <label>Convenio activo<select id="wiz-agreement-id" name="agreement_id" disabled></select></label>
+                <label>Antiguedad<input id="wiz-seniority" name="seniority_years" type="number" value="0" disabled></label>
+                <label>Zona<input id="wiz-zone" name="zone" placeholder="General"></label>
+                <label>Jornada<select id="wiz-workday" name="workday"><option>Completa</option><option>Parcial</option><option>Reducida</option></select></label>
+              </div>
+              <div class="hint-box">Al salir del campo empleado se consulta el alta y se completan convenio, puesto/rol y antiguedad.</div>
+            </div>
+          </section>
+
+          <section class="wizard-step" data-step-panel="2">
+            <div class="panel wizard-panel">
+              <h2>Paso 2 - Periodo</h2>
+              <div class="form-grid">
+                <label>Mes<select id="wiz-month" name="month"></select></label>
+                <label>Anio<input id="wiz-year" name="year" type="number" value="2026"></label>
+                <label>Tipo de liquidacion<select id="wiz-liquidation-type" name="liquidation_type">
+                  <option value="mensual">Mensual</option>
+                  <option value="quincenal">Quincenal</option>
+                  <option value="jornalizado">Jornalizado</option>
+                  <option value="vacaciones">Vacaciones</option>
+                  <option value="SAC">SAC</option>
+                  <option value="liquidacion_final">Liquidacion final</option>
+                </select></label>
+              </div>
+            </div>
+          </section>
+
+          <section class="wizard-step" data-step-panel="3">
+            <div class="panel wizard-panel">
+              <h2>Paso 3 - Novedades del periodo</h2>
+              <div class="event-grid">
+                <fieldset><legend>Inasistencias</legend><label>Justificadas<input id="ev-absence-justified" type="number" min="0" value="0"></label><label>Injustificadas<input id="ev-absence-unjustified" type="number" min="0" value="0"></label></fieldset>
+                <fieldset><legend>Licencias</legend><label>Enfermedad<input id="ev-leave-sickness" type="number" min="0" value="0"></label><label>Accidente<input id="ev-leave-accident" type="number" min="0" value="0"></label><label>Matrimonio<input id="ev-leave-marriage" type="number" min="0" value="0"></label><label>Examen<input id="ev-leave-exam" type="number" min="0" value="0"></label><label>Nacimiento<input id="ev-leave-birth" type="number" min="0" value="0"></label></fieldset>
+                <fieldset><legend>Feriados</legend><label>Trabajados<input id="ev-holiday-worked" type="number" min="0" value="0"></label><label>No trabajados<input id="ev-holiday-not-worked" type="number" min="0" value="0"></label></fieldset>
+                <fieldset><legend>Otros</legend><label>Suspensiones<input id="ev-suspensions" type="number" min="0" value="0"></label><label>Comisiones<input id="ev-commissions" type="number" min="0" value="0"></label><label>Bonos<input id="ev-bonuses" type="number" min="0" value="0"></label></fieldset>
+              </div>
+              <div class="hint-box" id="event-rules-preview">Las novedades se transforman a MonthlyEvent y el motor aplica event_rules del convenio.</div>
+            </div>
+          </section>
+
+          <section class="wizard-step" data-step-panel="4">
+            <div class="panel wizard-panel">
+              <h2>Paso 4 - Adicionales del convenio</h2>
+              <div id="agreement-additionals" class="concept-list">
+                <div class="empty-state">Selecciona un convenio activo para leer conceptos remunerativos y no remunerativos.</div>
+              </div>
+            </div>
+          </section>
+
+          <section class="wizard-step" data-step-panel="5">
+            <div class="panel wizard-panel">
+              <h2>Paso 5 - Horas extraordinarias</h2>
+              <div id="overtime-rules" class="overtime-grid"></div>
+              <div class="hint-box">Valor hora = sueldo basico del puesto/rol / 200. El multiplicador sale de agreement.salary_model.overtime_rules.</div>
+            </div>
+          </section>
+
+          <section class="wizard-step" data-step-panel="6">
+            <div class="payroll-layout result-layout">
+              <section class="panel">
+                <div class="tabs">
+                  <button type="button" class="tab-button active" data-result-tab="receipt">Recibo</button>
+                  <button type="button" class="tab-button" data-result-tab="formula">Como se calculo</button>
+                  <button type="button" class="tab-button" data-result-tab="distribution">Distribucion salarial</button>
+                  <button type="button" class="tab-button" data-result-tab="cost">Costo empleador</button>
+                </div>
+                <div class="tab-panel active" id="result-receipt">
+                  <div id="receipt-detail" class="receipt-grid"></div>
+                </div>
+                <div class="tab-panel" id="result-formula">
+                  <div id="formula-detail" class="formula-list"></div>
+                </div>
+                <div class="tab-panel" id="result-distribution">
+                  <div class="chart-wrap"><div id="salary-chart" class="bar-chart"></div></div>
+                </div>
+                <div class="tab-panel" id="result-cost">
+                  <div id="employer-cost" class="cost-grid"></div>
+                </div>
+              </section>
+              <aside class="summary-card">
+                <h2>Resumen de Liquidacion</h2>
+                <div class="summary-line"><span>Total Haberes</span><strong id="summary-gross">$ 0,00</strong></div>
+                <div class="summary-line"><span>Total Descuentos</span><strong id="summary-deductions" class="danger">$ 0,00</strong></div>
+                <hr>
+                <small>Sueldo Neto</small>
+                <strong id="summary-net" class="net">$ 0,00</strong>
+                <div id="audit-badge" class="audit-badge muted">Auditoria pendiente</div>
+                <div class="final-actions">
+                  <button type="button" class="secondary">Guardar borrador</button>
+                  <button type="button" class="primary">Confirmar liquidacion</button>
+                  <button type="button" class="secondary">Exportar PDF</button>
+                  <button type="button" class="primary" id="wizard-audit">Ejecutar auditoria Gemini</button>
+                  <button type="button" class="ghost" id="new-payroll">Crear nueva liquidacion</button>
+                </div>
+              </aside>
+            </div>
+            <pre id="payroll-result" class="json-preview small hidden"></pre>
+            <pre id="wizard-audit-result" class="json-preview small"></pre>
+          </section>
+
+          <div class="wizard-actions">
+            <button type="button" class="secondary" id="wizard-prev">Anterior</button>
+            <button type="button" class="primary" id="wizard-next">Siguiente</button>
+            <button type="button" class="primary hidden" id="wizard-calculate">Calcular liquidacion</button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <section id="audit" class="view">
+      <header class="page-header">
+        <div>
+          <h1>Auditoria</h1>
+          <p>Ejecuta auditoria Gemini sobre JSON estructurado.</p>
+        </div>
+      </header>
+      <div class="panel">
+        <form id="audit-form" class="form-grid">
+          <label>Empleado<input name="employee_id" placeholder="E1"></label>
+          <label>Periodo<input name="period" placeholder="2026-04"></label>
+          <button class="primary">Ejecutar auditoria</button>
+        </form>
+        <pre id="audit-result" class="json-preview small"></pre>
+      </div>
+    </section>
+  </main>
+  <script src="/static/app.js"></script>
+</body>
+</html>

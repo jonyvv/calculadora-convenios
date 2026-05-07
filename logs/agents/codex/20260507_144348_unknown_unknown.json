@@ -1,0 +1,10 @@
+{
+  "status": "ERROR",
+  "agreement_id": "",
+  "version": "",
+  "warnings": [
+    "'str' object has no attribute 'get'"
+  ],
+  "agent": "codex_structuring_agent",
+  "processed_at": "2026-05-07T14:43:48.769439+00:00"
+}

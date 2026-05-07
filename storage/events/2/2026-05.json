@@ -1,0 +1,22 @@
+{
+  "employee_id": "2",
+  "period": "2026-05",
+  "events": [
+    {
+      "type": "HOLIDAY_WORKED",
+      "subtype": "WORKED",
+      "days": 2.0,
+      "hours": null,
+      "amount": null,
+      "description": null
+    },
+    {
+      "type": "BONUS",
+      "subtype": "BONUS",
+      "days": null,
+      "hours": null,
+      "amount": 2.0,
+      "description": "Bonos"
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "status": "DRAFT",
+  "agreement_id": "CCT_40_89",
+  "version": "2026_01",
+  "warnings": [
+    "Faltan categorias del convenio"
+  ],
+  "agent": "agreement_structuring_agent",
+  "generated_test": "tests\\conventions\\test_cct_40_89_2026_01.py",
+  "processed_at": "2026-05-07T15:31:20.964283+00:00"
+}
