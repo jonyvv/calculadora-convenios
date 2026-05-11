@@ -33,6 +33,10 @@ class SalaryItem(BaseModel):
     amount: float | None = None
     rate: float | None = None
     formula: str | None = None
+    applies_to_categories: list[str] = Field(default_factory=list)
+    applies_to_tags: list[str] = Field(default_factory=list)
+    input_mode: str = "AUTO"
+    unit: str | None = None
 
 
 class Deduction(BaseModel):

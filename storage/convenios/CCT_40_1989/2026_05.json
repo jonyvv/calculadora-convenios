@@ -1,0 +1,645 @@
+{
+  "metadata": {
+    "agreement_id": "CCT_40_1989",
+    "name": "Cct_40_1989_Reglas_Liquidacion.Pdf",
+    "version": "2026_05",
+    "valid_from": "2026-05-01",
+    "valid_to": null,
+    "source_document": "CCT_40_1989_Reglas_Liquidacion.pdf, Escala Salarial CCT 40_89 - Vigencia Mayo 2026.pdf, Manual Técnico de Liquidación de Haberes_ CCT 40_89 (Actualización  Mayo 2026).pdf",
+    "created_at": "2026-05-08T17:30:22.929906+00:00",
+    "status": "ACTIVE",
+    "union": "Federación Nacional de Trabajadores Camioneros",
+    "activity": "Transporte de Cargas",
+    "jurisdiction": "Nacional",
+    "parity_terms": []
+  },
+  "categories": [
+    {
+      "category_id": "A",
+      "name": "Conductores De Primera Categoría",
+      "basic_salary": 1001071.98
+    },
+    {
+      "category_id": "B",
+      "name": "Conductores De Segunda Categoría",
+      "basic_salary": 983232.49
+    },
+    {
+      "category_id": "C",
+      "name": "Conductores De Tercera Categoría",
+      "basic_salary": 965374.95
+    },
+    {
+      "category_id": "E",
+      "name": "Encargado",
+      "basic_salary": 940866.38
+    },
+    {
+      "category_id": "F",
+      "name": "Recibidor Y/O Clasificador De Guías",
+      "basic_salary": 931891.94
+    },
+    {
+      "category_id": "G",
+      "name": "Embaladores. Peones Especializados",
+      "basic_salary": 923101.01
+    },
+    {
+      "category_id": "H",
+      "name": "Recolectores De Residuos Y Limpieza",
+      "basic_salary": 923101.01
+    },
+    {
+      "category_id": "I",
+      "name": "Peones",
+      "basic_salary": 914291.07
+    },
+    {
+      "category_id": "J",
+      "name": "Peones Generales De Barrido Y Limpieza",
+      "basic_salary": 914291.07
+    },
+    {
+      "category_id": "K",
+      "name": "Ayudantes Mayores De 18 Años",
+      "basic_salary": 896768.85
+    },
+    {
+      "category_id": "G1",
+      "name": "Grúa H/ 10 T Y Autoelevadores",
+      "basic_salary": 1018918.96
+    },
+    {
+      "category_id": "G2",
+      "name": "Grúa Más De 10 Y H/ 20 T",
+      "basic_salary": 1120810.86
+    },
+    {
+      "category_id": "G3",
+      "name": "Grúa Más De 20 Y H/ 35 T",
+      "basic_salary": 1165643.29
+    },
+    {
+      "category_id": "G4",
+      "name": "Grúa Más De 35 Y H/ 45 T",
+      "basic_salary": 1212269.02
+    },
+    {
+      "category_id": "G5",
+      "name": "Grúa Más De 45 Y H/ 55 T",
+      "basic_salary": 1260759.78
+    },
+    {
+      "category_id": "G6",
+      "name": "Grúa Más De 55 Y H/ 70 T",
+      "basic_salary": 1323797.77
+    },
+    {
+      "category_id": "G7",
+      "name": "Grúa Más De 70 Y H/ 90 T",
+      "basic_salary": 1389987.66
+    },
+    {
+      "category_id": "G8",
+      "name": "Grúa Más De 90 Y H/ 110 T",
+      "basic_salary": 1459487.04
+    },
+    {
+      "category_id": "G9",
+      "name": "Grúa Más De 110 Y H/ 140 T",
+      "basic_salary": 1532461.39
+    },
+    {
+      "category_id": "G10",
+      "name": "Grúa Más De 140 Y H/ 170 T",
+      "basic_salary": 1609084.46
+    },
+    {
+      "category_id": "G11",
+      "name": "Grúa Más De 170 Y H/ 300 T",
+      "basic_salary": 1689538.68
+    },
+    {
+      "category_id": "G12",
+      "name": "Grúa Más De 300 T",
+      "basic_salary": 1824701.77
+    },
+    {
+      "category_id": "L",
+      "name": "Operador De Servicios",
+      "basic_salary": 1065180.22
+    },
+    {
+      "category_id": "LL",
+      "name": "Distribuidor Domiciliario",
+      "basic_salary": 969519.98
+    },
+    {
+      "category_id": "M",
+      "name": "Auxiliar Operativo De 1ª",
+      "basic_salary": 998029.39
+    },
+    {
+      "category_id": "N",
+      "name": "Auxiliar Operativo De 2ª",
+      "basic_salary": 949869.3
+    },
+    {
+      "category_id": "O",
+      "name": "Chofer Con Firma",
+      "basic_salary": 1155899.2
+    },
+    {
+      "category_id": "P",
+      "name": "Custodio De Unidad Blindada",
+      "basic_salary": 933124.69
+    },
+    {
+      "category_id": "Q",
+      "name": "Auxiliar Operativo De 1ª (Caudales)",
+      "basic_salary": 1375644.41
+    },
+    {
+      "category_id": "R",
+      "name": "Auxiliar Operativo De 2ª (Caudales)",
+      "basic_salary": 958260.84
+    },
+    {
+      "category_id": "R1",
+      "name": "Oficial De Primera",
+      "basic_salary": 1114923.7
+    },
+    {
+      "category_id": "S",
+      "name": "Oficial Completo De Taller",
+      "basic_salary": 1057158.76
+    },
+    {
+      "category_id": "T",
+      "name": "Oficial",
+      "basic_salary": 1005085.13
+    },
+    {
+      "category_id": "U",
+      "name": "Medio Oficial",
+      "basic_salary": 949464.23
+    },
+    {
+      "category_id": "V",
+      "name": "Oficial Gomero",
+      "basic_salary": 1005085.13
+    },
+    {
+      "category_id": "W",
+      "name": "Medio Oficial Gomero",
+      "basic_salary": 949464.23
+    },
+    {
+      "category_id": "X",
+      "name": "Lavadores. Engrasadores Y Ayudantes De Taller",
+      "basic_salary": 949464.23
+    },
+    {
+      "category_id": "Y",
+      "name": "Administrativo De Primera Categoría",
+      "basic_salary": 996199.21
+    },
+    {
+      "category_id": "Z",
+      "name": "Administrativo De Segunda Categoría",
+      "basic_salary": 958260.84
+    },
+    {
+      "category_id": "Z1",
+      "name": "Administrativo De Tercera Categoría",
+      "basic_salary": 923101.01
+    },
+    {
+      "category_id": "Z2",
+      "name": "Administrativo De Cuarta Categoría",
+      "basic_salary": 905538.31
+    },
+    {
+      "category_id": "Z3",
+      "name": "Maestranza Y/O Serenos",
+      "basic_salary": 905538.31
+    }
+  ],
+  "salary_model": {
+    "remunerative_items": [
+      {
+        "code": "AD_LACTEO",
+        "name": "Adicional conductor lácteo",
+        "type": "REMUNERATIVE",
+        "calculation_type": "PERCENTAGE",
+        "base_reference": "Basico",
+        "amount": null,
+        "rate": 15.0,
+        "formula": "Basico * 15.0%",
+        "applies_to_categories": [
+          "CONDUCTOR",
+          "L",
+          "CTEO"
+        ],
+        "applies_to_tags": [],
+        "input_mode": "AUTO",
+        "unit": null
+      },
+      {
+        "code": "AD_GRUAS",
+        "name": "Adicional grúas/autogrúas",
+        "type": "REMUNERATIVE",
+        "calculation_type": "PERCENTAGE",
+        "base_reference": "Basico",
+        "amount": null,
+        "rate": 10.0,
+        "formula": "Basico * 10.0%",
+        "applies_to_categories": [
+          "GR",
+          "AS",
+          "AUTOGR",
+          "AS"
+        ],
+        "applies_to_tags": [],
+        "input_mode": "AUTO",
+        "unit": null
+      },
+      {
+        "code": "PLUS_TALLER",
+        "name": "Plus pluralidad taller",
+        "type": "REMUNERATIVE",
+        "calculation_type": "PERCENTAGE",
+        "base_reference": "Basico",
+        "amount": null,
+        "rate": 18.0,
+        "formula": "Basico * 18.0%",
+        "applies_to_categories": [
+          "MEDIO",
+          "OFICIALES"
+        ],
+        "applies_to_tags": [
+          "PLURALIDAD_GRUPO_I"
+        ],
+        "input_mode": "AUTO",
+        "unit": null
+      },
+      {
+        "code": "AD_MUDANZAS",
+        "name": "Adicional mudanzas especiales",
+        "type": "REMUNERATIVE",
+        "calculation_type": "PERCENTAGE",
+        "base_reference": "Jornal",
+        "amount": null,
+        "rate": 10.0,
+        "formula": "Jornal * 10.0%",
+        "applies_to_categories": [],
+        "applies_to_tags": [],
+        "input_mode": "AUTO",
+        "unit": null
+      },
+      {
+        "code": "ADIC_CAUDALES",
+        "name": "Adicional Caudales",
+        "type": "REMUNERATIVE",
+        "calculation_type": "PERCENTAGE",
+        "base_reference": "Basico",
+        "amount": null,
+        "rate": 20.0,
+        "formula": "Basico * 20.0%",
+        "applies_to_categories": [
+          "CAUDALES"
+        ],
+        "applies_to_tags": [],
+        "input_mode": "AUTO",
+        "unit": null
+      },
+      {
+        "code": "ADIC_RESIDUOS",
+        "name": "Adicional Recolección",
+        "type": "REMUNERATIVE",
+        "calculation_type": "PERCENTAGE",
+        "base_reference": "Basico",
+        "amount": null,
+        "rate": 15.0,
+        "formula": "Basico * 15.0%",
+        "applies_to_categories": [
+          "RECOLECCI",
+          "N",
+          "RESIDUOS"
+        ],
+        "applies_to_tags": [],
+        "input_mode": "AUTO",
+        "unit": null
+      },
+      {
+        "code": "ADIC_COMB_LIQ",
+        "name": "Adicional Combustibles",
+        "type": "REMUNERATIVE",
+        "calculation_type": "PERCENTAGE",
+        "base_reference": "Basico",
+        "amount": null,
+        "rate": 15.0,
+        "formula": "Basico * 15.0%",
+        "applies_to_categories": [
+          "COMBUSTIBLES",
+          "L",
+          "QUIDOS"
+        ],
+        "applies_to_tags": [],
+        "input_mode": "AUTO",
+        "unit": null
+      },
+      {
+        "code": "ADIC_MAT_LACTEA",
+        "name": "Adicional Materia Prima",
+        "type": "REMUNERATIVE",
+        "calculation_type": "PERCENTAGE",
+        "base_reference": "Basico",
+        "amount": null,
+        "rate": 15.0,
+        "formula": "Basico * 15.0%",
+        "applies_to_categories": [
+          "RECOLECCI",
+          "N",
+          "MATERIA",
+          "PRIMA"
+        ],
+        "applies_to_tags": [],
+        "input_mode": "AUTO",
+        "unit": null
+      },
+      {
+        "code": "ADIC_PELIGROSAS",
+        "name": "Adicional Sust. Peligrosas",
+        "type": "REMUNERATIVE",
+        "calculation_type": "PERCENTAGE",
+        "base_reference": "Basico",
+        "amount": null,
+        "rate": 20.0,
+        "formula": "Basico * 20.0%",
+        "applies_to_categories": [
+          "TRANSPORTE",
+          "SUST",
+          "PELIGROSAS"
+        ],
+        "applies_to_tags": [],
+        "input_mode": "AUTO",
+        "unit": null
+      },
+      {
+        "code": "ADIC_CLEARING_CH",
+        "name": "Adicional Clearing Chofer",
+        "type": "REMUNERATIVE",
+        "calculation_type": "PERCENTAGE",
+        "base_reference": "Basico",
+        "amount": null,
+        "rate": 15.0,
+        "formula": "Basico * 15.0%",
+        "applies_to_categories": [
+          "CLEARING",
+          "CHOFERES"
+        ],
+        "applies_to_tags": [],
+        "input_mode": "AUTO",
+        "unit": null
+      },
+      {
+        "code": "ADIC_CLEARING_AUX",
+        "name": "Adicional Clearing Aux",
+        "type": "REMUNERATIVE",
+        "calculation_type": "PERCENTAGE",
+        "base_reference": "Basico",
+        "amount": null,
+        "rate": 10.0,
+        "formula": "Basico * 10.0%",
+        "applies_to_categories": [
+          "CLEARING",
+          "AUXILIARES"
+        ],
+        "applies_to_tags": [],
+        "input_mode": "AUTO",
+        "unit": null
+      },
+      {
+        "code": "ADIC_DIARIOS",
+        "name": "Adicional Diarios/Revistas",
+        "type": "REMUNERATIVE",
+        "calculation_type": "PERCENTAGE",
+        "base_reference": "Basico",
+        "amount": null,
+        "rate": 12.0,
+        "formula": "Basico * 12.0%",
+        "applies_to_categories": [
+          "DIARIOS",
+          "Y",
+          "REVISTAS"
+        ],
+        "applies_to_tags": [],
+        "input_mode": "AUTO",
+        "unit": "DAY"
+      },
+      {
+        "code": "ANTIGUEDAD",
+        "name": "Antigüedad",
+        "type": "REMUNERATIVE",
+        "calculation_type": "PERCENTAGE",
+        "base_reference": "Total Remunerativo",
+        "amount": null,
+        "rate": 1.0,
+        "formula": "Total Remunerativo * 1.0%",
+        "applies_to_categories": [],
+        "applies_to_tags": [],
+        "input_mode": "AUTO",
+        "unit": null
+      },
+      {
+        "code": "PRESENTISMO",
+        "name": "Premio Presentismo",
+        "type": "REMUNERATIVE",
+        "calculation_type": "FIXED",
+        "base_reference": "NO_INDICADO",
+        "amount": 60000.0,
+        "rate": null,
+        "formula": "60000.0",
+        "applies_to_categories": [
+          "LOG",
+          "STICA",
+          "Y",
+          "CLEARING"
+        ],
+        "applies_to_tags": [],
+        "input_mode": "AUTO",
+        "unit": null
+      },
+      {
+        "code": "RETRIB_KM",
+        "name": "Retribución por KM",
+        "type": "REMUNERATIVE",
+        "calculation_type": "PERCENTAGE",
+        "base_reference": "Basico Chofer 1ra",
+        "amount": null,
+        "rate": 0.015,
+        "formula": "Basico Chofer 1ra * 0.015%",
+        "applies_to_categories": [
+          "CHOFERES"
+        ],
+        "applies_to_tags": [],
+        "input_mode": "MANUAL",
+        "unit": "KM"
+      }
+    ],
+    "non_remunerative_items": [
+      {
+        "code": "VIAT_COMIDA",
+        "name": "Comida",
+        "type": "NON_REMUNERATIVE",
+        "calculation_type": "FIXED",
+        "base_reference": "NO_INDICADO",
+        "amount": 15061.95,
+        "rate": null,
+        "formula": "15061.95",
+        "applies_to_categories": [],
+        "applies_to_tags": [],
+        "input_mode": "MANUAL",
+        "unit": "DAY"
+      },
+      {
+        "code": "VIAT_ESPECIAL",
+        "name": "Viático Especial",
+        "type": "NON_REMUNERATIVE",
+        "calculation_type": "FIXED",
+        "base_reference": "NO_INDICADO",
+        "amount": 7558.06,
+        "rate": null,
+        "formula": "7558.06",
+        "applies_to_categories": [],
+        "applies_to_tags": [],
+        "input_mode": "AUTO",
+        "unit": null
+      },
+      {
+        "code": "VIAT_PERNOCTADA",
+        "name": "Pernoctada",
+        "type": "NON_REMUNERATIVE",
+        "calculation_type": "FIXED",
+        "base_reference": "NO_INDICADO",
+        "amount": 17542.99,
+        "rate": null,
+        "formula": "17542.99",
+        "applies_to_categories": [],
+        "applies_to_tags": [],
+        "input_mode": "MANUAL",
+        "unit": "NIGHT"
+      },
+      {
+        "code": "PLUS_VACACIONAL",
+        "name": "Plus Vacacional",
+        "type": "NON_REMUNERATIVE",
+        "calculation_type": "FIXED",
+        "base_reference": "NO_INDICADO",
+        "amount": 22993.38,
+        "rate": null,
+        "formula": "22993.38",
+        "applies_to_categories": [],
+        "applies_to_tags": [],
+        "input_mode": "AUTO",
+        "unit": null
+      },
+      {
+        "code": "VIAT_KM",
+        "name": "Viático por KM",
+        "type": "NON_REMUNERATIVE",
+        "calculation_type": "PERCENTAGE",
+        "base_reference": "Basico Chofer 1ra",
+        "amount": null,
+        "rate": 0.015,
+        "formula": "Basico Chofer 1ra * 0.015%",
+        "applies_to_categories": [
+          "CHOFERES"
+        ],
+        "applies_to_tags": [],
+        "input_mode": "MANUAL",
+        "unit": "KM"
+      }
+    ],
+    "deductions": [
+      {
+        "code": "JUBILACION",
+        "name": "Jubilación",
+        "rate": 11.0,
+        "base": "Remunerativo"
+      },
+      {
+        "code": "LEY_19032",
+        "name": "Ley 19.032",
+        "rate": 3.0,
+        "base": "Remunerativo"
+      },
+      {
+        "code": "OBRA_SOCIAL",
+        "name": "Obra Social",
+        "rate": 3.0,
+        "base": "Remunerativo"
+      },
+      {
+        "code": "SINDICATO",
+        "name": "Contribución Solidaria",
+        "rate": 3.0,
+        "base": "Remunerativo"
+      },
+      {
+        "code": "SEGURO_SEPELIO",
+        "name": "Seguro de Sepelio",
+        "rate": 1.5,
+        "base": "Remunerativo"
+      }
+    ],
+    "employer_contributions": [
+      {
+        "code": "SOCIAL_SECURITY",
+        "name": "Contribuciones patronales",
+        "base": "REMUNERATIVE_TOTAL"
+      },
+      {
+        "code": "ART",
+        "name": "ART",
+        "base": "REMUNERATIVE_TOTAL"
+      }
+    ],
+    "fiscal_shields": [],
+    "overtime_rules": [
+      {
+        "code": "OT_50",
+        "multiplier": 1.5
+      },
+      {
+        "code": "OT_100",
+        "multiplier": 2.0
+      }
+    ]
+  },
+  "event_rules": [
+    {
+      "event_type": "HOLIDAY_WORKED",
+      "subtype": "WORKED",
+      "effects": [
+        "PAY_OVERTIME_100"
+      ]
+    },
+    {
+      "event_type": "OVERTIME",
+      "subtype": null,
+      "effects": [
+        "PAY_OVERTIME"
+      ]
+    }
+  ],
+  "audit_rules": [
+    {
+      "rule": "overtime_must_match_declared_multiplier"
+    },
+    {
+      "rule": "deductions_apply_only_to_remunerative_total"
+    }
+  ]
+}

@@ -5,6 +5,8 @@ const wizardState = {
   employee: null,
   events: null,
   payroll: null,
+  manualConceptValues: {},
+  manualConceptEnabled: {},
 };
 
 for (let month = 1; month <= 12; month += 1) {
@@ -33,18 +35,28 @@ const pretty = (target, data) => {
   if (element) element.textContent = JSON.stringify(data, null, 2);
 };
 
+const readResponse = async (response) => {
+  const text = await response.text();
+  if (!text) return {};
+  try {
+    return JSON.parse(text);
+  } catch {
+    return { detail: text };
+  }
+};
+
 const postJson = async (url, payload) => {
   const response = await fetch(url, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
   });
-  return response.json();
+  return readResponse(response);
 };
 
 const getJson = async (url) => {
   const response = await fetch(url);
-  return response.json();
+  return readResponse(response);
 };
 
 const renderAgreements = (agreements) => {
@@ -282,7 +294,7 @@ const collectAgreementFromEditor = () => {
 
 const putJson = async (url, payload) => {
   const response = await fetch(url, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
-  return response.json();
+  return readResponse(response);
 };
 
 const loadAgreements = async () => {
@@ -377,6 +389,20 @@ const buildWizardEvents = () => {
     const hours = Number(input.value || 0);
     if (hours > 0) events.push({ type: "OVERTIME", subtype: input.dataset.overtimeCode, hours });
   });
+  document.querySelectorAll("[data-manual-concept-toggle]").forEach((toggle) => {
+    if (!toggle.checked) return;
+    const code = toggle.dataset.manualConceptToggle;
+    const quantityInput = document.querySelector(`[data-manual-concept-quantity="${code}"]`);
+    const quantity = quantityInput ? Number(quantityInput.value || 0) : 1;
+    if (quantity > 0) {
+      events.push({
+        type: "SALARY_ITEM",
+        subtype: code,
+        quantity,
+        description: `${toggle.dataset.manualConceptName || code}${toggle.dataset.manualConceptUnit ? ` (${toggle.dataset.manualConceptUnit})` : ""}`,
+      });
+    }
+  });
 
   return {
     employee_id: document.getElementById("wiz-employee-id").value,
@@ -385,7 +411,164 @@ const buildWizardEvents = () => {
   };
 };
 
+const canonical = (value) => String(value || "")
+  .normalize("NFD")
+  .replace(/[\u0300-\u036f]/g, "")
+  .toUpperCase()
+  .replace(/[^A-Z0-9]+/g, "_")
+  .replace(/^_+|_+$/g, "");
+
+const captureManualConceptValues = () => {
+  document.querySelectorAll("[data-manual-concept-quantity]").forEach((input) => {
+    wizardState.manualConceptValues[input.dataset.manualConceptQuantity] = input.value;
+  });
+  document.querySelectorAll("[data-manual-concept-toggle]").forEach((input) => {
+    wizardState.manualConceptEnabled[input.dataset.manualConceptToggle] = input.checked;
+  });
+};
+
+const unitLabel = (unit) => ({
+  KM: "Kilometros",
+  DAY: "Dias",
+  TRIP: "Viajes",
+  NIGHT: "Noches",
+  AMOUNT: "Importe",
+  HOUR: "Horas",
+})[String(unit || "").toUpperCase()] || "Cantidad";
+
+const manualInputLabel = (item) => {
+  if (item.unit) return unitLabel(item.unit);
+  if (item.calculation_type === "PERCENTAGE" || item.rate !== undefined && item.rate !== null) return "Aplicar";
+  return "Cantidad";
+};
+
+const itemAppliesToWizardEmployee = (item, category) => {
+  const categoryFilters = (item.applies_to_categories || []).map(canonical).filter(Boolean);
+  if (categoryFilters.length) {
+    const categoryValues = [category?.category_id, category?.name].map(canonical).filter(Boolean);
+    if (!categoryFilters.some((filter) => categoryValues.some((value) => categoryTokensMatch(filter, value)))) return false;
+  }
+
+  const tagFilters = (item.applies_to_tags || []).map(canonical).filter(Boolean);
+  if (!tagFilters.length) return true;
+  const employeeValues = [
+    document.getElementById("wiz-zone").value,
+    document.getElementById("wiz-workday").value,
+    category?.name,
+  ].map(canonical).filter(Boolean);
+  const blob = employeeValues.join("_");
+  return tagFilters.some((tag) => employeeValues.includes(tag) || blob.includes(tag));
+};
+
+const isManualSalaryItem = (item) => {
+  if (item.input_mode === "MANUAL") return true;
+  if (item.unit) return true;
+  const value = canonical(`${item.code} ${item.name} ${item.base_reference}`);
+  const coreAutoTokens = ["ANTIG", "ANTIGUEDAD", "SENIORITY", "PRESENTISMO", "ATTENDANCE", "ASISTENCIA"];
+  if (coreAutoTokens.some((token) => value.includes(token))) return false;
+  const conditionalTokens = [
+    "ADIC",
+    "ADICIONAL",
+    "PLUS",
+    "RAMA",
+    "DIFERENCIAL",
+    "PLURALIDAD",
+  ];
+  if ((item.applies_to_categories || []).length || (item.applies_to_tags || []).length) return true;
+  if (conditionalTokens.some((token) => value.includes(token))) return true;
+  return [
+    "KM",
+    "KILOMETRO",
+    "KILOMETROS",
+    "VIAJE",
+    "VIAJES",
+    "DIARIO",
+    "DIARIOS",
+    "REVISTAS",
+    "COMISION",
+    "COMISIONES",
+    "PRODUCTIVIDAD",
+  ].some((token) => value.includes(token));
+};
+
+const categoryTokensMatch = (filter, value) => {
+  if (!filter || !value) return false;
+  if (filter === value || filter.includes(value) || value.includes(filter)) return true;
+  const equivalents = [
+    ["CHOFER", "CHOFERES", "CONDUCTOR", "CONDUCTORES"],
+    ["AUXILIAR", "AYUDANTE", "AYUDANTES"],
+    ["PEON", "PEONES"],
+    ["RECOLECTOR", "RECOLECTORES", "RECOLECCION", "RESIDUOS"],
+    ["ADMINISTRATIVO", "ADMINISTRACION"],
+  ];
+  return equivalents.some((group) => group.some((token) => filter.includes(token)) && group.some((token) => value.includes(token)));
+};
+
+const itemValueLabel = (item) => {
+  if (item.calculation_type === "PERCENTAGE") return `${Number(item.rate || 0)}%`;
+  if (item.amount !== undefined && item.amount !== null) return money(item.amount);
+  return item.calculation_type || "FORMULA";
+};
+
+const manualConceptCard = (item) => {
+  const enabled = Boolean(wizardState.manualConceptEnabled[item.code]);
+  const value = wizardState.manualConceptValues[item.code] ?? (item.unit ? "0" : "1");
+  const label = manualInputLabel(item);
+  const hasQuantity = Boolean(item.unit);
+  return `
+    <article class="concept-card manual-concept">
+      <div>
+        <strong>${item.name || item.code}</strong>
+        <small>${item.code} - ${item.type === "REMUNERATIVE" ? "Remunerativo" : "No remunerativo"}</small>
+        <small>Valor unitario: ${itemValueLabel(item)}${item.unit ? ` / ${item.unit}` : ""}</small>
+        ${hasQuantity ? "<small>Activar y cargar la cantidad correspondiente</small>" : "<small>Activar para incluir este haber en la liquidacion</small>"}
+      </div>
+      <div class="manual-controls">
+        <label class="switch-control">
+          <input
+            data-manual-concept-toggle="${item.code}"
+            data-manual-concept-name="${item.name || item.code}"
+            data-manual-concept-unit="${item.unit || ""}"
+            data-manual-concept-type="${item.type || ""}"
+            type="checkbox"
+            ${enabled ? "checked" : ""}>
+          <span></span>
+          <em>${enabled ? "Activo" : "Inactivo"}</em>
+        </label>
+        ${hasQuantity ? `
+          <label>${label}
+            <input
+              data-manual-concept-quantity="${item.code}"
+              data-manual-concept-name="${item.name || item.code}"
+              data-manual-concept-unit="${item.unit || ""}"
+              data-manual-concept-type="${item.type || ""}"
+              type="number"
+              min="0"
+              step="0.01"
+              placeholder="0"
+              value="${value}"
+              ${enabled ? "" : "disabled"}>
+          </label>
+        ` : ""}
+      </div>
+    </article>
+  `;
+};
+
+const conceptSection = (title, items, emptyText, renderer) => `
+  <section class="concept-section">
+    <header>
+      <h3>${title}</h3>
+      <span>${items.length}</span>
+    </header>
+    <div class="concept-list inner">
+      ${items.length ? items.map(renderer).join("") : `<div class="empty-state">${emptyText}</div>`}
+    </div>
+  </section>
+`;
+
 const renderAgreementDrivenSections = () => {
+  captureManualConceptValues();
   const additionals = document.getElementById("agreement-additionals");
   const overtime = document.getElementById("overtime-rules");
   const rules = document.getElementById("event-rules-preview");
@@ -402,18 +585,37 @@ const renderAgreementDrivenSections = () => {
   const items = [
     ...(salaryModel.remunerative_items || []),
     ...(salaryModel.non_remunerative_items || []),
-  ].filter((item) => item.code !== "BASIC");
+  ].filter((item) => item.code !== "BASIC" && itemAppliesToWizardEmployee(item, category));
+  const automaticItems = items.filter((item) => !isManualSalaryItem(item));
+  const manualItems = items.filter((item) => isManualSalaryItem(item));
+  const automaticRemunerative = automaticItems.filter((item) => item.type === "REMUNERATIVE");
+  const automaticNonRemunerative = automaticItems.filter((item) => item.type === "NON_REMUNERATIVE");
+  const manualRemunerative = manualItems.filter((item) => item.type === "REMUNERATIVE");
+  const manualNonRemunerative = manualItems.filter((item) => item.type === "NON_REMUNERATIVE");
 
   additionals.innerHTML = items.length
-    ? items.map((item) => `
-        <article class="concept-card">
-          <div>
-            <strong>${item.name || item.code}</strong>
-            <small>${item.code} - ${item.type}</small>
-          </div>
-          <span>${item.calculation_type || "FIXED"}</span>
-        </article>
-      `).join("")
+    ? [
+      conceptSection("Haberes remunerativos automaticos", automaticRemunerative, "Sin haberes remunerativos automaticos para este convenio.", (item) => `
+          <article class="concept-card">
+            <div>
+              <strong>${item.name || item.code}</strong>
+              <small>${item.code}</small>
+            </div>
+            <span>${itemValueLabel(item)}</span>
+          </article>
+        `),
+      conceptSection("Haberes remunerativos de carga manual", manualRemunerative, "Este convenio no tiene haberes remunerativos manuales activos.", manualConceptCard),
+      conceptSection("Haberes no remunerativos automaticos", automaticNonRemunerative, "Sin haberes no remunerativos automaticos para este convenio.", (item) => `
+          <article class="concept-card">
+            <div>
+              <strong>${item.name || item.code}</strong>
+              <small>${item.code}</small>
+            </div>
+            <span>${itemValueLabel(item)}</span>
+          </article>
+        `),
+      conceptSection("Haberes no remunerativos de carga manual", manualNonRemunerative, "Este convenio no tiene haberes no remunerativos manuales activos.", manualConceptCard),
+    ].join("")
     : `<div class="empty-state">El convenio no declara adicionales en salary_model.</div>`;
 
   const baseSalary = Number(category?.basic_salary || 0);
@@ -479,6 +681,90 @@ const receiptGroup = (title, items) => `
   </article>
 `;
 
+const salaryItemsByCode = () => {
+  const model = wizardState.agreement?.salary_model || {};
+  return new Map([
+    ...(model.remunerative_items || []),
+    ...(model.non_remunerative_items || []),
+  ].map((item) => [item.code, item]));
+};
+
+const deductionsByCode = () => {
+  const model = wizardState.agreement?.salary_model || {};
+  return new Map((model.deductions || []).map((item) => [item.code, item]));
+};
+
+const eventsBySubtype = () => new Map((wizardState.events?.events || []).map((event) => [event.subtype, event]));
+
+const overtimeByCode = () => {
+  const model = wizardState.agreement?.salary_model || {};
+  return new Map((model.overtime_rules || []).map((rule) => [rule.code, rule]));
+};
+
+const explainPayrollDetail = (detail) => {
+  const category = activeCategory();
+  const baseSalary = Number(category?.basic_salary || 0);
+  const salaryItem = salaryItemsByCode().get(detail.code);
+  const deduction = deductionsByCode().get(detail.code);
+  const event = eventsBySubtype().get(detail.code);
+  const overtime = overtimeByCode().get(detail.code);
+
+  if (detail.code === "BASIC") {
+    return `Basico del puesto/rol ${category?.name || ""}: ${money(baseSalary)}`;
+  }
+
+  if (salaryItem) {
+    const base = salaryItem.base_reference && !["", "NO_INDICADO"].includes(String(salaryItem.base_reference).toUpperCase())
+      ? salaryItem.base_reference
+      : "Basico";
+    const quantity = Number(event?.quantity || event?.days || event?.hours || 0);
+    if (quantity > 0) {
+      const unitValue = Math.abs(Number(detail.amount || 0)) / quantity;
+      return `${salaryItem.name || detail.name} = ${money(unitValue)} x ${quantity}${salaryItem.unit ? ` ${unitLabel(salaryItem.unit).toLowerCase()}` : ""}`;
+    }
+    if (salaryItem.calculation_type === "PERCENTAGE" || salaryItem.rate !== undefined && salaryItem.rate !== null) {
+      return `${salaryItem.name || detail.name} = ${base} x ${Number(salaryItem.rate || 0)}%`;
+    }
+    if (salaryItem.calculation_type === "FORMULA" && salaryItem.formula) {
+      return `${salaryItem.name || detail.name} = ${salaryItem.formula}`;
+    }
+    if (salaryItem.amount !== undefined && salaryItem.amount !== null) {
+      return `${salaryItem.name || detail.name} = importe fijo ${money(salaryItem.amount)}`;
+    }
+  }
+
+  if (overtime || detail.code.startsWith("OT_")) {
+    const hours = Number(event?.hours || 0);
+    const multiplier = Number(overtime?.multiplier || 1);
+    const hourly = baseSalary / 200;
+    return `Horas extra = ${money(hourly)} valor hora x ${multiplier} x ${hours} horas`;
+  }
+
+  if (detail.code.startsWith("HOLIDAY_WORKED")) {
+    const event = (wizardState.events?.events || []).find((item) => item.type === "HOLIDAY_WORKED");
+    const days = Number(event?.days || 0);
+    return `Feriado trabajado = (${money(baseSalary)} / 30) x 2 x ${days} dias`;
+  }
+
+  if (detail.code.startsWith("ABSENCE") || detail.amount < 0 && detail.type === "REMUNERATIVE") {
+    const event = (wizardState.events?.events || []).find((item) => detail.code.startsWith(item.type));
+    const days = Number(event?.days || 0);
+    return `Descuento por novedad = (${money(baseSalary)} / 30) x ${days} dias`;
+  }
+
+  if (deduction || detail.type === "DEDUCTION") {
+    const rate = Number(deduction?.rate || 0);
+    const base = deduction?.base || "Total remunerativo";
+    return `${deduction?.name || detail.name} = ${base} x ${rate}%`;
+  }
+
+  if (detail.type === "BONUS") {
+    return `${detail.name} = importe cargado manualmente ${money(detail.amount)}`;
+  }
+
+  return `${detail.name} = importe liquidado ${money(detail.amount)}`;
+};
+
 const renderPayrollResult = (payroll) => {
   const details = payroll.details || [];
   const remunerative = details.filter((detail) => detail.type === "REMUNERATIVE");
@@ -495,16 +781,9 @@ const renderPayrollResult = (payroll) => {
     `<article class="receipt-card total"><h3>Neto final</h3><strong>${money(payroll.net_salary)}</strong></article>`,
   ].join("");
 
-  document.getElementById("formula-detail").innerHTML = details.map((detail) => {
-    const formula = detail.code.startsWith("OT_")
-      ? "Horas extra = Valor hora x multiplicador x cantidad"
-      : detail.code === "SENIORITY"
-        ? "Antiguedad = Basico x porcentaje del convenio x anios"
-        : detail.type === "DEDUCTION"
-          ? "Retencion = Total remunerativo x alicuota"
-          : "Concepto = regla declarada en salary_model";
-    return `<article><strong>${detail.name}</strong><span>${formula}</span><em>${money(detail.amount)}</em></article>`;
-  }).join("");
+  document.getElementById("formula-detail").innerHTML = details.map((detail) => (
+    `<article><strong>${detail.name}</strong><span>${explainPayrollDetail(detail)}</span><em>${money(detail.amount)}</em></article>`
+  )).join("");
 
   const gross = Number(payroll.gross_salary || 0);
   const deductionsValue = Number(payroll.deductions || 0);
@@ -611,7 +890,7 @@ document.getElementById("upload-form").addEventListener("submit", async (event) 
       body: data,
       signal: controller.signal,
     });
-    const result = await response.json();
+    const result = await readResponse(response);
     pretty("agreement-json", result);
     const meta = result.agreement?.metadata;
     if (!response.ok || !meta) {
@@ -711,7 +990,7 @@ document.getElementById("delete-agreement-friendly").addEventListener("click", a
   const ok = window.confirm(`Eliminar convenio ${meta.agreement_id} version ${meta.version}?`);
   if (!ok) return;
   const response = await fetch(`/agreements/${meta.agreement_id}?version=${meta.version}`, { method: "DELETE" });
-  const result = await response.json();
+  const result = await readResponse(response);
   pretty("agreement-json", result);
   selectedAgreement = null;
   document.getElementById("agreement-summary").innerHTML = "";
@@ -730,7 +1009,7 @@ document.getElementById("employee-form").addEventListener("submit", async (event
   const editingId = document.getElementById("employee-editing-id").value;
   if (editingId) data.employee_id = editingId;
   const result = editingId
-    ? await fetch(`/employees/${editingId}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) }).then((response) => response.json())
+    ? await fetch(`/employees/${editingId}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) }).then(readResponse)
     : await postJson("/employees", data);
   pretty("employee-result", result);
   resetEmployeeForm();
@@ -764,6 +1043,22 @@ document.getElementById("audit-form").addEventListener("submit", async (event) =
 
 document.getElementById("wiz-employee-id").addEventListener("blur", loadEmployeeIntoWizard);
 document.getElementById("wiz-category-id").addEventListener("input", renderAgreementDrivenSections);
+document.getElementById("wiz-zone").addEventListener("input", renderAgreementDrivenSections);
+document.getElementById("wiz-workday").addEventListener("change", renderAgreementDrivenSections);
+document.getElementById("agreement-additionals").addEventListener("input", (event) => {
+  const input = event.target.closest("[data-manual-concept-quantity]");
+  if (input) wizardState.manualConceptValues[input.dataset.manualConceptQuantity] = input.value;
+});
+document.getElementById("agreement-additionals").addEventListener("change", (event) => {
+  const toggle = event.target.closest("[data-manual-concept-toggle]");
+  if (!toggle) return;
+  const code = toggle.dataset.manualConceptToggle;
+  wizardState.manualConceptEnabled[code] = toggle.checked;
+  const quantityInput = document.querySelector(`[data-manual-concept-quantity="${code}"]`);
+  if (quantityInput) quantityInput.disabled = !toggle.checked;
+  const label = toggle.closest(".switch-control")?.querySelector("em");
+  if (label) label.textContent = toggle.checked ? "Activo" : "Inactivo";
+});
 
 document.getElementById("wizard-prev").addEventListener("click", () => setWizardStep(wizardState.step - 1));
 document.getElementById("wizard-next").addEventListener("click", () => setWizardStep(wizardState.step + 1));
@@ -800,6 +1095,8 @@ document.getElementById("new-payroll").addEventListener("click", () => {
   wizardState.employee = null;
   wizardState.events = null;
   wizardState.payroll = null;
+  wizardState.manualConceptValues = {};
+  wizardState.manualConceptEnabled = {};
   renderAgreementDrivenSections();
   renderPayrollResult({ gross_salary: 0, deductions: 0, net_salary: 0, details: [] });
   pretty("wizard-audit-result", {});

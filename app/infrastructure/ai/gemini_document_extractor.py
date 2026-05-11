@@ -23,7 +23,11 @@ Reglas criticas:
 - Mantene importes tal como aparecen, con pesos, puntos y comas.
 - Si un valor aplica por categoria, agrega una fila por categoria.
 - Si un valor no esta indicado, escribi NO_INDICADO.
+- En retenciones/deducciones, cada fila debe ser una retencion separada. No agrupes jubilacion, obra social, ley 19032, sindicato, seguro, contribucion solidaria ni aportes en una sola fila.
+- Si el documento no trae codigo para una retencion, crea un code corto desde el concepto: JUBILACION, OBRA_SOCIAL, LEY_19032, SINDICATO, SEGURO_SEPELIO, CONTRIBUCION_SOLIDARIA, etc.
 - Si hay varias vigencias o meses, conserva la columna/periodo original.
+- Si un concepto depende de una carga mensual del usuario (kilometros, km, viajes, dias, comidas por dia, pernoctadas, comisiones, productividad variable), en observaciones escribi "CARGA_MANUAL" y conserva la unidad en base u observaciones.
+- No conviertas viaticos por kilometro, viajes, pernoctadas o comisiones en importes automaticos mensuales.
 - No expliques nada fuera de las secciones pedidas.
 
 Devuelve texto plano en este formato exacto:
@@ -91,7 +95,10 @@ class GeminiDocumentTextExtractor:
         except Exception as exc:
             raise RuntimeError(f"Gemini document extraction failed: {exc}") from exc
         finally:
-            Path(temp_path).unlink(missing_ok=True)
+            try:
+                Path(temp_path).unlink(missing_ok=True)
+            except PermissionError:
+                pass
 
 
 class MockGeminiDocumentTextExtractor(GeminiDocumentTextExtractor):

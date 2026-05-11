@@ -17,6 +17,8 @@ async def upload_agreement(file: UploadFile = File(...), container: Container = 
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     except RuntimeError as exc:
         raise HTTPException(status_code=502, detail=str(exc)) from exc
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"Unexpected agreement upload error: {exc}") from exc
 
 
 @router.post("/upload-files")
@@ -29,6 +31,8 @@ async def upload_agreement_files(files: list[UploadFile] = File(...), container:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     except RuntimeError as exc:
         raise HTTPException(status_code=502, detail=str(exc)) from exc
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"Unexpected agreement upload error: {exc}") from exc
 
 
 @router.get("")

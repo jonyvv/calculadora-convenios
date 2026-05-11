@@ -178,3 +178,47 @@
 [INFO] 2026-05-07T17:08:52.705285+00:00 Gemini extraction success: Informe Normativo_ Reglas y Condiciones Generales de Trabajo - CCT 40_89 (Camioneros).pdf
 [INFO] 2026-05-07T17:08:52.720403+00:00 Gemini extraction started: Informe Técnico_ Tabla de Liquidación Salarial Integral CCT 40_89 - Abril 2026.pdf
 [INFO] 2026-05-07T17:09:38.841851+00:00 Gemini extraction success: Informe Técnico_ Tabla de Liquidación Salarial Integral CCT 40_89 - Abril 2026.pdf
+[INFO] 2026-05-07T17:39:58.989757+00:00 Gemini extraction started: cct.txt
+[INFO] 2026-05-07T17:39:59.018856+00:00 Gemini extraction success: cct.txt
+[INFO] 2026-05-07T17:39:59.202700+00:00 Gemini extraction started: CCT_130_75.txt
+[INFO] 2026-05-07T17:39:59.203939+00:00 Gemini extraction success: CCT_130_75.txt
+[INFO] 2026-05-07T17:39:59.205065+00:00 Gemini extraction started: paritaria_2026.txt
+[INFO] 2026-05-07T17:39:59.206181+00:00 Gemini extraction success: paritaria_2026.txt
+[INFO] 2026-05-07T17:39:59.386616+00:00 Gemini extraction started: CCT_130_75.txt
+[INFO] 2026-05-07T17:39:59.388195+00:00 Gemini extraction success: CCT_130_75.txt
+[INFO] 2026-05-07T17:39:59.539768+00:00 Gemini extraction started: CCT_130_75.txt
+[INFO] 2026-05-07T17:39:59.540963+00:00 Gemini extraction success: CCT_130_75.txt
+[INFO] 2026-05-07T17:41:05.607305+00:00 Gemini extraction started: Informe Normativo_ Reglas y Condiciones Generales de Trabajo - CCT 40_89 (Camioneros).pdf
+[ERROR] 2026-05-07T17:41:16.857472+00:00 Gemini extraction failed: Informe Normativo_ Reglas y Condiciones Generales de Trabajo - CCT 40_89 (Camioneros).pdf: [WinError 32] El proceso no tiene acceso al archivo porque está siendo utilizado por otro proceso: 'C:\\Users\\joniv\\AppData\\Local\\Temp\\tmplxrs3jpu.pdf'
+[INFO] 2026-05-07T17:48:27.512219+00:00 Gemini extraction started: cct.txt
+[INFO] 2026-05-07T17:48:27.514237+00:00 Gemini extraction success: cct.txt
+[INFO] 2026-05-07T17:48:27.719806+00:00 Gemini extraction started: CCT_130_75.txt
+[INFO] 2026-05-07T17:48:27.721634+00:00 Gemini extraction success: CCT_130_75.txt
+[INFO] 2026-05-07T17:48:27.723212+00:00 Gemini extraction started: paritaria_2026.txt
+[INFO] 2026-05-07T17:48:27.724915+00:00 Gemini extraction success: paritaria_2026.txt
+[INFO] 2026-05-07T17:48:27.889605+00:00 Gemini extraction started: CCT_130_75.txt
+[INFO] 2026-05-07T17:48:27.891288+00:00 Gemini extraction success: CCT_130_75.txt
+[INFO] 2026-05-07T17:48:28.035432+00:00 Gemini extraction started: CCT_130_75.txt
+[INFO] 2026-05-07T17:48:28.036580+00:00 Gemini extraction success: CCT_130_75.txt
+[INFO] 2026-05-07T17:50:07.194665+00:00 Gemini extraction started: Informe Normativo_ Reglas y Condiciones Generales de Trabajo - CCT 40_89 (Camioneros).pdf
+[ERROR] 2026-05-07T17:50:13.606780+00:00 Gemini extraction failed: Informe Normativo_ Reglas y Condiciones Generales de Trabajo - CCT 40_89 (Camioneros).pdf: Gemini document extraction failed: <HttpError 403 when requesting None returned "Your API key was reported as leaked. Please use another API key.". Details: "Your API key was reported as leaked. Please use another API key.">
+[INFO] 2026-05-07T17:52:35.545933+00:00 Gemini extraction started: Informe Normativo_ Reglas y Condiciones Generales de Trabajo - CCT 40_89 (Camioneros).pdf
+[INFO] 2026-05-07T17:55:03.015051+00:00 Gemini extraction success: Informe Normativo_ Reglas y Condiciones Generales de Trabajo - CCT 40_89 (Camioneros).pdf
+[INFO] 2026-05-07T17:55:03.020478+00:00 Gemini extraction started: Informe Técnico_ Tabla de Liquidación Salarial Integral CCT 40_89 - Abril 2026.pdf
+[INFO] 2026-05-07T17:55:50.623714+00:00 Gemini extraction success: Informe Técnico_ Tabla de Liquidación Salarial Integral CCT 40_89 - Abril 2026.pdf
+[INFO] 2026-05-07T17:58:36.407208+00:00 Gemini extraction started: Informe Normativo_ Reglas y Condiciones Generales de Trabajo - CCT 40_89 (Camioneros).pdf
+[INFO] 2026-05-07T18:02:02.333381+00:00 Gemini extraction started: cct.txt
+[INFO] 2026-05-07T18:02:02.334779+00:00 Gemini extraction success: cct.txt
+[INFO] 2026-05-07T18:02:02.524034+00:00 Gemini extraction started: CCT_130_75.txt
+[INFO] 2026-05-07T18:02:02.525423+00:00 Gemini extraction success: CCT_130_75.txt
+[INFO] 2026-05-07T18:02:02.526803+00:00 Gemini extraction started: paritaria_2026.txt
+[INFO] 2026-05-07T18:02:02.528098+00:00 Gemini extraction success: paritaria_2026.txt
+[INFO] 2026-05-07T18:02:02.673329+00:00 Gemini extraction started: CCT_130_75.txt
+[INFO] 2026-05-07T18:02:02.674942+00:00 Gemini extraction success: CCT_130_75.txt
+[INFO] 2026-05-07T18:02:02.815163+00:00 Gemini extraction started: CCT_130_75.txt
+[INFO] 2026-05-07T18:02:02.816510+00:00 Gemini extraction success: CCT_130_75.txt
+[INFO] 2026-05-07T18:03:51.692036+00:00 Gemini extraction started: Informe Normativo_ Reglas y Condiciones Generales de Trabajo - CCT 40_89 (Camioneros).pdf
+[INFO] 2026-05-07T18:08:06.023857+00:00 Gemini extraction success: Informe Normativo_ Reglas y Condiciones Generales de Trabajo - CCT 40_89 (Camioneros).pdf
+[INFO] 2026-05-07T18:08:06.025759+00:00 Gemini extraction started: Informe Técnico_ Tabla de Liquidación Salarial Integral CCT 40_89 - Abril 2026.pdf
+[INFO] 2026-05-07T18:08:55.718911+00:00 Gemini extraction success: Informe Técnico_ Tabla de Liquidación Salarial Integral CCT 40_89 - Abril 2026.pdf
+[INFO] 2026-05-07T18:08:55.870452+00:00 Gemini extraction started: Informe Normativo_ Reglas y Condiciones Generales de Trabajo - CCT 40_89 (Camioneros).pdf

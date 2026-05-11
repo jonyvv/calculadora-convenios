@@ -1,0 +1,12 @@
+{
+  "status": "DRAFT",
+  "agreement_id": "CCT_40_1989",
+  "version": "2026_05",
+  "warnings": [
+    "Formula faltante para RETRIB_KM",
+    "Formula faltante para VIAT_KM"
+  ],
+  "agent": "agreement_structuring_agent",
+  "generated_test": "tests\\conventions\\test_cct_40_1989_2026_05.py",
+  "processed_at": "2026-05-08T15:29:46.236139+00:00"
+}

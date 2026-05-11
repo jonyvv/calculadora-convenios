@@ -6,6 +6,7 @@ class Event(BaseModel):
     subtype: str | None = None
     days: float | None = None
     hours: float | None = None
+    quantity: float | None = None
     amount: float | None = None
     description: str | None = None
 
