@@ -75,6 +75,55 @@ def test_agreement_structuring_agent_supersedes_previous_version(tmp_path):
     assert old["metadata"]["status"] == "SUPERSEDED"
 
 
+def test_agreement_structuring_agent_uses_source_document_cct_instead_of_defaulting_to_existing_agreement(tmp_path):
+    result = agent(tmp_path).process({
+        "document_metadata": {
+            "source_document": "Maestranza y limpieza, CCT 281_1996. Convenio colectivo.pdf",
+            "name": "Maestranza y limpieza",
+        },
+        "full_text": """
+        Sindicato de Obreros de Maestranza.
+        Actividad: Maestranza y Limpieza.
+        Vigencia desde 01/01/2024 hasta 31/03/2024.
+
+        ## ESCALA_SALARIAL_CATEGORIAS
+        | category_id | puesto_rol_categoria | periodo | basico | total_remunerativo | observaciones |
+        | --- | --- | --- | --- | --- | --- |
+        | 1 | Supervisor | Enero 2024 | $ 468.486,00 | $ 468.486,00 | escala salarial |
+
+        ## HABERES_REMUNERATIVOS
+        | code | concepto | calculation_type | importe | porcentaje | base | aplica_a_categoria | periodo | observaciones |
+        | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+        | PRESENTISMO | Presentismo | FIXED | $ 10.000,00 | NO_INDICADO | BASIC | TODAS | Enero 2024 | remunerativo |
+        """,
+    })
+
+    assert result["agreement_id"] == "CCT_281_1996"
+    assert not (tmp_path / "storage" / "convenios" / "CCT_40_89").exists()
+    assert (tmp_path / "storage" / "convenios" / "CCT_281_1996" / "2024_01.json").exists()
+
+
+def test_agreement_structuring_agent_prefers_four_digit_cct_year_when_multiple_documents_disagree(tmp_path):
+    result = agent(tmp_path).process({
+        "document_metadata": {
+            "source_document": "escala febrero 2026 (CCT 281_96).pdf, convenio CCT 281_1996.pdf",
+        },
+        "full_text": """
+        Convenio CCT 281/1996 Maestranza.
+        Vigencia desde 01/02/2026.
+
+        ## ESCALA_SALARIAL_CATEGORIAS
+        | category_id | puesto_rol_categoria | periodo | basico | total_remunerativo | observaciones |
+        | --- | --- | --- | --- | --- | --- |
+        | 1 | Supervisor | Febrero 2026 | $ 468.486,00 | $ 468.486,00 | escala salarial |
+        """,
+    })
+
+    assert result["agreement_id"] == "CCT_281_1996"
+    assert (tmp_path / "storage" / "convenios" / "CCT_281_1996" / "2026_02.json").exists()
+    assert not (tmp_path / "storage" / "convenios" / "CCT_281_96").exists()
+
+
 def test_agreement_structuring_agent_reads_gemini_salary_tables(tmp_path):
     result = agent(tmp_path).process({
         "document_metadata": {"source_document": "escala.pdf"},
@@ -125,9 +174,44 @@ def test_agreement_structuring_agent_reads_gemini_salary_tables(tmp_path):
     assert non_remunerative["amount"] == 40000
     assert {deduction["code"]: deduction["rate"] for deduction in agreement["salary_model"]["deductions"]} == {
         "JUBILACION": 11,
+        "LEY_19032": 3,
         "OBRA_SOCIAL": 3,
         "SINDICATO": 2,
     }
+
+
+def test_agreement_structuring_agent_reads_salary_scale_with_accented_headers_and_full_roles(tmp_path):
+    result = agent(tmp_path).process({
+        "document_metadata": {"source_document": "maestranza-escala.pdf"},
+        "full_text": """
+        Convenio CCT 281/1996 Maestranza.
+        Vigencia desde 01/02/2026.
+
+        ## ESCALA_SALARIAL_CATEGORIAS
+        | categoría | descripción | período | sueldo básico | total remunerativo | observaciones |
+        | --- | --- | --- | --- | --- | --- |
+        | 1 | Supervisor (Jornada Completa) | Febrero 2026 | $ 468.486,00 | $ 468.486,00 | escala salarial |
+        | 2 | Administrativo 1° (Jornada Reducida) | Febrero 2026 | $ 231.993,00 | $ 231.993,00 | escala salarial |
+        | 3 | Coord. C (Media Jornada) | Febrero 2026 | $ 203.661,00 | $ 203.661,00 | escala salarial |
+
+        ## HABERES_REMUNERATIVOS
+        | code | concepto | calculation_type | importe | porcentaje | base | aplica_a_categoria | periodo | observaciones |
+        | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+        | PRESENTISMO | Presentismo | FIXED | $ 10.000,00 | NO_INDICADO | BASIC | TODAS | Febrero 2026 | remunerativo |
+        """,
+    })
+
+    agreement_path = tmp_path / "storage" / "convenios" / result["agreement_id"] / f"{result['version']}.json"
+    agreement = json.loads(agreement_path.read_text(encoding="utf-8"))
+
+    assert result["agreement_id"] == "CCT_281_1996"
+    assert [category["category_id"] for category in agreement["categories"]] == ["1", "2", "3"]
+    assert [category["name"] for category in agreement["categories"]] == [
+        "Supervisor (Jornada Completa)",
+        "Administrativo 1° (Jornada Reducida)",
+        "Coord. C (Media Jornada)",
+    ]
+    assert [category["basic_salary"] for category in agreement["categories"]] == [468486, 231993, 203661]
 
 
 def test_agreement_structuring_agent_merges_salary_scale_from_second_document(tmp_path):
@@ -287,6 +371,107 @@ def test_agreement_structuring_agent_keeps_multiple_deductions_with_repeated_or_
         "Ley 19032": 3,
         "Sindicato": 2,
     }
+    assert len(deductions) == 4
+
+
+def test_agreement_structuring_agent_completes_statutory_deductions_when_table_only_has_union_fee(tmp_path):
+    result = agent(tmp_path).process({
+        "document_metadata": {"source_document": "maestranza.pdf"},
+        "full_text": """
+        Convenio CCT 281/1996 Maestranza.
+        Sindicato de Obreros de Maestranza.
+        Vigencia desde 01/02/2026.
+
+        ## ESCALA_SALARIAL_CATEGORIAS
+        | category_id | puesto_rol_categoria | periodo | basico | total_remunerativo | observaciones |
+        | --- | --- | --- | --- | --- | --- |
+        | 1 | Supervisor | Febrero 2026 | $ 468.486,00 | $ 468.486,00 | escala salarial |
+
+        ## RETENCIONES_DEDUCCIONES
+        | code | concepto | porcentaje | importe | base | observaciones |
+        | --- | --- | --- | --- | --- | --- |
+        | CUOTA_SINDICAL | Cuota sindical | 2,5% | NO_INDICADO | Total bruto | convenio |
+        """,
+    })
+
+    agreement_path = tmp_path / "storage" / "convenios" / result["agreement_id"] / f"{result['version']}.json"
+    agreement = json.loads(agreement_path.read_text(encoding="utf-8"))
+    deductions = {deduction["code"]: deduction["rate"] for deduction in agreement["salary_model"]["deductions"]}
+
+    assert deductions["JUBILACION"] == 11
+    assert deductions["LEY_19032"] == 3
+    assert deductions["OBRA_SOCIAL"] == 3
+    assert deductions["CUOTA_SINDICAL"] == 2.5
+    assert "SINDICATO" not in deductions
+
+
+def test_agreement_structuring_agent_reads_deductions_with_accented_headers(tmp_path):
+    result = agent(tmp_path).process({
+        "document_metadata": {"source_document": "descuentos.pdf"},
+        "full_text": """
+        Convenio CCT 999/2026 Prueba.
+        Vigencia desde 01/02/2026.
+
+        ## ESCALA_SALARIAL_CATEGORIAS
+        | category_id | puesto_rol_categoria | periodo | basico | total_remunerativo | observaciones |
+        | --- | --- | --- | --- | --- | --- |
+        | A | Operario | Febrero 2026 | $ 500.000,00 | $ 500.000,00 | escala salarial |
+
+        ## RETENCIONES_DEDUCCIONES
+        | aporte | alícuota | base imponible | observaciones |
+        | --- | --- | --- | --- |
+        | Jubilación | 11% | Remunerativo | ley |
+        | Ley 19.032 | 3% | Remunerativo | ley |
+        | Obra social | 3% | Remunerativo | ley |
+        """,
+    })
+
+    agreement_path = tmp_path / "storage" / "convenios" / result["agreement_id"] / f"{result['version']}.json"
+    agreement = json.loads(agreement_path.read_text(encoding="utf-8"))
+    deductions = {deduction["code"]: deduction["rate"] for deduction in agreement["salary_model"]["deductions"]}
+
+    assert deductions == {
+        "JUBILACION": 11,
+        "LEY_19032": 3,
+        "OBRA_SOCIAL": 3,
+    }
+
+
+def test_agreement_structuring_agent_deduplicates_semantic_deductions_with_numeric_codes(tmp_path):
+    result = agent(tmp_path).process({
+        "document_metadata": {"source_document": "retenciones-duplicadas.pdf"},
+        "full_text": """
+        Convenio CCT 281/1996 Maestranza.
+        Vigencia desde 01/02/2026.
+
+        ## ESCALA_SALARIAL_CATEGORIAS
+        | category_id | puesto_rol_categoria | periodo | basico | total_remunerativo | observaciones |
+        | --- | --- | --- | --- | --- | --- |
+        | A | Operario | Febrero 2026 | $ 500.000,00 | $ 500.000,00 | escala salarial |
+
+        ## RETENCIONES_DEDUCCIONES
+        | code | concepto | porcentaje | base | observaciones |
+        | --- | --- | --- | --- | --- |
+        | 600 | Jubilacion (SIPA) | 11% | Haberes sujetos | ley |
+        | JUBILACION | Jubilacion | 11% | REMUNERATIVE_TOTAL | ley |
+        | 601 | Ley 19.032 (INSSJyP) | 3% | Haberes sujetos | ley |
+        | LEY_19032 | Ley 19.032 | 3% | REMUNERATIVE_TOTAL | ley |
+        | 602 | Obra Social | 3% | Base jornada completa | ley |
+        | OBRA_SOCIAL | Obra social | 3% | REMUNERATIVE_TOTAL | ley |
+        | 625 | Cuota Sindical | 2,5% | Base jornada completa | convenio |
+        | CUOTA_SINDICAL | Cuota sindical | 2,5% | Total bruto | convenio |
+        """,
+    })
+
+    agreement_path = tmp_path / "storage" / "convenios" / result["agreement_id"] / f"{result['version']}.json"
+    agreement = json.loads(agreement_path.read_text(encoding="utf-8"))
+    deductions = agreement["salary_model"]["deductions"]
+    codes = [deduction["code"] for deduction in deductions]
+
+    assert codes.count("JUBILACION") == 1
+    assert codes.count("LEY_19032") == 1
+    assert codes.count("OBRA_SOCIAL") == 1
+    assert codes.count("CUOTA_SINDICAL") == 1
     assert len(deductions) == 4
 
 

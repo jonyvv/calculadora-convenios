@@ -40,7 +40,7 @@
       <div class="metric-grid">
         <article class="metric-card"><small>Convenios</small><strong id="metric-agreements">0</strong></article>
         <article class="metric-card"><small>Motor</small><strong>Deterministico</strong></article>
-        <article class="metric-card"><small>Auditoria</small><strong>Gemini JSON</strong></article>
+        <article class="metric-card"><small>Auditoria</small><strong>Gemini IA</strong></article>
       </div>
     </section>
 
@@ -110,11 +110,11 @@
             <label>Version<input id="agreement-version" placeholder="2026_01"></label>
           </div>
           <div class="actions-row">
-            <button class="secondary" id="load-agreement">Visualizar JSON</button>
+            <button class="secondary" id="load-agreement">Ver convenio</button>
             <button class="primary" id="activate-agreement">Activar version</button>
           </div>
         </div>
-        <pre id="agreement-json" class="json-preview"></pre>
+        <div id="agreement-feedback" class="message-panel muted">Selecciona un convenio para ver y editar su informacion.</div>
       </div>
 
       <div class="panel agreement-editor" id="agreement-friendly-editor">
@@ -180,7 +180,7 @@
           <button class="primary" id="employee-save-button">Guardar empleado</button>
           <button class="secondary" type="button" id="employee-cancel-edit">Cancelar edicion</button>
         </form>
-        <pre id="employee-result" class="json-preview small"></pre>
+        <div id="employee-result" class="message-panel hidden"></div>
       </div>
       <div class="panel">
         <div class="table-toolbar">
@@ -219,10 +219,13 @@
         <form id="events-form" class="form-grid">
           <label>Empleado<input name="employee_id" placeholder="E1"></label>
           <label>Periodo<input name="period" placeholder="2026-04"></label>
-          <label class="wide">Eventos JSON<textarea name="events" rows="8">[{"type":"OVERTIME","subtype":"OT_50","hours":8}]</textarea></label>
+          <label>Inasistencias injustificadas<input name="absence_unjustified" type="number" min="0" value="0"></label>
+          <label>Horas extra 50%<input name="overtime_50" type="number" min="0" value="0"></label>
+          <label>Horas extra 100%<input name="overtime_100" type="number" min="0" value="0"></label>
+          <label>Bonos<input name="bonus" type="number" min="0" value="0"></label>
           <button class="primary">Registrar novedades</button>
         </form>
-        <pre id="events-result" class="json-preview small"></pre>
+        <div id="events-result" class="message-panel hidden"></div>
       </div>
     </section>
 
@@ -350,8 +353,8 @@
                 </div>
               </aside>
             </div>
-            <pre id="payroll-result" class="json-preview small hidden"></pre>
-            <pre id="wizard-audit-result" class="json-preview small"></pre>
+            <div id="payroll-result" class="message-panel hidden"></div>
+            <div id="wizard-audit-result" class="audit-result-panel hidden"></div>
           </section>
 
           <div class="wizard-actions">
@@ -367,7 +370,7 @@
       <header class="page-header">
         <div>
           <h1>Auditoria</h1>
-          <p>Ejecuta auditoria Gemini sobre JSON estructurado.</p>
+          <p>Ejecuta auditoria Gemini sobre la liquidacion calculada.</p>
         </div>
       </header>
       <div class="panel">
@@ -376,10 +379,11 @@
           <label>Periodo<input name="period" placeholder="2026-04"></label>
           <button class="primary">Ejecutar auditoria</button>
         </form>
-        <pre id="audit-result" class="json-preview small"></pre>
+        <div id="audit-result" class="audit-result-panel hidden"></div>
       </div>
     </section>
   </main>
+  <div id="toast-stack" class="toast-stack"></div>
   <script src="/static/app.js"></script>
 </body>
 </html>

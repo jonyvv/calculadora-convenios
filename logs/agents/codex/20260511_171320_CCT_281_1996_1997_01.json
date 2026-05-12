@@ -1,0 +1,12 @@
+{
+  "status": "DRAFT",
+  "agreement_id": "CCT_281_1996",
+  "version": "1997_01",
+  "warnings": [
+    "Formula faltante para TAS_SALUD",
+    "Formula faltante para TRAB_EQUIPO"
+  ],
+  "agent": "agreement_structuring_agent",
+  "generated_test": "tests\\conventions\\test_cct_281_1996_1997_01.py",
+  "processed_at": "2026-05-11T17:13:20.380173+00:00"
+}

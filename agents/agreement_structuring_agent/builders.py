@@ -86,11 +86,30 @@ class MetadataBuilder:
 
     def _agreement_id(self, metadata: dict, text: str) -> str:
         explicit = metadata.get("agreement_id") or metadata.get("code")
-        source = f"{explicit or ''} {text}".upper()
-        match = re.search(r"CCT\s*(\d+)\s*/\s*(\d+)", source)
-        if match:
-            return f"CCT_{match.group(1)}_{match.group(2)}"
-        return TextTools.code(str(explicit or "CCT_40_89"))
+        source = " ".join(str(part or "") for part in [
+            explicit,
+            metadata.get("name"),
+            metadata.get("source_document"),
+            metadata.get("activity"),
+            metadata.get("union"),
+            text,
+        ]).upper()
+        matches = re.findall(r"CCT\s*(\d+)\s*[/_-]\s*(\d{2,4})", source)
+        if matches:
+            first_number = matches[0][0]
+            preferred = next((match for match in matches if match[0] == first_number and len(match[1]) == 4), matches[0])
+            return f"CCT_{preferred[0]}_{preferred[1]}"
+        if explicit:
+            return TextTools.code(str(explicit))
+        fallback = (
+            metadata.get("name")
+            or metadata.get("source_document")
+            or self._after_label(text, "actividad")
+            or self._after_label(text, "sindicato")
+            or self._name(text, "CONVENIO")
+        )
+        fallback_id = TextTools.code(str(fallback))[:50].strip("_")
+        return fallback_id or "CONVENIO_SIN_IDENTIFICAR"
 
     def _name(self, text: str, agreement_id: str) -> str:
         match = re.search(r"(?:convenio|cct)[^\n]{0,80}", text, flags=re.IGNORECASE)
@@ -158,29 +177,85 @@ class CategoryBuilder:
         categories = []
         seen = set()
         for row in TextTools.tables_after_heading(text, "ESCALA_SALARIAL_CATEGORIAS"):
+            descriptive_name = self._first_value(
+                row,
+                "puesto_rol_categoria",
+                "puesto_rol_categor_a",
+                "puesto_rol",
+                "puesto",
+                "rol",
+                "cargo",
+                "funcion",
+                "funci_n",
+                "descripcion",
+                "descripci_n",
+                "name",
+            ).strip()
+            category_value = self._first_value(
+                row,
+                "categoria",
+                "categor_a",
+                "category",
+                "category_id",
+                "codigo",
+                "c_digo",
+                "cod",
+            ).strip()
             name = (
-                row.get("puesto_rol_categoria")
-                or row.get("categoria")
-                or row.get("puesto")
-                or row.get("rol")
-                or row.get("name")
-                or ""
+                descriptive_name
+                if descriptive_name and not self._looks_like_code_only(descriptive_name)
+                else category_value
             ).strip()
             amount = TextTools.money(
-                row.get("basico")
-                or row.get("sueldo_basico")
-                or row.get("basic_salary")
-                or row.get("total_remunerativo")
-                or ""
+                self._first_value(
+                    row,
+                    "basico",
+                    "b_sico",
+                    "sueldo_basico",
+                    "sueldo_b_sico",
+                    "salario_basico",
+                    "salario_b_sico",
+                    "basic_salary",
+                    "remuneracion_basica",
+                    "remuneraci_n_b_sica",
+                    "total_remunerativo",
+                )
             )
             if not name or amount <= 0 or "NO_INDICADO" in name.upper() or self._looks_like_non_category(name):
                 continue
-            category_id = TextTools.code(row.get("category_id") or name)[:30] or "A"
+            category_id = TextTools.code(
+                self._first_value(row, "category_id", "codigo", "c_digo", "cod", "categor_a_n", "categoria_n")
+                or category_value
+                or name
+            )[:30] or "A"
+            category_id = self._unique_category_id(category_id, seen)
             if category_id in seen:
                 continue
             seen.add(category_id)
-            categories.append(Category(category_id=category_id, name=name.title(), basic_salary=amount))
+            categories.append(Category(category_id=category_id, name=self._normalize_display_name(name), basic_salary=amount))
         return categories
+
+    def _first_value(self, row: dict[str, str], *keys: str) -> str:
+        for key in keys:
+            value = row.get(key)
+            if value and str(value).strip():
+                return str(value)
+        return ""
+
+    def _unique_category_id(self, category_id: str, seen: set[str]) -> str:
+        if category_id not in seen:
+            return category_id
+        index = 2
+        while f"{category_id}_{index}" in seen:
+            index += 1
+        return f"{category_id}_{index}"
+
+    def _normalize_display_name(self, name: str) -> str:
+        cleaned = re.sub(r"\s+", " ", str(name or "")).strip(" .:-")
+        return cleaned.title()
+
+    def _looks_like_code_only(self, value: str) -> bool:
+        return bool(re.fullmatch(r"[A-Za-z]?\d+[A-Za-z]?|[A-Za-z]{1,3}", str(value or "").strip()))
 
     def _looks_like_non_category(self, name: str) -> bool:
         value = name.lower()
@@ -304,17 +379,21 @@ class SalaryModelBuilder:
     def _deductions(self, text: str) -> list[Deduction]:
         lower = text.lower()
         deductions = self._deductions_from_table(text)
-        if deductions:
+        if self._has_aggregate_legal_contribution(deductions):
             return self._dedupe_deductions(deductions)
         if "jubil" in lower:
             if not any(deduction.code == "JUBILACION" for deduction in deductions):
                 deductions.append(Deduction(code="JUBILACION", name="Jubilacion", rate=self._near_percentage(text, "jubil") or 11))
+        if "ley 19032" in lower or "ley 19.032" in lower or "inssjp" in lower or "pami" in lower:
+            if not any(deduction.code == "LEY_19032" for deduction in deductions):
+                deductions.append(Deduction(code="LEY_19032", name="Ley 19.032", rate=self._near_percentage(text, "19032") or self._near_percentage(text, "19.032") or 3))
         if "obra social" in lower:
             if not any(deduction.code == "OBRA_SOCIAL" for deduction in deductions):
                 deductions.append(Deduction(code="OBRA_SOCIAL", name="Obra social", rate=self._near_percentage(text, "obra social") or 3))
         if "sindicato" in lower or "cuota sindical" in lower:
-            if not any(deduction.code == "SINDICATO" for deduction in deductions):
+            if not any("SINDIC" in TextTools.code(f"{deduction.code} {deduction.name}") for deduction in deductions):
                 deductions.append(Deduction(code="SINDICATO", name="Sindicato", rate=self._near_percentage(text, "sindicato") or 2))
+        deductions = self._ensure_argentina_statutory_deductions(deductions, text)
         return self._dedupe_deductions(deductions) or [
             Deduction(code="JUBILACION", name="Jubilacion", rate=11),
             Deduction(code="OBRA_SOCIAL", name="Obra social", rate=3),
@@ -323,19 +402,94 @@ class SalaryModelBuilder:
     def _deductions_from_table(self, text: str) -> list[Deduction]:
         deductions = []
         for row in TextTools.tables_after_heading(text, "RETENCIONES_DEDUCCIONES"):
-            concept = self._first_value(row, "concepto", "conceptos", "name", "descripcion", "descripci_n", "retencion", "retenci_n", "deduccion", "deducci_n")
+            concept = self._first_value(
+                row,
+                "concepto",
+                "conceptos",
+                "name",
+                "descripcion",
+                "descripci_n",
+                "detalle",
+                "item",
+                "aporte",
+                "aportes",
+                "retencion",
+                "retenci_n",
+                "deduccion",
+                "deducci_n",
+            )
             raw_code = TextTools.code(row.get("code") or "")
-            code = TextTools.code(concept if self._generic_deduction_code(raw_code) else raw_code)
-            rate = TextTools.percent(self._first_value(row, "porcentaje", "alicuota", "al_cuota", "rate", "tasa", "porcentaje_aporte"))
+            code = self._deduction_code(concept, raw_code)
+            rate = TextTools.percent(self._first_value(row, "porcentaje", "alicuota", "alicuota_aporte", "al_cuota", "rate", "tasa", "porcentaje_aporte", "valor"))
+            if rate is None:
+                rate = TextTools.percent(" ".join(str(value or "") for value in row.values()))
             if not code or rate is None or rate <= 0:
                 continue
             deductions.append(Deduction(
                 code=code,
                 name=concept or code,
                 rate=rate,
-                base=self._first_value(row, "base", "base_calculo", "base_de_calculo", "base_imponible") or "REMUNERATIVE_TOTAL",
+                base=self._first_value(row, "base", "base_calculo", "base_de_calculo", "base_imponible", "sobre", "aplica_sobre") or "REMUNERATIVE_TOTAL",
             ))
         return deductions
+
+    def _ensure_argentina_statutory_deductions(self, deductions: list[Deduction], text: str) -> list[Deduction]:
+        if self._has_aggregate_legal_contribution(deductions):
+            return deductions
+        lower = text.lower()
+        if not any(token in lower for token in ("argentina", "cct", "convenio", "sindicato", "obra social", "jubil")):
+            return deductions
+        required = [
+            Deduction(code="JUBILACION", name="Jubilacion", rate=11, base="REMUNERATIVE_TOTAL"),
+            Deduction(code="LEY_19032", name="Ley 19.032", rate=3, base="REMUNERATIVE_TOTAL"),
+            Deduction(code="OBRA_SOCIAL", name="Obra social", rate=3, base="REMUNERATIVE_TOTAL"),
+        ]
+        existing = {self._statutory_key(deduction) for deduction in deductions}
+        for deduction in required:
+            if self._statutory_key(deduction) not in existing:
+                deductions.append(deduction)
+        return deductions
+
+    def _has_aggregate_legal_contribution(self, deductions: list[Deduction]) -> bool:
+        return any("APORTES_DE_LEY" in TextTools.code(f"{deduction.code} {deduction.name}") for deduction in deductions)
+
+    def _statutory_key(self, deduction: Deduction) -> str:
+        value = TextTools.code(f"{deduction.code} {deduction.name}")
+        if "JUBIL" in value:
+            return "JUBILACION"
+        if "19032" in value or "PAMI" in value or "INSSJP" in value:
+            return "LEY_19032"
+        if "OBRA_SOCIAL" in value:
+            return "OBRA_SOCIAL"
+        if "CUOTA_SINDICAL" in value:
+            return "CUOTA_SINDICAL"
+        if "SINDIC" in value:
+            return "SINDICATO"
+        if "SEGURO" in value and "SEPEL" in value:
+            return "SEGURO_SEPELIO"
+        return deduction.code
+
+    def _deduction_code(self, concept: str, raw_code: str) -> str:
+        semantic = self._semantic_deduction_code(concept)
+        if semantic:
+            return semantic
+        return TextTools.code(concept if self._generic_deduction_code(raw_code) else raw_code)
+
+    def _semantic_deduction_code(self, concept: str) -> str | None:
+        value = TextTools.code(concept)
+        if "JUBIL" in value:
+            return "JUBILACION"
+        if "19032" in value or "19_032" in value or "PAMI" in value or "INSSJP" in value:
+            return "LEY_19032"
+        if "OBRA_SOCIAL" in value:
+            return "OBRA_SOCIAL"
+        if "SEGURO" in value and "SEPEL" in value:
+            return "SEGURO_SEPELIO"
+        if "CUOTA_SINDICAL" in value:
+            return "CUOTA_SINDICAL"
+        if "SINDIC" in value:
+            return "SINDICATO"
+        return None
 
     def _dedupe_deductions(self, deductions: list[Deduction]) -> list[Deduction]:
         result = {}
@@ -344,6 +498,9 @@ class SalaryModelBuilder:
         return list(result.values())
 
     def _deduction_key(self, deduction: Deduction) -> str:
+        semantic = self._statutory_key(deduction)
+        if semantic in {"JUBILACION", "LEY_19032", "OBRA_SOCIAL", "CUOTA_SINDICAL", "SINDICATO", "SEGURO_SEPELIO"}:
+            return semantic
         code = TextTools.code(deduction.code)
         name = TextTools.code(deduction.name)
         base = TextTools.code(deduction.base)

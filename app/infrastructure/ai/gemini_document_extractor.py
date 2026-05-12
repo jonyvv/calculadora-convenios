@@ -20,10 +20,18 @@ Reglas criticas:
 - Si hay tablas, preserva la relacion fila-columna. Una fila de escala debe mantener puesto/rol/categoria + basico en la misma linea.
 - No separes importes de sus categorias.
 - No resumas tablas salariales.
+- En ESCALA_SALARIAL_CATEGORIAS, copia literalmente el nombre completo del puesto/rol/categoria de la celda original. No lo abrevies, no lo partas por palabras, no lo conviertas en tags.
+- Cada puesto de la escala debe ser una fila independiente. Si la tabla tiene 30 puestos, devuelve 30 filas.
+- No uses nombres genericos como "categoria", "puesto", "operario" o "administrativo" si la tabla trae un nombre mas especifico.
+- Si el codigo/categoria de origen es una letra o numero (A, B, 1, 2, etc.), ponelo en category_id y conserva el nombre completo en puesto_rol_categoria.
+- Si la tabla contiene jornada completa, jornada reducida, media jornada, supervisor, coordinador, oficial, auxiliar, peon, conductor, chofer, administrativo u otros modificadores, mantenelos dentro de puesto_rol_categoria.
 - Mantene importes tal como aparecen, con pesos, puntos y comas.
 - Si un valor aplica por categoria, agrega una fila por categoria.
 - Si un valor no esta indicado, escribi NO_INDICADO.
 - En retenciones/deducciones, cada fila debe ser una retencion separada. No agrupes jubilacion, obra social, ley 19032, sindicato, seguro, contribucion solidaria ni aportes en una sola fila.
+- Extrae siempre las retenciones legales argentinas si aparecen en el documento o en la tabla: Jubilacion 11%, Ley 19.032 / INSSJP / PAMI 3%, Obra Social 3%. Deben ser filas separadas.
+- No reemplaces Jubilacion + Ley 19.032 + Obra Social por una fila generica llamada "Aportes" salvo que el documento solo lo muestre agregado y no permita separarlo.
+- Si aparece "Aportes de ley" junto con el detalle de sus componentes, desagregalo en JUBILACION, LEY_19032 y OBRA_SOCIAL.
 - Si el documento no trae codigo para una retencion, crea un code corto desde el concepto: JUBILACION, OBRA_SOCIAL, LEY_19032, SINDICATO, SEGURO_SEPELIO, CONTRIBUCION_SOLIDARIA, etc.
 - Si hay varias vigencias o meses, conserva la columna/periodo original.
 - Si un concepto depende de una carga mensual del usuario (kilometros, km, viajes, dias, comidas por dia, pernoctadas, comisiones, productividad variable), en observaciones escribi "CARGA_MANUAL" y conserva la unidad en base u observaciones.

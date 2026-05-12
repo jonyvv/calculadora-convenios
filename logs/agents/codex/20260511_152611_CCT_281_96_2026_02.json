@@ -1,0 +1,12 @@
+{
+  "status": "DRAFT",
+  "agreement_id": "CCT_281_96",
+  "version": "2026_02",
+  "warnings": [
+    "Formula faltante para TAREAS_SALUD",
+    "Formula faltante para TRABAJO_EQUIPO"
+  ],
+  "agent": "agreement_structuring_agent",
+  "generated_test": "tests\\conventions\\test_cct_281_96_2026_02.py",
+  "processed_at": "2026-05-11T15:26:11.963321+00:00"
+}

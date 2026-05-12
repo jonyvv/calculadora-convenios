@@ -30,9 +30,50 @@ const show = (id) => {
   document.querySelector(`[data-tab="${id}"]`)?.classList.add("active");
 };
 
-const pretty = (target, data) => {
+const notify = (message, type = "success") => {
+  const stack = document.getElementById("toast-stack");
+  if (!stack) return;
+  const toast = document.createElement("div");
+  toast.className = `toast ${type}`;
+  toast.textContent = message;
+  stack.appendChild(toast);
+  window.setTimeout(() => toast.remove(), 4200);
+};
+
+const showMessage = (target, message, type = "success") => {
   const element = document.getElementById(target);
-  if (element) element.textContent = JSON.stringify(data, null, 2);
+  if (!element) return;
+  element.className = `message-panel ${type}`;
+  element.textContent = message;
+  element.classList.remove("hidden");
+};
+
+const clearMessage = (target) => {
+  const element = document.getElementById(target);
+  if (element) element.classList.add("hidden");
+};
+
+const responseMessage = (data, fallback = "Operacion realizada correctamente.") => {
+  if (!data) return fallback;
+  if (data.detail) return String(data.detail);
+  if (data.message) return String(data.message);
+  if (data.status && typeof data.status === "string") return data.status;
+  return fallback;
+};
+
+const renderAuditPanel = (target, audit) => {
+  const element = document.getElementById(target);
+  if (!element) return;
+  const status = audit?.status || "WARNING";
+  const issues = Array.isArray(audit?.issues) ? audit.issues : [];
+  const recommendations = Array.isArray(audit?.recommendations) ? audit.recommendations : [];
+  element.className = `audit-result-panel ${status.toLowerCase()}`;
+  element.innerHTML = `
+    <h3>Resultado: ${status}</h3>
+    ${issues.length ? `<strong>Observaciones</strong><ul>${issues.map((issue) => `<li>${issue.message || issue}</li>`).join("")}</ul>` : "<p>Sin inconsistencias detectadas.</p>"}
+    ${recommendations.length ? `<strong>Recomendaciones</strong><ul>${recommendations.map((item) => `<li>${item}</li>`).join("")}</ul>` : ""}
+  `;
+  element.classList.remove("hidden");
 };
 
 const readResponse = async (response) => {
@@ -59,7 +100,14 @@ const getJson = async (url) => {
   return readResponse(response);
 };
 
+const asArray = (value, label = "items") => {
+  if (Array.isArray(value)) return value;
+  console.warn(`Expected ${label} array`, value);
+  return [];
+};
+
 const renderAgreements = (agreements) => {
+  agreements = asArray(agreements, "agreements");
   const tbody = document.getElementById("agreements-table");
   const count = document.getElementById("agreements-count");
   const metric = document.getElementById("metric-agreements");
@@ -102,7 +150,7 @@ let selectedAgreement = null;
 
 const activeAgreementsById = () => {
   const map = new Map();
-  agreementCache.forEach((agreement) => {
+  asArray(agreementCache, "agreementCache").forEach((agreement) => {
     const id = agreement.metadata?.agreement_id;
     if (!id) return;
     const current = map.get(id);
@@ -183,6 +231,11 @@ const editableInput = (field, value, type = "text") => `<input data-field="${fie
 const removeButton = () => `<button class="icon-button danger-row" data-remove-row="1">Quitar</button>`;
 
 const renderAgreementEditor = (agreement) => {
+  if (agreement?.detail) {
+    showMessage("agreement-feedback", agreement.detail, "error");
+    notify(agreement.detail, "error");
+    return;
+  }
   selectedAgreement = agreement;
   if (!agreement) return;
   const meta = agreement.metadata;
@@ -298,13 +351,15 @@ const putJson = async (url, payload) => {
 };
 
 const loadAgreements = async () => {
-  agreementCache = await getJson("/agreements");
+  const response = await getJson("/agreements");
+  agreementCache = asArray(response, "agreements response");
   renderAgreements(agreementCache);
   populateAgreementSelects();
   renderEmployees(employeeCache);
 };
 
 const renderEmployees = (employees) => {
+  employees = asArray(employees, "employees");
   const tbody = document.getElementById("employees-table");
   if (!tbody) return;
   if (!employees.length) {
@@ -325,7 +380,8 @@ const renderEmployees = (employees) => {
 };
 
 const loadEmployees = async () => {
-  employeeCache = await getJson("/employees");
+  const response = await getJson("/employees");
+  employeeCache = asArray(response, "employees response");
   renderEmployees(employeeCache);
 };
 
@@ -392,15 +448,21 @@ const buildWizardEvents = () => {
   document.querySelectorAll("[data-manual-concept-toggle]").forEach((toggle) => {
     if (!toggle.checked) return;
     const code = toggle.dataset.manualConceptToggle;
+    const unit = String(toggle.dataset.manualConceptUnit || "").toUpperCase();
     const quantityInput = document.querySelector(`[data-manual-concept-quantity="${code}"]`);
     const quantity = quantityInput ? Number(quantityInput.value || 0) : 1;
     if (quantity > 0) {
-      events.push({
+      const event = {
         type: "SALARY_ITEM",
         subtype: code,
-        quantity,
-        description: `${toggle.dataset.manualConceptName || code}${toggle.dataset.manualConceptUnit ? ` (${toggle.dataset.manualConceptUnit})` : ""}`,
-      });
+        description: `${toggle.dataset.manualConceptName || code}${unit ? ` (${unit})` : ""}`,
+      };
+      if (unit === "AMOUNT") {
+        event.amount = quantity;
+      } else {
+        event.quantity = quantity;
+      }
+      events.push(event);
     }
   });
 
@@ -436,8 +498,32 @@ const unitLabel = (unit) => ({
   HOUR: "Horas",
 })[String(unit || "").toUpperCase()] || "Cantidad";
 
+const effectiveUnit = (item) => {
+  const explicit = String(item.unit || "").toUpperCase();
+  if (explicit) return explicit;
+  const value = canonical(`${item.code} ${item.name} ${item.base_reference} ${item.formula || ""}`);
+  if (value.includes("KM") || value.includes("KILOMETRO")) return "KM";
+  if (value.includes("PERNOCT")) return "NIGHT";
+  if (value.includes("VIAJE")) return "TRIP";
+  if (value.includes("HORA")) return "HOUR";
+  if (
+    value.includes("DIA")
+    || value.includes("DIAS")
+    || value.includes("DAYS")
+    || value.includes("DIARIO")
+    || value.includes("JORNAL")
+    || value.includes("REVISTA")
+    || value.includes("COMIDA")
+  ) return "DAY";
+  if (item.input_mode === "MANUAL" && value.includes("VIATIC")) return "DAY";
+  if (value.includes("COMISION")) return "AMOUNT";
+  return "";
+};
+
 const manualInputLabel = (item) => {
-  if (item.unit) return unitLabel(item.unit);
+  const unit = effectiveUnit(item);
+  if (unit === "DAY") return "Dias a liquidar";
+  if (unit) return unitLabel(unit);
   if (item.calculation_type === "PERCENTAGE" || item.rate !== undefined && item.rate !== null) return "Aplicar";
   return "Cantidad";
 };
@@ -445,12 +531,14 @@ const manualInputLabel = (item) => {
 const itemAppliesToWizardEmployee = (item, category) => {
   const categoryFilters = (item.applies_to_categories || []).map(canonical).filter(Boolean);
   if (categoryFilters.length) {
+    if (!category) return true;
     const categoryValues = [category?.category_id, category?.name].map(canonical).filter(Boolean);
     if (!categoryFilters.some((filter) => categoryValues.some((value) => categoryTokensMatch(filter, value)))) return false;
   }
 
   const tagFilters = (item.applies_to_tags || []).map(canonical).filter(Boolean);
   if (!tagFilters.length) return true;
+  if (!category) return true;
   const employeeValues = [
     document.getElementById("wiz-zone").value,
     document.getElementById("wiz-workday").value,
@@ -462,7 +550,7 @@ const itemAppliesToWizardEmployee = (item, category) => {
 
 const isManualSalaryItem = (item) => {
   if (item.input_mode === "MANUAL") return true;
-  if (item.unit) return true;
+  if (effectiveUnit(item)) return true;
   const value = canonical(`${item.code} ${item.name} ${item.base_reference}`);
   const coreAutoTokens = ["ANTIG", "ANTIGUEDAD", "SENIORITY", "PRESENTISMO", "ATTENDANCE", "ASISTENCIA"];
   if (coreAutoTokens.some((token) => value.includes(token))) return false;
@@ -511,16 +599,17 @@ const itemValueLabel = (item) => {
 };
 
 const manualConceptCard = (item) => {
+  const unit = effectiveUnit(item);
   const enabled = Boolean(wizardState.manualConceptEnabled[item.code]);
-  const value = wizardState.manualConceptValues[item.code] ?? (item.unit ? "0" : "1");
+  const value = wizardState.manualConceptValues[item.code] ?? (unit ? "0" : "1");
   const label = manualInputLabel(item);
-  const hasQuantity = Boolean(item.unit);
+  const hasQuantity = Boolean(unit);
   return `
     <article class="concept-card manual-concept">
       <div>
         <strong>${item.name || item.code}</strong>
         <small>${item.code} - ${item.type === "REMUNERATIVE" ? "Remunerativo" : "No remunerativo"}</small>
-        <small>Valor unitario: ${itemValueLabel(item)}${item.unit ? ` / ${item.unit}` : ""}</small>
+        <small>Valor unitario: ${itemValueLabel(item)}${unit ? ` / ${unit}` : ""}</small>
         ${hasQuantity ? "<small>Activar y cargar la cantidad correspondiente</small>" : "<small>Activar para incluir este haber en la liquidacion</small>"}
       </div>
       <div class="manual-controls">
@@ -528,7 +617,7 @@ const manualConceptCard = (item) => {
           <input
             data-manual-concept-toggle="${item.code}"
             data-manual-concept-name="${item.name || item.code}"
-            data-manual-concept-unit="${item.unit || ""}"
+            data-manual-concept-unit="${unit || ""}"
             data-manual-concept-type="${item.type || ""}"
             type="checkbox"
             ${enabled ? "checked" : ""}>
@@ -536,11 +625,11 @@ const manualConceptCard = (item) => {
           <em>${enabled ? "Activo" : "Inactivo"}</em>
         </label>
         ${hasQuantity ? `
-          <label>${label}
+          <label class="manual-quantity ${enabled ? "" : "hidden"}">${label}
             <input
               data-manual-concept-quantity="${item.code}"
               data-manual-concept-name="${item.name || item.code}"
-              data-manual-concept-unit="${item.unit || ""}"
+              data-manual-concept-unit="${unit || ""}"
               data-manual-concept-type="${item.type || ""}"
               type="number"
               min="0"
@@ -653,7 +742,7 @@ const loadEmployeeIntoWizard = async () => {
 
   wizardState.agreement = await getJson(`/agreements/${employee.agreement_id}`);
   if (!wizardState.agreement.categories.some((category) => category.category_id === employee.category_id)) {
-    pretty("payroll-result", { error: "El puesto/rol del empleado no pertenece al convenio activo" });
+    showMessage("payroll-result", "El puesto/rol del empleado no pertenece al convenio activo.", "error");
   }
   renderAgreementDrivenSections();
 };
@@ -719,8 +808,9 @@ const explainPayrollDetail = (detail) => {
       : "Basico";
     const quantity = Number(event?.quantity || event?.days || event?.hours || 0);
     if (quantity > 0) {
+      const unit = effectiveUnit(salaryItem);
       const unitValue = Math.abs(Number(detail.amount || 0)) / quantity;
-      return `${salaryItem.name || detail.name} = ${money(unitValue)} x ${quantity}${salaryItem.unit ? ` ${unitLabel(salaryItem.unit).toLowerCase()}` : ""}`;
+      return `${salaryItem.name || detail.name} = ${money(unitValue)} x ${quantity}${unit ? ` ${unitLabel(unit).toLowerCase()}` : ""}`;
     }
     if (salaryItem.calculation_type === "PERCENTAGE" || salaryItem.rate !== undefined && salaryItem.rate !== null) {
       return `${salaryItem.name || detail.name} = ${base} x ${Number(salaryItem.rate || 0)}%`;
@@ -814,15 +904,15 @@ const renderPayrollResult = (payroll) => {
 
 const calculateWizardPayroll = async () => {
   if (!wizardState.employee) {
-    pretty("payroll-result", { error: "Primero selecciona un empleado valido para cargar su convenio activo." });
+    showMessage("payroll-result", "Primero selecciona un empleado valido para cargar su convenio activo.", "error");
     return;
   }
   if (!wizardState.agreement || wizardState.agreement.metadata.agreement_id !== wizardState.employee.agreement_id) {
-    pretty("payroll-result", { error: "El convenio cargado no coincide con el convenio activo del empleado." });
+    showMessage("payroll-result", "El convenio cargado no coincide con el convenio activo del empleado.", "error");
     return;
   }
   if (!wizardState.agreement.categories.some((category) => category.category_id === wizardState.employee.category_id)) {
-    pretty("payroll-result", { error: "El puesto/rol del empleado no pertenece al convenio activo." });
+    showMessage("payroll-result", "El puesto/rol del empleado no pertenece al convenio activo.", "error");
     return;
   }
   const eventsPayload = buildWizardEvents();
@@ -831,7 +921,8 @@ const calculateWizardPayroll = async () => {
     employee_id: eventsPayload.employee_id,
     period: eventsPayload.period,
   });
-  pretty("payroll-result", wizardState.payroll);
+  showMessage("payroll-result", "Liquidacion calculada correctamente.", "success");
+  notify("Liquidacion calculada correctamente.");
   renderPayrollResult(wizardState.payroll);
 };
 
@@ -851,13 +942,15 @@ document.getElementById("agreements-table").addEventListener("click", async (eve
     document.getElementById("agreement-id").value = id;
     document.getElementById("agreement-version").value = version;
     const agreement = await getJson(`/agreements/${id}?version=${version}`);
-    pretty("agreement-json", agreement);
+    showMessage("agreement-feedback", `Convenio ${id} version ${version} cargado para edicion.`, "success");
     renderAgreementEditor(agreement);
   }
   if (activateButton) {
     const id = activateButton.dataset.activateAgreement;
     const version = activateButton.dataset.version;
-    pretty("agreement-json", await postJson(`/agreements/${id}/activate`, { version }));
+    const result = await postJson(`/agreements/${id}/activate`, { version });
+    showMessage("agreement-feedback", responseMessage(result, `Version ${version} activada correctamente.`), result.detail ? "error" : "success");
+    notify(result.detail ? responseMessage(result) : `Version ${version} activada correctamente.`, result.detail ? "error" : "success");
     await loadAgreements();
   }
 });
@@ -891,7 +984,6 @@ document.getElementById("upload-form").addEventListener("submit", async (event) 
       signal: controller.signal,
     });
     const result = await readResponse(response);
-    pretty("agreement-json", result);
     const meta = result.agreement?.metadata;
     if (!response.ok || !meta) {
       throw new Error(result.detail || "No se pudo estructurar el convenio.");
@@ -900,6 +992,8 @@ document.getElementById("upload-form").addEventListener("submit", async (event) 
     renderWarnings(result.warnings || []);
     status.textContent = `Convenio creado: ${meta.agreement_id} version ${meta.version}. Ya esta activo para liquidar y auditar.`;
     status.className = "upload-status success";
+    showMessage("agreement-feedback", `Convenio ${meta.agreement_id} creado correctamente y listo para usar.`, "success");
+    notify("Convenio creado correctamente.");
     event.target.reset();
     await loadAgreements();
   } catch (error) {
@@ -927,14 +1021,21 @@ document.getElementById("load-agreement").addEventListener("click", async () => 
   const version = document.getElementById("agreement-version").value;
   const url = version ? `/agreements/${id}?version=${version}` : `/agreements/${id}`;
   const agreement = await getJson(url);
-  pretty("agreement-json", agreement);
+  if (agreement.detail) {
+    showMessage("agreement-feedback", agreement.detail, "error");
+    notify(agreement.detail, "error");
+    return;
+  }
+  showMessage("agreement-feedback", `Convenio ${agreement.metadata?.agreement_id || id} cargado para edicion.`, "success");
   renderAgreementEditor(agreement);
 });
 
 document.getElementById("activate-agreement").addEventListener("click", async () => {
   const id = document.getElementById("agreement-id").value;
   const version = document.getElementById("agreement-version").value;
-  pretty("agreement-json", await postJson(`/agreements/${id}/activate`, { version }));
+  const result = await postJson(`/agreements/${id}/activate`, { version });
+  showMessage("agreement-feedback", responseMessage(result, `Version ${version} activada correctamente.`), result.detail ? "error" : "success");
+  notify(result.detail ? responseMessage(result) : `Version ${version} activada correctamente.`, result.detail ? "error" : "success");
   await loadAgreements();
 });
 
@@ -979,7 +1080,8 @@ document.getElementById("save-agreement-friendly").addEventListener("click", asy
   const agreement = collectAgreementFromEditor();
   if (!agreement) return;
   const result = await putJson(`/agreements/${agreement.metadata.agreement_id}`, agreement);
-  pretty("agreement-json", result);
+  showMessage("agreement-feedback", responseMessage(result, "Convenio actualizado correctamente."), result.detail ? "error" : "success");
+  notify(result.detail ? responseMessage(result) : "Convenio actualizado correctamente.", result.detail ? "error" : "success");
   renderAgreementEditor(result);
   await loadAgreements();
 });
@@ -991,7 +1093,8 @@ document.getElementById("delete-agreement-friendly").addEventListener("click", a
   if (!ok) return;
   const response = await fetch(`/agreements/${meta.agreement_id}?version=${meta.version}`, { method: "DELETE" });
   const result = await readResponse(response);
-  pretty("agreement-json", result);
+  showMessage("agreement-feedback", responseMessage(result, "Convenio eliminado correctamente."), response.ok ? "success" : "error");
+  notify(response.ok ? "Convenio eliminado correctamente." : responseMessage(result), response.ok ? "success" : "error");
   selectedAgreement = null;
   document.getElementById("agreement-summary").innerHTML = "";
   renderCategoryRows([]);
@@ -1011,7 +1114,8 @@ document.getElementById("employee-form").addEventListener("submit", async (event
   const result = editingId
     ? await fetch(`/employees/${editingId}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) }).then(readResponse)
     : await postJson("/employees", data);
-  pretty("employee-result", result);
+  showMessage("employee-result", responseMessage(result, editingId ? "Empleado actualizado correctamente." : "Empleado creado correctamente."), result.detail ? "error" : "success");
+  notify(result.detail ? responseMessage(result) : editingId ? "Empleado actualizado correctamente." : "Empleado creado correctamente.", result.detail ? "error" : "success");
   resetEmployeeForm();
   await loadEmployees();
 });
@@ -1031,14 +1135,35 @@ document.getElementById("employees-table").addEventListener("click", (event) => 
 
 document.getElementById("events-form").addEventListener("submit", async (event) => {
   event.preventDefault();
-  const data = Object.fromEntries(new FormData(event.target));
-  data.events = JSON.parse(data.events);
-  pretty("events-result", await postJson("/events", data));
+  const form = Object.fromEntries(new FormData(event.target));
+  const events = [];
+  const absence = Number(form.absence_unjustified || 0);
+  const overtime50 = Number(form.overtime_50 || 0);
+  const overtime100 = Number(form.overtime_100 || 0);
+  const bonus = Number(form.bonus || 0);
+  if (absence > 0) events.push({ type: "ABSENCE", subtype: "UNJUSTIFIED", days: absence });
+  if (overtime50 > 0) events.push({ type: "OVERTIME", subtype: "OT_50", hours: overtime50 });
+  if (overtime100 > 0) events.push({ type: "OVERTIME", subtype: "OT_100", hours: overtime100 });
+  if (bonus > 0) events.push({ type: "BONUS", subtype: "BONUS", amount: bonus, description: "Bonos" });
+  const result = await postJson("/events", {
+    employee_id: form.employee_id,
+    period: form.period,
+    events,
+  });
+  showMessage("events-result", responseMessage(result, "Novedades registradas correctamente."), result.detail ? "error" : "success");
+  notify(result.detail ? responseMessage(result) : "Novedades registradas correctamente.", result.detail ? "error" : "success");
 });
 
 document.getElementById("audit-form").addEventListener("submit", async (event) => {
   event.preventDefault();
-  pretty("audit-result", await postJson("/payroll/audit", Object.fromEntries(new FormData(event.target))));
+  const audit = await postJson("/payroll/audit", Object.fromEntries(new FormData(event.target)));
+  if (audit.detail) {
+    showMessage("audit-result", audit.detail, "error");
+    notify(audit.detail, "error");
+    return;
+  }
+  renderAuditPanel("audit-result", audit);
+  notify(`Auditoria finalizada: ${audit.status || "WARNING"}.`, audit.status === "APPROVED" ? "success" : "warning");
 });
 
 document.getElementById("wiz-employee-id").addEventListener("blur", loadEmployeeIntoWizard);
@@ -1055,7 +1180,11 @@ document.getElementById("agreement-additionals").addEventListener("change", (eve
   const code = toggle.dataset.manualConceptToggle;
   wizardState.manualConceptEnabled[code] = toggle.checked;
   const quantityInput = document.querySelector(`[data-manual-concept-quantity="${code}"]`);
-  if (quantityInput) quantityInput.disabled = !toggle.checked;
+  if (quantityInput) {
+    quantityInput.disabled = !toggle.checked;
+    quantityInput.closest(".manual-quantity")?.classList.toggle("hidden", !toggle.checked);
+    if (toggle.checked && !quantityInput.value) quantityInput.value = "0";
+  }
   const label = toggle.closest(".switch-control")?.querySelector("em");
   if (label) label.textContent = toggle.checked ? "Activo" : "Inactivo";
 });
@@ -1083,7 +1212,13 @@ document.getElementById("wizard-audit").addEventListener("click", async () => {
     employee_id: document.getElementById("wiz-employee-id").value,
     period: periodValue(),
   });
-  pretty("wizard-audit-result", audit);
+  if (audit.detail) {
+    showMessage("wizard-audit-result", audit.detail, "error");
+    notify(audit.detail, "error");
+    return;
+  }
+  renderAuditPanel("wizard-audit-result", audit);
+  notify(`Auditoria finalizada: ${audit.status || "WARNING"}.`, audit.status === "APPROVED" ? "success" : "warning");
   const badge = document.getElementById("audit-badge");
   badge.textContent = audit.status || "WARNING";
   badge.className = `audit-badge ${(audit.status || "WARNING").toLowerCase()}`;
@@ -1099,7 +1234,8 @@ document.getElementById("new-payroll").addEventListener("click", () => {
   wizardState.manualConceptEnabled = {};
   renderAgreementDrivenSections();
   renderPayrollResult({ gross_salary: 0, deductions: 0, net_salary: 0, details: [] });
-  pretty("wizard-audit-result", {});
+  clearMessage("wizard-audit-result");
+  clearMessage("payroll-result");
   setWizardStep(1);
 });
 
