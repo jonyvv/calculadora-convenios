@@ -1,10 +1,10 @@
 {
   "employee_id": "1",
-  "agreement_id": "CCT_281_1996",
-  "category_id": "NO_INDICADO_6",
-  "seniority_years": 11,
+  "agreement_id": "CCT_40_1989",
+  "category_id": "A",
+  "seniority_years": 1,
   "cuil": "20451434161",
-  "hire_date": "2015-02-20",
+  "hire_date": "2025-05-13",
   "zone": "",
   "workday": "completa",
   "active": true

@@ -4,12 +4,14 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Liquidacion de Sueldos</title>
-  <link rel="stylesheet" href="/static/styles.css">
+  <link rel="stylesheet" href="/static/styles.css?v=3">
 </head>
 <body>
   <aside class="sidebar">
     <div class="brand">
-      <span class="brand-icon">$</span>
+      <span class="brand-icon" aria-hidden="true">
+        <img class="brand-cloud-logo" src="/static/logo-nube.jpg?v=2" alt="">
+      </span>
       <strong>Liquidacion<br>de Sueldos</strong>
     </div>
     <nav>
@@ -291,7 +293,7 @@
                 <fieldset><legend>Inasistencias</legend><label>Justificadas<input id="ev-absence-justified" type="number" min="0" value="0"></label><label>Injustificadas<input id="ev-absence-unjustified" type="number" min="0" value="0"></label></fieldset>
                 <fieldset><legend>Licencias</legend><label>Enfermedad<input id="ev-leave-sickness" type="number" min="0" value="0"></label><label>Accidente<input id="ev-leave-accident" type="number" min="0" value="0"></label><label>Matrimonio<input id="ev-leave-marriage" type="number" min="0" value="0"></label><label>Examen<input id="ev-leave-exam" type="number" min="0" value="0"></label><label>Nacimiento<input id="ev-leave-birth" type="number" min="0" value="0"></label></fieldset>
                 <fieldset><legend>Feriados</legend><label>Trabajados<input id="ev-holiday-worked" type="number" min="0" value="0"></label><label>No trabajados<input id="ev-holiday-not-worked" type="number" min="0" value="0"></label></fieldset>
-                <fieldset><legend>Otros</legend><label>Suspensiones<input id="ev-suspensions" type="number" min="0" value="0"></label><label>Comisiones<input id="ev-commissions" type="number" min="0" value="0"></label><label>Bonos<input id="ev-bonuses" type="number" min="0" value="0"></label></fieldset>
+                <fieldset><legend>Otros</legend><label>Horas trabajadas<input id="ev-worked-hours" type="number" min="0" value="0"></label><label>Dias trabajados<input id="ev-worked-days" type="number" min="0" value="0"></label><label>Suspensiones<input id="ev-suspensions" type="number" min="0" value="0"></label><label>Comisiones<input id="ev-commissions" type="number" min="0" value="0"></label><label>Bonos<input id="ev-bonuses" type="number" min="0" value="0"></label></fieldset>
               </div>
               <div class="hint-box" id="event-rules-preview">Las novedades se transforman a MonthlyEvent y el motor aplica event_rules del convenio.</div>
             </div>

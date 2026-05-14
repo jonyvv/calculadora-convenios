@@ -1,0 +1,857 @@
+{
+  "metadata": {
+    "agreement_id": "CCT_775_2019",
+    "name": "Convenio_Unificado",
+    "version": "2026_03",
+    "valid_from": "2026-03-01",
+    "valid_to": "2026-03-31",
+    "source_document": "Copia de Carne. Procesadores de aves, CCT 775_2019. Homologación.pdf, Copia de carne-cct607-2010-marzo2026.pdf, Informe de Escalas Salariales_ CCT N° 607_10 - Marzo 2026.pdf, Manual Normativo del Convenio Colectivo de Trabajo N° 607_10 (Reg. 775_2019) - Industria Avícola.pdf",
+    "created_at": "2026-05-13T16:55:37.530949+00:00",
+    "status": "ACTIVE",
+    "union": "Federación Gremial del Personal de la Industria de la Carne y sus Derivados",
+    "activity": "Industria Avícola",
+    "jurisdiction": "Nacional",
+    "parity_terms": []
+  },
+  "categories": [
+    {
+      "category_id": "OI",
+      "name": "Personal De Producción - Oi",
+      "basic_salary": 7336.54
+    },
+    {
+      "category_id": "C",
+      "name": "Personal De Producción - C",
+      "basic_salary": 7630.0
+    },
+    {
+      "category_id": "CA",
+      "name": "Personal De Producción - Ca",
+      "basic_salary": 7973.35
+    },
+    {
+      "category_id": "E",
+      "name": "Personal De Producción - E",
+      "basic_salary": 8372.02
+    },
+    {
+      "category_id": "EA",
+      "name": "Personal De Producción - Ea",
+      "basic_salary": 8790.62
+    },
+    {
+      "category_id": "EB",
+      "name": "Personal De Producción - Eb",
+      "basic_salary": 9274.1
+    },
+    {
+      "category_id": "OFICIAL",
+      "name": "Personal De Ingeniería - Oficial",
+      "basic_salary": 8450.0
+    },
+    {
+      "category_id": "EA_2",
+      "name": "Personal De Ingeniería - Ea",
+      "basic_salary": 9083.76
+    },
+    {
+      "category_id": "EB_2",
+      "name": "Personal De Ingeniería - Eb",
+      "basic_salary": 9992.13
+    },
+    {
+      "category_id": "EC",
+      "name": "Personal De Ingeniería - Ec",
+      "basic_salary": 10291.9
+    },
+    {
+      "category_id": "2DA",
+      "name": "Personal De Administración - 2Da",
+      "basic_salary": 1467292.17
+    },
+    {
+      "category_id": "3RA",
+      "name": "Personal De Administración - 3Ra",
+      "basic_salary": 1511310.94
+    },
+    {
+      "category_id": "4TA",
+      "name": "Personal De Administración - 4Ta",
+      "basic_salary": 1571763.38
+    },
+    {
+      "category_id": "5TA",
+      "name": "Personal De Administración - 5Ta",
+      "basic_salary": 1650351.55
+    },
+    {
+      "category_id": "6TA",
+      "name": "Personal De Administración - 6Ta",
+      "basic_salary": 1741120.88
+    }
+  ],
+  "salary_model": {
+    "remunerative_items": [
+      {
+        "code": "ASISTENCIA",
+        "name": "Premio por Asistencia y Puntualidad",
+        "type": "REMUNERATIVE",
+        "calculation_type": "PERCENTAGE",
+        "base_reference": "Total remuneraciones",
+        "amount": null,
+        "rate": 11.0,
+        "formula": "Total remuneraciones * 11.0%",
+        "applies_to_categories": [],
+        "applies_to_tags": [],
+        "input_mode": "AUTO",
+        "unit": null
+      },
+      {
+        "code": "MANEJO_DINERO",
+        "name": "Adicional Manejo de Dinero",
+        "type": "REMUNERATIVE",
+        "calculation_type": "PERCENTAGE",
+        "base_reference": "Remuneración mensual",
+        "amount": null,
+        "rate": 5.0,
+        "formula": "Remuneración mensual * 5.0%",
+        "applies_to_categories": [
+          "COBRADORES",
+          "CAJEROS",
+          "CHOFERES"
+        ],
+        "applies_to_tags": [],
+        "input_mode": "AUTO",
+        "unit": null
+      },
+      {
+        "code": "BAJA_TEMP",
+        "name": "Adicional Baja Temperatura",
+        "type": "REMUNERATIVE",
+        "calculation_type": "PERCENTAGE",
+        "base_reference": "Total remuneraciones",
+        "amount": null,
+        "rate": 5.0,
+        "formula": "Total remuneraciones * 5.0%",
+        "applies_to_categories": [
+          "PERSONAL",
+          "EN",
+          "C",
+          "MARAS",
+          "T",
+          "NELES"
+        ],
+        "applies_to_tags": [],
+        "input_mode": "AUTO",
+        "unit": null
+      }
+    ],
+    "non_remunerative_items": [
+      {
+        "code": "AGREEMENT_SUM",
+        "name": "Acuerdo no remunerativo",
+        "type": "NON_REMUNERATIVE",
+        "calculation_type": "FIXED",
+        "base_reference": "",
+        "amount": 0.0,
+        "rate": null,
+        "formula": "0",
+        "applies_to_categories": [],
+        "applies_to_tags": [],
+        "input_mode": "AUTO",
+        "unit": null
+      }
+    ],
+    "deductions": [
+      {
+        "code": "JUBILACION",
+        "name": "Jubilación",
+        "rate": 11.0,
+        "base": "Remunerativo"
+      },
+      {
+        "code": "LEY_19032",
+        "name": "Ley 19.032 / PAMI",
+        "rate": 3.0,
+        "base": "Remunerativo"
+      },
+      {
+        "code": "OBRA_SOCIAL",
+        "name": "Obra Social",
+        "rate": 3.0,
+        "base": "Remunerativo"
+      },
+      {
+        "code": "APORTE_FED",
+        "name": "Aporte Federativo",
+        "rate": 1.0,
+        "base": "Remunerativo"
+      },
+      {
+        "code": "SINDICATO",
+        "name": "Sindicato",
+        "rate": 2.0,
+        "base": "REMUNERATIVE_TOTAL"
+      }
+    ],
+    "employer_contributions": [
+      {
+        "code": "ART",
+        "name": "ART",
+        "base": "REMUNERATIVE_TOTAL"
+      }
+    ],
+    "fiscal_shields": [],
+    "overtime_rules": [
+      {
+        "code": "OT_50",
+        "multiplier": 1.5
+      },
+      {
+        "code": "OT_100",
+        "multiplier": 2.0
+      }
+    ]
+  },
+  "event_rules": [
+    {
+      "event_type": "HOLIDAY_WORKED",
+      "subtype": "WORKED",
+      "effects": [
+        "PAY_OVERTIME_100"
+      ]
+    },
+    {
+      "event_type": "OVERTIME",
+      "subtype": null,
+      "effects": [
+        "PAY_OVERTIME"
+      ]
+    }
+  ],
+  "audit_rules": [
+    {
+      "rule": "overtime_must_match_declared_multiplier"
+    },
+    {
+      "rule": "deductions_apply_only_to_remunerative_total"
+    }
+  ],
+  "identificacion_alcance": {
+    "partes_signatarias": [
+      "Federación Gremial del Personal de la Industria de la Carne y sus Derivados"
+    ],
+    "vigencia": {
+      "desde": "2026-03-01",
+      "hasta": "2026-03-31",
+      "paritarias": []
+    },
+    "ambito_aplicacion": {
+      "actividad": "Industria Avícola",
+      "jurisdiccion": "Nacional",
+      "territorio": "Nacional",
+      "rama": "Industria Avícola"
+    },
+    "categorias_profesionales": [
+      {
+        "codigo": "OI",
+        "nombre": "Personal De Producción - Oi",
+        "salario_basico": 7336.54
+      },
+      {
+        "codigo": "C",
+        "nombre": "Personal De Producción - C",
+        "salario_basico": 7630.0
+      },
+      {
+        "codigo": "CA",
+        "nombre": "Personal De Producción - Ca",
+        "salario_basico": 7973.35
+      },
+      {
+        "codigo": "E",
+        "nombre": "Personal De Producción - E",
+        "salario_basico": 8372.02
+      },
+      {
+        "codigo": "EA",
+        "nombre": "Personal De Producción - Ea",
+        "salario_basico": 8790.62
+      },
+      {
+        "codigo": "EB",
+        "nombre": "Personal De Producción - Eb",
+        "salario_basico": 9274.1
+      },
+      {
+        "codigo": "OFICIAL",
+        "nombre": "Personal De Ingeniería - Oficial",
+        "salario_basico": 8450.0
+      },
+      {
+        "codigo": "EA_2",
+        "nombre": "Personal De Ingeniería - Ea",
+        "salario_basico": 9083.76
+      },
+      {
+        "codigo": "EB_2",
+        "nombre": "Personal De Ingeniería - Eb",
+        "salario_basico": 9992.13
+      },
+      {
+        "codigo": "EC",
+        "nombre": "Personal De Ingeniería - Ec",
+        "salario_basico": 10291.9
+      },
+      {
+        "codigo": "2DA",
+        "nombre": "Personal De Administración - 2Da",
+        "salario_basico": 1467292.17
+      },
+      {
+        "codigo": "3RA",
+        "nombre": "Personal De Administración - 3Ra",
+        "salario_basico": 1511310.94
+      },
+      {
+        "codigo": "4TA",
+        "nombre": "Personal De Administración - 4Ta",
+        "salario_basico": 1571763.38
+      },
+      {
+        "codigo": "5TA",
+        "nombre": "Personal De Administración - 5Ta",
+        "salario_basico": 1650351.55
+      },
+      {
+        "codigo": "6TA",
+        "nombre": "Personal De Administración - 6Ta",
+        "salario_basico": 1741120.88
+      }
+    ]
+  },
+  "remuneraciones": {
+    "salario_basico": [
+      {
+        "nombre": "Salario basico - Personal De Producción - Oi",
+        "tipo": "remunerativo",
+        "formula": "importe_fijo",
+        "base_calculo": "categoria_profesional",
+        "porcentaje": null,
+        "importe_fijo": 7336.54,
+        "condiciones": [],
+        "excepciones": [],
+        "fuente_articulo": "escala_salarial",
+        "requiere_validacion": false,
+        "observaciones": "Categoria OI"
+      },
+      {
+        "nombre": "Salario basico - Personal De Producción - C",
+        "tipo": "remunerativo",
+        "formula": "importe_fijo",
+        "base_calculo": "categoria_profesional",
+        "porcentaje": null,
+        "importe_fijo": 7630.0,
+        "condiciones": [],
+        "excepciones": [],
+        "fuente_articulo": "escala_salarial",
+        "requiere_validacion": false,
+        "observaciones": "Categoria C"
+      },
+      {
+        "nombre": "Salario basico - Personal De Producción - Ca",
+        "tipo": "remunerativo",
+        "formula": "importe_fijo",
+        "base_calculo": "categoria_profesional",
+        "porcentaje": null,
+        "importe_fijo": 7973.35,
+        "condiciones": [],
+        "excepciones": [],
+        "fuente_articulo": "escala_salarial",
+        "requiere_validacion": false,
+        "observaciones": "Categoria CA"
+      },
+      {
+        "nombre": "Salario basico - Personal De Producción - E",
+        "tipo": "remunerativo",
+        "formula": "importe_fijo",
+        "base_calculo": "categoria_profesional",
+        "porcentaje": null,
+        "importe_fijo": 8372.02,
+        "condiciones": [],
+        "excepciones": [],
+        "fuente_articulo": "escala_salarial",
+        "requiere_validacion": false,
+        "observaciones": "Categoria E"
+      },
+      {
+        "nombre": "Salario basico - Personal De Producción - Ea",
+        "tipo": "remunerativo",
+        "formula": "importe_fijo",
+        "base_calculo": "categoria_profesional",
+        "porcentaje": null,
+        "importe_fijo": 8790.62,
+        "condiciones": [],
+        "excepciones": [],
+        "fuente_articulo": "escala_salarial",
+        "requiere_validacion": false,
+        "observaciones": "Categoria EA"
+      },
+      {
+        "nombre": "Salario basico - Personal De Producción - Eb",
+        "tipo": "remunerativo",
+        "formula": "importe_fijo",
+        "base_calculo": "categoria_profesional",
+        "porcentaje": null,
+        "importe_fijo": 9274.1,
+        "condiciones": [],
+        "excepciones": [],
+        "fuente_articulo": "escala_salarial",
+        "requiere_validacion": false,
+        "observaciones": "Categoria EB"
+      },
+      {
+        "nombre": "Salario basico - Personal De Ingeniería - Oficial",
+        "tipo": "remunerativo",
+        "formula": "importe_fijo",
+        "base_calculo": "categoria_profesional",
+        "porcentaje": null,
+        "importe_fijo": 8450.0,
+        "condiciones": [],
+        "excepciones": [],
+        "fuente_articulo": "escala_salarial",
+        "requiere_validacion": false,
+        "observaciones": "Categoria OFICIAL"
+      },
+      {
+        "nombre": "Salario basico - Personal De Ingeniería - Ea",
+        "tipo": "remunerativo",
+        "formula": "importe_fijo",
+        "base_calculo": "categoria_profesional",
+        "porcentaje": null,
+        "importe_fijo": 9083.76,
+        "condiciones": [],
+        "excepciones": [],
+        "fuente_articulo": "escala_salarial",
+        "requiere_validacion": false,
+        "observaciones": "Categoria EA_2"
+      },
+      {
+        "nombre": "Salario basico - Personal De Ingeniería - Eb",
+        "tipo": "remunerativo",
+        "formula": "importe_fijo",
+        "base_calculo": "categoria_profesional",
+        "porcentaje": null,
+        "importe_fijo": 9992.13,
+        "condiciones": [],
+        "excepciones": [],
+        "fuente_articulo": "escala_salarial",
+        "requiere_validacion": false,
+        "observaciones": "Categoria EB_2"
+      },
+      {
+        "nombre": "Salario basico - Personal De Ingeniería - Ec",
+        "tipo": "remunerativo",
+        "formula": "importe_fijo",
+        "base_calculo": "categoria_profesional",
+        "porcentaje": null,
+        "importe_fijo": 10291.9,
+        "condiciones": [],
+        "excepciones": [],
+        "fuente_articulo": "escala_salarial",
+        "requiere_validacion": false,
+        "observaciones": "Categoria EC"
+      },
+      {
+        "nombre": "Salario basico - Personal De Administración - 2Da",
+        "tipo": "remunerativo",
+        "formula": "importe_fijo",
+        "base_calculo": "categoria_profesional",
+        "porcentaje": null,
+        "importe_fijo": 1467292.17,
+        "condiciones": [],
+        "excepciones": [],
+        "fuente_articulo": "escala_salarial",
+        "requiere_validacion": false,
+        "observaciones": "Categoria 2DA"
+      },
+      {
+        "nombre": "Salario basico - Personal De Administración - 3Ra",
+        "tipo": "remunerativo",
+        "formula": "importe_fijo",
+        "base_calculo": "categoria_profesional",
+        "porcentaje": null,
+        "importe_fijo": 1511310.94,
+        "condiciones": [],
+        "excepciones": [],
+        "fuente_articulo": "escala_salarial",
+        "requiere_validacion": false,
+        "observaciones": "Categoria 3RA"
+      },
+      {
+        "nombre": "Salario basico - Personal De Administración - 4Ta",
+        "tipo": "remunerativo",
+        "formula": "importe_fijo",
+        "base_calculo": "categoria_profesional",
+        "porcentaje": null,
+        "importe_fijo": 1571763.38,
+        "condiciones": [],
+        "excepciones": [],
+        "fuente_articulo": "escala_salarial",
+        "requiere_validacion": false,
+        "observaciones": "Categoria 4TA"
+      },
+      {
+        "nombre": "Salario basico - Personal De Administración - 5Ta",
+        "tipo": "remunerativo",
+        "formula": "importe_fijo",
+        "base_calculo": "categoria_profesional",
+        "porcentaje": null,
+        "importe_fijo": 1650351.55,
+        "condiciones": [],
+        "excepciones": [],
+        "fuente_articulo": "escala_salarial",
+        "requiere_validacion": false,
+        "observaciones": "Categoria 5TA"
+      },
+      {
+        "nombre": "Salario basico - Personal De Administración - 6Ta",
+        "tipo": "remunerativo",
+        "formula": "importe_fijo",
+        "base_calculo": "categoria_profesional",
+        "porcentaje": null,
+        "importe_fijo": 1741120.88,
+        "condiciones": [],
+        "excepciones": [],
+        "fuente_articulo": "escala_salarial",
+        "requiere_validacion": false,
+        "observaciones": "Categoria 6TA"
+      }
+    ],
+    "adicionales_fijos": [],
+    "adicionales_variables": [
+      {
+        "nombre": "Adicional Manejo de Dinero",
+        "tipo": "remunerativo",
+        "formula": "Remuneración mensual * 5.0%",
+        "base_calculo": "Remuneración mensual",
+        "porcentaje": 5.0,
+        "importe_fijo": null,
+        "condiciones": [
+          "Aplica a categorias: COBRADORES, CAJEROS, CHOFERES"
+        ],
+        "excepciones": [],
+        "fuente_articulo": "salary_model",
+        "requiere_validacion": false,
+        "observaciones": "MANEJO_DINERO"
+      },
+      {
+        "nombre": "Adicional Baja Temperatura",
+        "tipo": "remunerativo",
+        "formula": "Total remuneraciones * 5.0%",
+        "base_calculo": "Total remuneraciones",
+        "porcentaje": 5.0,
+        "importe_fijo": null,
+        "condiciones": [
+          "Aplica a categorias: PERSONAL, EN, C, MARAS, T, NELES"
+        ],
+        "excepciones": [],
+        "fuente_articulo": "salary_model",
+        "requiere_validacion": false,
+        "observaciones": "BAJA_TEMP"
+      }
+    ],
+    "antiguedad": [],
+    "presentismo_asistencia": [
+      {
+        "nombre": "Premio por Asistencia y Puntualidad",
+        "tipo": "remunerativo",
+        "formula": "Total remuneraciones * 11.0%",
+        "base_calculo": "Total remuneraciones",
+        "porcentaje": 11.0,
+        "importe_fijo": null,
+        "condiciones": [],
+        "excepciones": [],
+        "fuente_articulo": "salary_model",
+        "requiere_validacion": false,
+        "observaciones": "ASISTENCIA"
+      }
+    ],
+    "titulos_tecnicos_profesionales": [],
+    "remuneraciones_por_rendimiento": [],
+    "beneficios_no_remunerativos": [
+      {
+        "nombre": "Acuerdo no remunerativo",
+        "tipo": "no_remunerativo",
+        "formula": "importe_fijo",
+        "base_calculo": "BASIC",
+        "porcentaje": null,
+        "importe_fijo": 0.0,
+        "condiciones": [],
+        "excepciones": [],
+        "fuente_articulo": "salary_model",
+        "requiere_validacion": false,
+        "observaciones": "AGREEMENT_SUM"
+      }
+    ],
+    "viaticos": [],
+    "asignaciones_familiares": [],
+    "descuentos": [
+      {
+        "nombre": "Jubilación",
+        "tipo": "descuento",
+        "formula": "Remunerativo * 11.0%",
+        "base_calculo": "Remunerativo",
+        "porcentaje": 11.0,
+        "importe_fijo": null,
+        "condiciones": [],
+        "excepciones": [],
+        "fuente_articulo": "retenciones_deducciones",
+        "requiere_validacion": true,
+        "observaciones": "JUBILACION"
+      },
+      {
+        "nombre": "Ley 19.032 / PAMI",
+        "tipo": "descuento",
+        "formula": "Remunerativo * 3.0%",
+        "base_calculo": "Remunerativo",
+        "porcentaje": 3.0,
+        "importe_fijo": null,
+        "condiciones": [],
+        "excepciones": [],
+        "fuente_articulo": "retenciones_deducciones",
+        "requiere_validacion": true,
+        "observaciones": "LEY_19032"
+      },
+      {
+        "nombre": "Obra Social",
+        "tipo": "descuento",
+        "formula": "Remunerativo * 3.0%",
+        "base_calculo": "Remunerativo",
+        "porcentaje": 3.0,
+        "importe_fijo": null,
+        "condiciones": [],
+        "excepciones": [],
+        "fuente_articulo": "retenciones_deducciones",
+        "requiere_validacion": true,
+        "observaciones": "OBRA_SOCIAL"
+      },
+      {
+        "nombre": "Aporte Federativo",
+        "tipo": "descuento",
+        "formula": "Remunerativo * 1.0%",
+        "base_calculo": "Remunerativo",
+        "porcentaje": 1.0,
+        "importe_fijo": null,
+        "condiciones": [],
+        "excepciones": [],
+        "fuente_articulo": "retenciones_deducciones",
+        "requiere_validacion": true,
+        "observaciones": "APORTE_FED"
+      },
+      {
+        "nombre": "Sindicato",
+        "tipo": "descuento",
+        "formula": "REMUNERATIVE_TOTAL * 2.0%",
+        "base_calculo": "REMUNERATIVE_TOTAL",
+        "porcentaje": 2.0,
+        "importe_fijo": null,
+        "condiciones": [],
+        "excepciones": [],
+        "fuente_articulo": "retenciones_deducciones",
+        "requiere_validacion": true,
+        "observaciones": "SINDICATO"
+      }
+    ]
+  },
+  "jornada_tiempos": {
+    "jornada_estandar": {
+      "maximo_horas_diarias": 8,
+      "maximo_horas_semanales": 48,
+      "fuente_normativa": "LCT 20.744 y Ley 11.544",
+      "fuente_convenio": false
+    },
+    "horas_suplementarias": [
+      {
+        "codigo": "OT_50",
+        "multiplicador": 1.5,
+        "formula": "valor_hora * multiplicador * horas",
+        "fuente_normativa": "LCT 20.744 art. 201 / convenio"
+      },
+      {
+        "codigo": "OT_100",
+        "multiplicador": 2.0,
+        "formula": "valor_hora * multiplicador * horas",
+        "fuente_normativa": "LCT 20.744 art. 201 / convenio"
+      }
+    ],
+    "jornada_nocturna": {
+      "maximo_horas": 7,
+      "fuente_normativa": "LCT 20.744"
+    },
+    "jornada_insalubre": {
+      "maximo_horas": 6,
+      "fuente_normativa": "LCT 20.744"
+    },
+    "descansos": {
+      "descanso_minimo_entre_jornadas_horas": 12,
+      "fuente_normativa": "LCT 20.744"
+    }
+  },
+  "licencias_descansos": {
+    "vacaciones_ordinarias": [
+      {
+        "antiguedad_hasta_anios": 5,
+        "dias": 14
+      },
+      {
+        "antiguedad_hasta_anios": 10,
+        "dias": 21
+      },
+      {
+        "antiguedad_hasta_anios": 20,
+        "dias": 28
+      },
+      {
+        "antiguedad_desde_anios": 20,
+        "dias": 35
+      }
+    ],
+    "licencias_especiales": [
+      {
+        "tipo": "nacimiento",
+        "dias": 2
+      },
+      {
+        "tipo": "matrimonio",
+        "dias": 10
+      },
+      {
+        "tipo": "fallecimiento_familiares",
+        "dias": "1 a 3"
+      },
+      {
+        "tipo": "examenes",
+        "dias_maximos_anuales": 10
+      }
+    ],
+    "enfermedades_infortunios": {
+      "criterio": "Considerar plazos de pago y conservacion de empleo segun antiguedad y carga de familia.",
+      "fuente_normativa": "LCT 20.744 arts. 208 a 213",
+      "fuente_convenio": false
+    }
+  },
+  "extincion_proteccion": {
+    "preaviso": [
+      {
+        "antiguedad": "periodo_de_prueba",
+        "dias": 15
+      },
+      {
+        "antiguedad": "hasta_5_anios",
+        "meses": 1
+      },
+      {
+        "antiguedad": "mas_de_5_anios",
+        "meses": 2
+      }
+    ],
+    "indemnizaciones": [
+      {
+        "tipo": "despido_sin_causa",
+        "formula": "mejor_remuneracion_mensual_normal_habitual * anios_servicio_o_fraccion_mayor_3_meses",
+        "fuente_normativa": "LCT 20.744 art. 245"
+      }
+    ],
+    "sac": {
+      "cuotas": [
+        "junio",
+        "diciembre"
+      ],
+      "formula": "50% de la mayor remuneracion mensual devengada del semestre",
+      "sac_proporcional_extincion": true
+    },
+    "liquidacion_final": {
+      "conceptos": [
+        "dias_trabajados",
+        "vacaciones_no_gozadas",
+        "sac_proporcional",
+        "indemnizaciones_si_corresponde"
+      ],
+      "fuente_convenio": false
+    },
+    "agravantes": [
+      {
+        "tipo": "maternidad",
+        "requiere_validacion": true
+      },
+      {
+        "tipo": "matrimonio",
+        "requiere_validacion": true
+      },
+      {
+        "tipo": "otras_protecciones_legales",
+        "requiere_validacion": true
+      }
+    ]
+  },
+  "validaciones_legales": [
+    {
+      "estado": "requiere_confirmacion",
+      "mensaje": "Validar que el salario basico de cada categoria no sea inferior al SMVM ni al minimo legal aplicable.",
+      "valor_ingresado": 7336.54,
+      "valor_minimo_legal": "SMVM vigente / minimo LCT aplicable",
+      "fuente_normativa": "LCT 20.744 art. 7, art. 8 y principio de norma mas favorable",
+      "accion_sugerida": "Actualizar valor minimo legal vigente antes de liquidar."
+    },
+    {
+      "estado": "valido",
+      "mensaje": "Jornada estandar configurada con maximos legales generales.",
+      "valor_ingresado": "8 horas diarias / 48 semanales",
+      "valor_minimo_legal": "No superar maximos legales",
+      "fuente_normativa": "LCT 20.744 y Ley 11.544",
+      "accion_sugerida": "Aplicar regla mas favorable si el convenio establece menor jornada."
+    },
+    {
+      "estado": "valido",
+      "mensaje": "Multiplicador OT_50 contra minimo legal.",
+      "valor_ingresado": 1.5,
+      "valor_minimo_legal": 1.5,
+      "fuente_normativa": "LCT 20.744 art. 201",
+      "accion_sugerida": "Si el valor convencional es menor, aplicar el minimo legal mas favorable."
+    },
+    {
+      "estado": "valido",
+      "mensaje": "Multiplicador OT_100 contra minimo legal.",
+      "valor_ingresado": 2.0,
+      "valor_minimo_legal": 2.0,
+      "fuente_normativa": "LCT 20.744 art. 201",
+      "accion_sugerida": "Si el valor convencional es menor, aplicar el minimo legal mas favorable."
+    }
+  ],
+  "fuentes_normativas": [
+    {
+      "tipo": "convenio_colectivo",
+      "referencia": "CCT_775_2019",
+      "documento": "Copia de Carne. Procesadores de aves, CCT 775_2019. Homologación.pdf, Copia de carne-cct607-2010-marzo2026.pdf, Informe de Escalas Salariales_ CCT N° 607_10 - Marzo 2026.pdf, Manual Normativo del Convenio Colectivo de Trabajo N° 607_10 (Reg. 775_2019) - Industria Avícola.pdf"
+    },
+    {
+      "tipo": "ley",
+      "referencia": "LCT 20.744"
+    },
+    {
+      "tipo": "ley",
+      "referencia": "Ley 11.544 jornada de trabajo"
+    }
+  ],
+  "advertencias_auditor": [
+    {
+      "codigo": "overtime_must_match_declared_multiplier",
+      "mensaje": "Regla de auditoria generada desde el convenio"
+    },
+    {
+      "codigo": "deductions_apply_only_to_remunerative_total",
+      "mensaje": "Regla de auditoria generada desde el convenio"
+    }
+  ]
+}

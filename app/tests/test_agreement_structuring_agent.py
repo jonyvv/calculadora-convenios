@@ -56,6 +56,18 @@ def test_agreement_structuring_agent_builds_agreement_from_full_text(tmp_path):
     assert len(agreement["categories"]) == 2
     assert agreement["salary_model"]["employer_contributions"]
     assert any(rule["rule"] == "attendance_bonus_removed_if_unjustified_absence" for rule in agreement["audit_rules"])
+    assert agreement["identificacion_alcance"]["partes_signatarias"]
+    assert agreement["identificacion_alcance"]["categorias_profesionales"]
+    assert agreement["remuneraciones"]["salario_basico"]
+    assert agreement["remuneraciones"]["antiguedad"]
+    assert agreement["remuneraciones"]["presentismo_asistencia"]
+    assert agreement["jornada_tiempos"]["jornada_estandar"]["maximo_horas_diarias"] == 8
+    assert any(rule["codigo"] == "OT_50" for rule in agreement["jornada_tiempos"]["horas_suplementarias"])
+    assert any(rule["codigo"] == "OT_100" for rule in agreement["jornada_tiempos"]["horas_suplementarias"])
+    assert agreement["licencias_descansos"]["vacaciones_ordinarias"][0]["dias"] == 14
+    assert agreement["extincion_proteccion"]["sac"]["sac_proporcional_extincion"] is True
+    assert agreement["extincion_proteccion"]["indemnizaciones"][0]["tipo"] == "despido_sin_causa"
+    assert agreement["validaciones_legales"]
 
 
 def test_agreement_structuring_agent_marks_draft_without_full_text(tmp_path):

@@ -16,16 +16,19 @@ class ConventionStructuringService:
         self.agreements = agreements
 
     def upload_convention(self, documents: list[tuple[str, bytes]]) -> tuple[Agreement, dict, list[str], str, list[dict]]:
-        extracted_documents = []
-        for document in documents:
-            extracted = self.extraction_orchestrator.extract_text(document)
-            extracted_documents.append({
-                "filename": document[0],
-                "source": extracted["source"],
-                "text": extracted["text"],
-            })
+        extracted = self.extraction_orchestrator.extract_documents(documents)
+        extracted_documents = [{
+            "filename": ", ".join(filename for filename, _ in documents),
+            "source": extracted["source"],
+            "text": extracted["text"],
+        }]
         source_document = ", ".join(filename for filename, _ in documents)
-        full_text = "\n\n".join(f"## SOURCE_DOCUMENT: {item['filename']}\n{item['text']}" for item in extracted_documents)
+        full_text = (
+            "## CONVENIO_UNIFICADO\n"
+            "Todos los SOURCE_DOCUMENT pertenecen al mismo convenio y deben estructurarse como un unico Agreement.\n\n"
+            f"## SOURCE_DOCUMENTS\n{source_document}\n\n"
+            f"{extracted['text']}"
+        )
         codex_input = {
             "document_metadata": {"source_document": source_document},
             "full_text": full_text,

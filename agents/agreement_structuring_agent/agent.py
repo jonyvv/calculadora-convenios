@@ -6,6 +6,7 @@ from agents.agreement_structuring_agent.builders import (
     ComplianceBuilder,
     EventRuleBuilder,
     FormulaBuilder,
+    LegalStructureBuilder,
     MetadataBuilder,
     SalaryModelBuilder,
 )
@@ -32,6 +33,7 @@ class AgreementStructuringAgent:
         salary_model_builder: SalaryModelBuilder | None = None,
         event_rule_builder: EventRuleBuilder | None = None,
         compliance_builder: ComplianceBuilder | None = None,
+        legal_structure_builder: LegalStructureBuilder | None = None,
         formula_builder: FormulaBuilder | None = None,
         input_validator: AgreementTextInputValidator | None = None,
         agreement_validator: AgreementValidator | None = None,
@@ -44,6 +46,7 @@ class AgreementStructuringAgent:
         self.salary_model_builder = salary_model_builder or SalaryModelBuilder()
         self.event_rule_builder = event_rule_builder or EventRuleBuilder()
         self.compliance_builder = compliance_builder or ComplianceBuilder()
+        self.legal_structure_builder = legal_structure_builder or LegalStructureBuilder()
         self.formula_builder = formula_builder or FormulaBuilder()
         self.input_validator = input_validator or AgreementTextInputValidator()
         self.agreement_validator = agreement_validator or AgreementValidator()
@@ -59,12 +62,21 @@ class AgreementStructuringAgent:
             salary_model = self.salary_model_builder.build(gemini_text_json)
             event_rules = self.event_rule_builder.build(gemini_text_json)
             audit_rules = self.compliance_builder.build(event_rules, salary_model)
+            legal_structure = self.legal_structure_builder.build(
+                gemini_text_json,
+                metadata,
+                categories,
+                salary_model,
+                event_rules,
+                audit_rules,
+            )
             agreement = Agreement(
                 metadata=metadata,
                 categories=categories,
                 salary_model=salary_model,
                 event_rules=event_rules,
                 audit_rules=audit_rules,
+                **legal_structure,
             )
             agreement = self.formula_builder.build(agreement)
 

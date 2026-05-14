@@ -1,0 +1,694 @@
+{
+  "metadata": {
+    "agreement_id": "CCT_281_1996",
+    "name": "Convenio_Unificado",
+    "version": "2026_01",
+    "valid_from": "2026-01-01",
+    "valid_to": null,
+    "source_document": "2026-01-Completa.pdf, CCT 281-1996.pdf, conveniotrabajo.pdf, Manual de Reglas_ Convenio Colectivo de Trabajo 281_1996 (Maestranza y Limpieza).pdf, Manual Técnico de Liquidación de Haberes_ CCT 281_1996 (Enero 2026).pdf",
+    "created_at": "2026-05-12T16:12:05.911875+00:00",
+    "status": "ACTIVE",
+    "union": "Sindicato de Obreros de Maestranza (SOMRA)",
+    "activity": "Maestranza y Limpieza",
+    "jurisdiction": "Nacional",
+    "parity_terms": []
+  },
+  "categories": [
+    {
+      "category_id": "NO_INDICADO",
+      "name": "Oficial",
+      "basic_salary": 391815.0
+    },
+    {
+      "category_id": "NO_INDICADO_2",
+      "name": "Oficial 1º",
+      "basic_salary": 392023.0
+    },
+    {
+      "category_id": "A",
+      "name": "Coordinador \"A\"",
+      "basic_salary": 393647.0
+    },
+    {
+      "category_id": "B",
+      "name": "Coordinador \"B\"",
+      "basic_salary": 396475.0
+    },
+    {
+      "category_id": "C",
+      "name": "Coordinador \"C\"",
+      "basic_salary": 399728.0
+    }
+  ],
+  "salary_model": {
+    "remunerative_items": [
+      {
+        "code": "PRESENTISMO",
+        "name": "Presentismo",
+        "type": "REMUNERATIVE",
+        "calculation_type": "FIXED",
+        "base_reference": "NO_INDICADO",
+        "amount": 89596.0,
+        "rate": null,
+        "formula": "89596.0",
+        "applies_to_categories": [],
+        "applies_to_tags": [],
+        "input_mode": "AUTO",
+        "unit": null
+      },
+      {
+        "code": "AIS",
+        "name": "Asignación Integración Social",
+        "type": "REMUNERATIVE",
+        "calculation_type": "FIXED",
+        "base_reference": "NO_INDICADO",
+        "amount": 59031.0,
+        "rate": null,
+        "formula": "59031.0",
+        "applies_to_categories": [],
+        "applies_to_tags": [],
+        "input_mode": "AUTO",
+        "unit": null
+      },
+      {
+        "code": "VIATICO",
+        "name": "Viático (Remunerativo)",
+        "type": "REMUNERATIVE",
+        "calculation_type": "FIXED",
+        "base_reference": "NO_INDICADO",
+        "amount": 245090.0,
+        "rate": null,
+        "formula": "245090.0",
+        "applies_to_categories": [
+          "COORD",
+          "C"
+        ],
+        "applies_to_tags": [],
+        "input_mode": "AUTO",
+        "unit": null
+      },
+      {
+        "code": "ADIC_SALUD",
+        "name": "Adicional Salud",
+        "type": "REMUNERATIVE",
+        "calculation_type": "PERCENTAGE",
+        "base_reference": "Básico + Antigüedad",
+        "amount": null,
+        "rate": 12.0,
+        "formula": "Básico + Antigüedad * 12.0%",
+        "applies_to_categories": [],
+        "applies_to_tags": [],
+        "input_mode": "AUTO",
+        "unit": null
+      },
+      {
+        "code": "ADIC_EQUIPO",
+        "name": "Plus Trabajo en Equipo",
+        "type": "REMUNERATIVE",
+        "calculation_type": "PERCENTAGE",
+        "base_reference": "Básico + Antigüedad",
+        "amount": null,
+        "rate": 13.0,
+        "formula": "Básico + Antigüedad * 13.0%",
+        "applies_to_categories": [],
+        "applies_to_tags": [],
+        "input_mode": "AUTO",
+        "unit": null
+      },
+      {
+        "code": "ZONA_FRIA",
+        "name": "Adicional Zona Fría",
+        "type": "REMUNERATIVE",
+        "calculation_type": "PERCENTAGE",
+        "base_reference": "Básicos",
+        "amount": null,
+        "rate": 20.0,
+        "formula": "Básicos * 20.0%",
+        "applies_to_categories": [],
+        "applies_to_tags": [],
+        "input_mode": "AUTO",
+        "unit": null
+      }
+    ],
+    "non_remunerative_items": [
+      {
+        "code": "ASIG_EXT_NR",
+        "name": "Asig. Ext. No Rem",
+        "type": "NON_REMUNERATIVE",
+        "calculation_type": "FIXED",
+        "base_reference": "NO_INDICADO",
+        "amount": 134680.0,
+        "rate": null,
+        "formula": "134680.0",
+        "applies_to_categories": [
+          "COORD",
+          "C"
+        ],
+        "applies_to_tags": [],
+        "input_mode": "AUTO",
+        "unit": null
+      }
+    ],
+    "deductions": [
+      {
+        "code": "CUOTA_SINDICAL",
+        "name": "Cuota Sindical",
+        "rate": 2.5,
+        "base": "Total bruto"
+      },
+      {
+        "code": "APORTE_FOMENTO",
+        "name": "Aporte Fomento Act. Sociales",
+        "rate": 1.5,
+        "base": "Total bruto"
+      },
+      {
+        "code": "JUBILACION",
+        "name": "Jubilación",
+        "rate": 11.0,
+        "base": "Total bruto"
+      },
+      {
+        "code": "LEY_19032",
+        "name": "Ley 19.032 / PAMI",
+        "rate": 3.0,
+        "base": "Total bruto"
+      },
+      {
+        "code": "OBRA_SOCIAL",
+        "name": "Obra Social",
+        "rate": 3.0,
+        "base": "Total bruto"
+      }
+    ],
+    "employer_contributions": [],
+    "fiscal_shields": [
+      {
+        "code": "NON_REMUNERATIVE_LIMIT",
+        "description": "Conceptos no remunerativos detectados"
+      }
+    ],
+    "overtime_rules": [
+      {
+        "code": "OT_50",
+        "multiplier": 1.5
+      },
+      {
+        "code": "OT_100",
+        "multiplier": 2.0
+      }
+    ]
+  },
+  "event_rules": [],
+  "audit_rules": [
+    {
+      "rule": "overtime_must_match_declared_multiplier"
+    },
+    {
+      "rule": "deductions_apply_only_to_remunerative_total"
+    }
+  ],
+  "identificacion_alcance": {
+    "partes_signatarias": [
+      "Sindicato de Obreros de Maestranza (SOMRA)"
+    ],
+    "vigencia": {
+      "desde": "2026-01-01",
+      "hasta": null,
+      "paritarias": []
+    },
+    "ambito_aplicacion": {
+      "actividad": "Maestranza y Limpieza",
+      "jurisdiccion": "Nacional",
+      "territorio": "Nacional",
+      "rama": "Maestranza y Limpieza"
+    },
+    "categorias_profesionales": [
+      {
+        "codigo": "NO_INDICADO",
+        "nombre": "Oficial",
+        "salario_basico": 391815.0
+      },
+      {
+        "codigo": "NO_INDICADO_2",
+        "nombre": "Oficial 1º",
+        "salario_basico": 392023.0
+      },
+      {
+        "codigo": "A",
+        "nombre": "Coordinador \"A\"",
+        "salario_basico": 393647.0
+      },
+      {
+        "codigo": "B",
+        "nombre": "Coordinador \"B\"",
+        "salario_basico": 396475.0
+      },
+      {
+        "codigo": "C",
+        "nombre": "Coordinador \"C\"",
+        "salario_basico": 399728.0
+      }
+    ]
+  },
+  "remuneraciones": {
+    "salario_basico": [
+      {
+        "nombre": "Salario basico - Oficial",
+        "tipo": "remunerativo",
+        "formula": "importe_fijo",
+        "base_calculo": "categoria_profesional",
+        "porcentaje": null,
+        "importe_fijo": 391815.0,
+        "condiciones": [],
+        "excepciones": [],
+        "fuente_articulo": "escala_salarial",
+        "requiere_validacion": false,
+        "observaciones": "Categoria NO_INDICADO"
+      },
+      {
+        "nombre": "Salario basico - Oficial 1º",
+        "tipo": "remunerativo",
+        "formula": "importe_fijo",
+        "base_calculo": "categoria_profesional",
+        "porcentaje": null,
+        "importe_fijo": 392023.0,
+        "condiciones": [],
+        "excepciones": [],
+        "fuente_articulo": "escala_salarial",
+        "requiere_validacion": false,
+        "observaciones": "Categoria NO_INDICADO_2"
+      },
+      {
+        "nombre": "Salario basico - Coordinador \"A\"",
+        "tipo": "remunerativo",
+        "formula": "importe_fijo",
+        "base_calculo": "categoria_profesional",
+        "porcentaje": null,
+        "importe_fijo": 393647.0,
+        "condiciones": [],
+        "excepciones": [],
+        "fuente_articulo": "escala_salarial",
+        "requiere_validacion": false,
+        "observaciones": "Categoria A"
+      },
+      {
+        "nombre": "Salario basico - Coordinador \"B\"",
+        "tipo": "remunerativo",
+        "formula": "importe_fijo",
+        "base_calculo": "categoria_profesional",
+        "porcentaje": null,
+        "importe_fijo": 396475.0,
+        "condiciones": [],
+        "excepciones": [],
+        "fuente_articulo": "escala_salarial",
+        "requiere_validacion": false,
+        "observaciones": "Categoria B"
+      },
+      {
+        "nombre": "Salario basico - Coordinador \"C\"",
+        "tipo": "remunerativo",
+        "formula": "importe_fijo",
+        "base_calculo": "categoria_profesional",
+        "porcentaje": null,
+        "importe_fijo": 399728.0,
+        "condiciones": [],
+        "excepciones": [],
+        "fuente_articulo": "escala_salarial",
+        "requiere_validacion": false,
+        "observaciones": "Categoria C"
+      }
+    ],
+    "adicionales_fijos": [
+      {
+        "nombre": "Asignación Integración Social",
+        "tipo": "remunerativo",
+        "formula": "importe_fijo",
+        "base_calculo": "NO_INDICADO",
+        "porcentaje": null,
+        "importe_fijo": 59031.0,
+        "condiciones": [],
+        "excepciones": [],
+        "fuente_articulo": "salary_model",
+        "requiere_validacion": false,
+        "observaciones": "AIS"
+      }
+    ],
+    "adicionales_variables": [
+      {
+        "nombre": "Adicional Zona Fría",
+        "tipo": "remunerativo",
+        "formula": "Básicos * 20.0%",
+        "base_calculo": "Básicos",
+        "porcentaje": 20.0,
+        "importe_fijo": null,
+        "condiciones": [],
+        "excepciones": [],
+        "fuente_articulo": "salary_model",
+        "requiere_validacion": false,
+        "observaciones": "ZONA_FRIA"
+      }
+    ],
+    "antiguedad": [
+      {
+        "nombre": "Adicional Salud",
+        "tipo": "remunerativo",
+        "formula": "Básico + Antigüedad * 12.0%",
+        "base_calculo": "Básico + Antigüedad",
+        "porcentaje": 12.0,
+        "importe_fijo": null,
+        "condiciones": [],
+        "excepciones": [],
+        "fuente_articulo": "salary_model",
+        "requiere_validacion": false,
+        "observaciones": "ADIC_SALUD"
+      },
+      {
+        "nombre": "Plus Trabajo en Equipo",
+        "tipo": "remunerativo",
+        "formula": "Básico + Antigüedad * 13.0%",
+        "base_calculo": "Básico + Antigüedad",
+        "porcentaje": 13.0,
+        "importe_fijo": null,
+        "condiciones": [],
+        "excepciones": [],
+        "fuente_articulo": "salary_model",
+        "requiere_validacion": false,
+        "observaciones": "ADIC_EQUIPO"
+      }
+    ],
+    "presentismo_asistencia": [
+      {
+        "nombre": "Presentismo",
+        "tipo": "remunerativo",
+        "formula": "importe_fijo",
+        "base_calculo": "NO_INDICADO",
+        "porcentaje": null,
+        "importe_fijo": 89596.0,
+        "condiciones": [],
+        "excepciones": [],
+        "fuente_articulo": "salary_model",
+        "requiere_validacion": false,
+        "observaciones": "PRESENTISMO"
+      }
+    ],
+    "titulos_tecnicos_profesionales": [],
+    "remuneraciones_por_rendimiento": [],
+    "beneficios_no_remunerativos": [
+      {
+        "nombre": "Asig. Ext. No Rem",
+        "tipo": "no_remunerativo",
+        "formula": "importe_fijo",
+        "base_calculo": "NO_INDICADO",
+        "porcentaje": null,
+        "importe_fijo": 134680.0,
+        "condiciones": [
+          "Aplica a categorias: COORD, C"
+        ],
+        "excepciones": [],
+        "fuente_articulo": "salary_model",
+        "requiere_validacion": false,
+        "observaciones": "ASIG_EXT_NR"
+      }
+    ],
+    "viaticos": [
+      {
+        "nombre": "Viático (Remunerativo)",
+        "tipo": "remunerativo",
+        "formula": "importe_fijo",
+        "base_calculo": "NO_INDICADO",
+        "porcentaje": null,
+        "importe_fijo": 245090.0,
+        "condiciones": [
+          "Aplica a categorias: COORD, C"
+        ],
+        "excepciones": [],
+        "fuente_articulo": "salary_model",
+        "requiere_validacion": false,
+        "observaciones": "VIATICO"
+      }
+    ],
+    "asignaciones_familiares": [],
+    "descuentos": [
+      {
+        "nombre": "Cuota Sindical",
+        "tipo": "descuento",
+        "formula": "Total bruto * 2.5%",
+        "base_calculo": "Total bruto",
+        "porcentaje": 2.5,
+        "importe_fijo": null,
+        "condiciones": [],
+        "excepciones": [],
+        "fuente_articulo": "retenciones_deducciones",
+        "requiere_validacion": true,
+        "observaciones": "CUOTA_SINDICAL"
+      },
+      {
+        "nombre": "Aporte Fomento Act. Sociales",
+        "tipo": "descuento",
+        "formula": "Total bruto * 1.5%",
+        "base_calculo": "Total bruto",
+        "porcentaje": 1.5,
+        "importe_fijo": null,
+        "condiciones": [],
+        "excepciones": [],
+        "fuente_articulo": "retenciones_deducciones",
+        "requiere_validacion": true,
+        "observaciones": "APORTE_FOMENTO"
+      },
+      {
+        "nombre": "Jubilación",
+        "tipo": "descuento",
+        "formula": "Total bruto * 11.0%",
+        "base_calculo": "Total bruto",
+        "porcentaje": 11.0,
+        "importe_fijo": null,
+        "condiciones": [],
+        "excepciones": [],
+        "fuente_articulo": "retenciones_deducciones",
+        "requiere_validacion": true,
+        "observaciones": "JUBILACION"
+      },
+      {
+        "nombre": "Ley 19.032 / PAMI",
+        "tipo": "descuento",
+        "formula": "Total bruto * 3.0%",
+        "base_calculo": "Total bruto",
+        "porcentaje": 3.0,
+        "importe_fijo": null,
+        "condiciones": [],
+        "excepciones": [],
+        "fuente_articulo": "retenciones_deducciones",
+        "requiere_validacion": true,
+        "observaciones": "LEY_19032"
+      },
+      {
+        "nombre": "Obra Social",
+        "tipo": "descuento",
+        "formula": "Total bruto * 3.0%",
+        "base_calculo": "Total bruto",
+        "porcentaje": 3.0,
+        "importe_fijo": null,
+        "condiciones": [],
+        "excepciones": [],
+        "fuente_articulo": "retenciones_deducciones",
+        "requiere_validacion": true,
+        "observaciones": "OBRA_SOCIAL"
+      }
+    ]
+  },
+  "jornada_tiempos": {
+    "jornada_estandar": {
+      "maximo_horas_diarias": 8,
+      "maximo_horas_semanales": 48,
+      "fuente_normativa": "LCT 20.744 y Ley 11.544",
+      "fuente_convenio": false
+    },
+    "horas_suplementarias": [
+      {
+        "codigo": "OT_50",
+        "multiplicador": 1.5,
+        "formula": "valor_hora * multiplicador * horas",
+        "fuente_normativa": "LCT 20.744 art. 201 / convenio"
+      },
+      {
+        "codigo": "OT_100",
+        "multiplicador": 2.0,
+        "formula": "valor_hora * multiplicador * horas",
+        "fuente_normativa": "LCT 20.744 art. 201 / convenio"
+      }
+    ],
+    "jornada_nocturna": {
+      "maximo_horas": 7,
+      "fuente_normativa": "LCT 20.744"
+    },
+    "jornada_insalubre": {
+      "maximo_horas": 6,
+      "fuente_normativa": "LCT 20.744"
+    },
+    "descansos": {
+      "descanso_minimo_entre_jornadas_horas": 12,
+      "fuente_normativa": "LCT 20.744"
+    }
+  },
+  "licencias_descansos": {
+    "vacaciones_ordinarias": [
+      {
+        "antiguedad_hasta_anios": 5,
+        "dias": 14
+      },
+      {
+        "antiguedad_hasta_anios": 10,
+        "dias": 21
+      },
+      {
+        "antiguedad_hasta_anios": 20,
+        "dias": 28
+      },
+      {
+        "antiguedad_desde_anios": 20,
+        "dias": 35
+      }
+    ],
+    "licencias_especiales": [
+      {
+        "tipo": "nacimiento",
+        "dias": 2
+      },
+      {
+        "tipo": "matrimonio",
+        "dias": 10
+      },
+      {
+        "tipo": "fallecimiento_familiares",
+        "dias": "1 a 3"
+      },
+      {
+        "tipo": "examenes",
+        "dias_maximos_anuales": 10
+      }
+    ],
+    "enfermedades_infortunios": {
+      "criterio": "Considerar plazos de pago y conservacion de empleo segun antiguedad y carga de familia.",
+      "fuente_normativa": "LCT 20.744 arts. 208 a 213",
+      "fuente_convenio": false
+    }
+  },
+  "extincion_proteccion": {
+    "preaviso": [
+      {
+        "antiguedad": "periodo_de_prueba",
+        "dias": 15
+      },
+      {
+        "antiguedad": "hasta_5_anios",
+        "meses": 1
+      },
+      {
+        "antiguedad": "mas_de_5_anios",
+        "meses": 2
+      }
+    ],
+    "indemnizaciones": [
+      {
+        "tipo": "despido_sin_causa",
+        "formula": "mejor_remuneracion_mensual_normal_habitual * anios_servicio_o_fraccion_mayor_3_meses",
+        "fuente_normativa": "LCT 20.744 art. 245"
+      }
+    ],
+    "sac": {
+      "cuotas": [
+        "junio",
+        "diciembre"
+      ],
+      "formula": "50% de la mayor remuneracion mensual devengada del semestre",
+      "sac_proporcional_extincion": true
+    },
+    "liquidacion_final": {
+      "conceptos": [
+        "dias_trabajados",
+        "vacaciones_no_gozadas",
+        "sac_proporcional",
+        "indemnizaciones_si_corresponde"
+      ],
+      "fuente_convenio": false
+    },
+    "agravantes": [
+      {
+        "tipo": "maternidad",
+        "requiere_validacion": true
+      },
+      {
+        "tipo": "matrimonio",
+        "requiere_validacion": true
+      },
+      {
+        "tipo": "otras_protecciones_legales",
+        "requiere_validacion": true
+      }
+    ]
+  },
+  "validaciones_legales": [
+    {
+      "estado": "requiere_confirmacion",
+      "mensaje": "Validar que el salario basico de cada categoria no sea inferior al SMVM ni al minimo legal aplicable.",
+      "valor_ingresado": 391815.0,
+      "valor_minimo_legal": "SMVM vigente / minimo LCT aplicable",
+      "fuente_normativa": "LCT 20.744 art. 7, art. 8 y principio de norma mas favorable",
+      "accion_sugerida": "Actualizar valor minimo legal vigente antes de liquidar."
+    },
+    {
+      "estado": "valido",
+      "mensaje": "Jornada estandar configurada con maximos legales generales.",
+      "valor_ingresado": "8 horas diarias / 48 semanales",
+      "valor_minimo_legal": "No superar maximos legales",
+      "fuente_normativa": "LCT 20.744 y Ley 11.544",
+      "accion_sugerida": "Aplicar regla mas favorable si el convenio establece menor jornada."
+    },
+    {
+      "estado": "valido",
+      "mensaje": "Multiplicador OT_50 contra minimo legal.",
+      "valor_ingresado": 1.5,
+      "valor_minimo_legal": 1.5,
+      "fuente_normativa": "LCT 20.744 art. 201",
+      "accion_sugerida": "Si el valor convencional es menor, aplicar el minimo legal mas favorable."
+    },
+    {
+      "estado": "valido",
+      "mensaje": "Multiplicador OT_100 contra minimo legal.",
+      "valor_ingresado": 2.0,
+      "valor_minimo_legal": 2.0,
+      "fuente_normativa": "LCT 20.744 art. 201",
+      "accion_sugerida": "Si el valor convencional es menor, aplicar el minimo legal mas favorable."
+    }
+  ],
+  "fuentes_normativas": [
+    {
+      "tipo": "convenio_colectivo",
+      "referencia": "CCT_281_1996",
+      "documento": "2026-01-Completa.pdf, CCT 281-1996.pdf, conveniotrabajo.pdf, Manual de Reglas_ Convenio Colectivo de Trabajo 281_1996 (Maestranza y Limpieza).pdf, Manual Técnico de Liquidación de Haberes_ CCT 281_1996 (Enero 2026).pdf"
+    },
+    {
+      "tipo": "ley",
+      "referencia": "LCT 20.744"
+    },
+    {
+      "tipo": "ley",
+      "referencia": "Ley 11.544 jornada de trabajo"
+    }
+  ],
+  "advertencias_auditor": [
+    {
+      "codigo": "overtime_must_match_declared_multiplier",
+      "mensaje": "Regla de auditoria generada desde el convenio"
+    },
+    {
+      "codigo": "deductions_apply_only_to_remunerative_total",
+      "mensaje": "Regla de auditoria generada desde el convenio"
+    },
+    {
+      "codigo": "EVENT_RULES_EMPTY",
+      "mensaje": "No se detectaron reglas de novedades; revisar licencias, ausencias y feriados."
+    }
+  ]
+}

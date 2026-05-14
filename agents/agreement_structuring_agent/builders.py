@@ -8,9 +8,16 @@ from app.domain.entities.agreement import (
     Category,
     Deduction,
     EventRule,
+    ConceptoConvenio,
+    ModuloExtincionProteccion,
+    ModuloIdentificacionAlcance,
+    ModuloJornadaTiempos,
+    ModuloLicenciasDescansos,
+    ModuloRemuneraciones,
     OvertimeRule,
     SalaryItem,
     SalaryModel,
+    ValidacionLegal,
 )
 
 
@@ -678,11 +685,279 @@ class ComplianceBuilder:
         return rules
 
 
+class LegalStructureBuilder:
+    def build(
+        self,
+        payload: dict,
+        metadata: AgreementMetadata,
+        categories: list[Category],
+        salary_model: SalaryModel,
+        event_rules: list[EventRule],
+        audit_rules: list[AuditRule],
+    ) -> dict:
+        text = payload.get("full_text") or ""
+        return {
+            "identificacion_alcance": self._identificacion_alcance(text, metadata, categories),
+            "remuneraciones": self._remuneraciones(categories, salary_model),
+            "jornada_tiempos": self._jornada_tiempos(text, salary_model),
+            "licencias_descansos": self._licencias_descansos(text),
+            "extincion_proteccion": self._extincion_proteccion(text),
+            "validaciones_legales": self._validaciones_legales(categories, salary_model),
+            "fuentes_normativas": self._fuentes_normativas(metadata),
+            "advertencias_auditor": self._advertencias_auditor(audit_rules, event_rules),
+        }
+
+    def _identificacion_alcance(self, text: str, metadata: AgreementMetadata, categories: list[Category]) -> ModuloIdentificacionAlcance:
+        parties = [value for value in [metadata.union, self._employer_party(text)] if value]
+        return ModuloIdentificacionAlcance(
+            partes_signatarias=parties,
+            vigencia={
+                "desde": metadata.valid_from,
+                "hasta": metadata.valid_to,
+                "paritarias": metadata.parity_terms,
+            },
+            ambito_aplicacion={
+                "actividad": metadata.activity,
+                "jurisdiccion": metadata.jurisdiction,
+                "territorio": metadata.jurisdiction or "NO_INDICADO",
+                "rama": metadata.activity or "NO_INDICADO",
+            },
+            categorias_profesionales=[
+                {
+                    "codigo": category.category_id,
+                    "nombre": category.name,
+                    "salario_basico": category.basic_salary,
+                }
+                for category in categories
+            ],
+        )
+
+    def _remuneraciones(self, categories: list[Category], salary_model: SalaryModel) -> ModuloRemuneraciones:
+        basic = [
+            ConceptoConvenio(
+                nombre=f"Salario basico - {category.name}",
+                tipo="remunerativo",
+                formula="importe_fijo",
+                base_calculo="categoria_profesional",
+                importe_fijo=category.basic_salary,
+                fuente_articulo="escala_salarial",
+                observaciones=f"Categoria {category.category_id}",
+            )
+            for category in categories
+        ]
+        module = ModuloRemuneraciones(salario_basico=basic)
+        for item in salary_model.remunerative_items:
+            self._append_salary_item(module, item)
+        for item in salary_model.non_remunerative_items:
+            self._append_salary_item(module, item)
+        module.descuentos = [
+            ConceptoConvenio(
+                nombre=deduction.name or deduction.code,
+                tipo="descuento",
+                formula=f"{deduction.base} * {deduction.rate}%",
+                base_calculo=deduction.base,
+                porcentaje=deduction.rate,
+                fuente_articulo="retenciones_deducciones",
+                requiere_validacion=True,
+                observaciones=deduction.code,
+            )
+            for deduction in salary_model.deductions
+        ]
+        return module
+
+    def _append_salary_item(self, module: ModuloRemuneraciones, item: SalaryItem) -> None:
+        concept = self._concept_from_salary_item(item)
+        key = self._remuneration_bucket(item)
+        getattr(module, key).append(concept)
+
+    def _concept_from_salary_item(self, item: SalaryItem) -> ConceptoConvenio:
+        tipo = "remunerativo" if item.type == "REMUNERATIVE" else "no_remunerativo"
+        formula = item.formula
+        if not formula and item.rate is not None:
+            formula = f"{item.base_reference or 'BASIC'} * {item.rate}%"
+        if not formula and item.amount is not None:
+            formula = "importe_fijo"
+        conditions = []
+        if item.applies_to_categories:
+            conditions.append(f"Aplica a categorias: {', '.join(item.applies_to_categories)}")
+        if item.applies_to_tags:
+            conditions.append(f"Aplica a etiquetas: {', '.join(item.applies_to_tags)}")
+        if item.input_mode == "MANUAL" or item.unit:
+            conditions.append(f"Requiere carga manual de unidad {item.unit or 'cantidad'}")
+        return ConceptoConvenio(
+            nombre=item.name,
+            tipo=tipo,
+            formula=formula,
+            base_calculo=item.base_reference or "BASIC",
+            porcentaje=item.rate,
+            importe_fijo=item.amount,
+            condiciones=conditions,
+            excepciones=[],
+            fuente_articulo="salary_model",
+            requiere_validacion=item.input_mode == "MANUAL" or item.unit is not None,
+            observaciones=item.code,
+        )
+
+    def _remuneration_bucket(self, item: SalaryItem) -> str:
+        value = TextTools.code(f"{item.code} {item.name} {item.base_reference}")
+        if item.type == "NON_REMUNERATIVE":
+            if any(token in value for token in ("VIATIC", "COMIDA", "KM", "KILOMETRO", "PERNOCT", "VIAJE")):
+                return "viaticos"
+            return "beneficios_no_remunerativos"
+        if "ANTIG" in value or "SENIORITY" in value:
+            return "antiguedad"
+        if "PRESENTISMO" in value or "ASISTENCIA" in value or "ATTENDANCE" in value:
+            return "presentismo_asistencia"
+        if "TITULO" in value or "TECNICO" in value or "PROFESIONAL" in value:
+            return "titulos_tecnicos_profesionales"
+        if "PRODUCTIVIDAD" in value or "RENDIMIENTO" in value or "COMISION" in value:
+            return "remuneraciones_por_rendimiento"
+        if any(token in value for token in ("VIATIC", "COMIDA", "KM", "KILOMETRO", "PERNOCT", "VIAJE")):
+            return "viaticos"
+        if item.calculation_type == "FIXED":
+            return "adicionales_fijos"
+        return "adicionales_variables"
+
+    def _jornada_tiempos(self, text: str, salary_model: SalaryModel) -> ModuloJornadaTiempos:
+        overtime = [
+            {
+                "codigo": rule.code,
+                "multiplicador": rule.multiplier,
+                "formula": "valor_hora * multiplicador * horas",
+                "fuente_normativa": "LCT 20.744 art. 201 / convenio",
+            }
+            for rule in salary_model.overtime_rules
+        ]
+        return ModuloJornadaTiempos(
+            jornada_estandar={
+                "maximo_horas_diarias": 8,
+                "maximo_horas_semanales": 48,
+                "fuente_normativa": "LCT 20.744 y Ley 11.544",
+                "fuente_convenio": self._contains(text, "jornada"),
+            },
+            horas_suplementarias=overtime or [
+                {"codigo": "OT_50", "multiplicador": 1.5, "condicion": "Dias comunes"},
+                {"codigo": "OT_100", "multiplicador": 2.0, "condicion": "Sabados despues de las 13 hs, domingos y feriados"},
+            ],
+            jornada_nocturna={"maximo_horas": 7, "fuente_normativa": "LCT 20.744"},
+            jornada_insalubre={"maximo_horas": 6, "fuente_normativa": "LCT 20.744"},
+            descansos={"descanso_minimo_entre_jornadas_horas": 12, "fuente_normativa": "LCT 20.744"},
+        )
+
+    def _licencias_descansos(self, text: str) -> ModuloLicenciasDescansos:
+        return ModuloLicenciasDescansos(
+            vacaciones_ordinarias=[
+                {"antiguedad_hasta_anios": 5, "dias": 14},
+                {"antiguedad_hasta_anios": 10, "dias": 21},
+                {"antiguedad_hasta_anios": 20, "dias": 28},
+                {"antiguedad_desde_anios": 20, "dias": 35},
+            ],
+            licencias_especiales=[
+                {"tipo": "nacimiento", "dias": 2},
+                {"tipo": "matrimonio", "dias": 10},
+                {"tipo": "fallecimiento_familiares", "dias": "1 a 3"},
+                {"tipo": "examenes", "dias_maximos_anuales": 10},
+            ],
+            enfermedades_infortunios={
+                "criterio": "Considerar plazos de pago y conservacion de empleo segun antiguedad y carga de familia.",
+                "fuente_normativa": "LCT 20.744 arts. 208 a 213",
+                "fuente_convenio": self._contains(text, "enfermedad") or self._contains(text, "infortunio"),
+            },
+        )
+
+    def _extincion_proteccion(self, text: str) -> ModuloExtincionProteccion:
+        return ModuloExtincionProteccion(
+            preaviso=[
+                {"antiguedad": "periodo_de_prueba", "dias": 15},
+                {"antiguedad": "hasta_5_anios", "meses": 1},
+                {"antiguedad": "mas_de_5_anios", "meses": 2},
+            ],
+            indemnizaciones=[
+                {
+                    "tipo": "despido_sin_causa",
+                    "formula": "mejor_remuneracion_mensual_normal_habitual * anios_servicio_o_fraccion_mayor_3_meses",
+                    "fuente_normativa": "LCT 20.744 art. 245",
+                }
+            ],
+            sac={
+                "cuotas": ["junio", "diciembre"],
+                "formula": "50% de la mayor remuneracion mensual devengada del semestre",
+                "sac_proporcional_extincion": True,
+            },
+            liquidacion_final={
+                "conceptos": ["dias_trabajados", "vacaciones_no_gozadas", "sac_proporcional", "indemnizaciones_si_corresponde"],
+                "fuente_convenio": self._contains(text, "liquidacion final") or self._contains(text, "extincion"),
+            },
+            agravantes=[
+                {"tipo": "maternidad", "requiere_validacion": True},
+                {"tipo": "matrimonio", "requiere_validacion": True},
+                {"tipo": "otras_protecciones_legales", "requiere_validacion": True},
+            ],
+        )
+
+    def _validaciones_legales(self, categories: list[Category], salary_model: SalaryModel) -> list[ValidacionLegal]:
+        validations = [
+            ValidacionLegal(
+                estado="requiere_confirmacion",
+                mensaje="Validar que el salario basico de cada categoria no sea inferior al SMVM ni al minimo legal aplicable.",
+                valor_ingresado=min((category.basic_salary for category in categories), default=None),
+                valor_minimo_legal="SMVM vigente / minimo LCT aplicable",
+                fuente_normativa="LCT 20.744 art. 7, art. 8 y principio de norma mas favorable",
+                accion_sugerida="Actualizar valor minimo legal vigente antes de liquidar.",
+            ),
+            ValidacionLegal(
+                estado="valido",
+                mensaje="Jornada estandar configurada con maximos legales generales.",
+                valor_ingresado="8 horas diarias / 48 semanales",
+                valor_minimo_legal="No superar maximos legales",
+                fuente_normativa="LCT 20.744 y Ley 11.544",
+                accion_sugerida="Aplicar regla mas favorable si el convenio establece menor jornada.",
+            ),
+        ]
+        for rule in salary_model.overtime_rules:
+            minimum = 1.5 if rule.code == "OT_50" else 2.0 if rule.code == "OT_100" else None
+            if minimum is None:
+                continue
+            validations.append(ValidacionLegal(
+                estado="valido" if rule.multiplier >= minimum else "invalido",
+                mensaje=f"Multiplicador {rule.code} contra minimo legal.",
+                valor_ingresado=rule.multiplier,
+                valor_minimo_legal=minimum,
+                fuente_normativa="LCT 20.744 art. 201",
+                accion_sugerida="Si el valor convencional es menor, aplicar el minimo legal mas favorable.",
+            ))
+        return validations
+
+    def _fuentes_normativas(self, metadata: AgreementMetadata) -> list[dict]:
+        return [
+            {"tipo": "convenio_colectivo", "referencia": metadata.agreement_id, "documento": metadata.source_document},
+            {"tipo": "ley", "referencia": "LCT 20.744"},
+            {"tipo": "ley", "referencia": "Ley 11.544 jornada de trabajo"},
+        ]
+
+    def _advertencias_auditor(self, audit_rules: list[AuditRule], event_rules: list[EventRule]) -> list[dict]:
+        warnings = [{"codigo": rule.rule, "mensaje": "Regla de auditoria generada desde el convenio"} for rule in audit_rules]
+        if not event_rules:
+            warnings.append({"codigo": "EVENT_RULES_EMPTY", "mensaje": "No se detectaron reglas de novedades; revisar licencias, ausencias y feriados."})
+        return warnings
+
+    def _employer_party(self, text: str) -> str | None:
+        for label in ("camara empresaria", "parte empresaria", "empleadores"):
+            match = re.search(rf"{label}\s*:\s*([^\n\r]+)", text, flags=re.IGNORECASE)
+            if match:
+                return match.group(1).strip()
+        return None
+
+    def _contains(self, text: str, token: str) -> bool:
+        return token.lower() in text.lower()
+
+
 __all__ = [
     "MetadataBuilder",
     "CategoryBuilder",
     "SalaryModelBuilder",
     "EventRuleBuilder",
     "ComplianceBuilder",
+    "LegalStructureBuilder",
     "FormulaBuilder",
 ]

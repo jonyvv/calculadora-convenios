@@ -33,6 +33,10 @@ class FormulaEngine:
         "Horas Mensuales": "MONTHLY_HOURS",
         "Monthly Hours": "MONTHLY_HOURS",
         "Multiplicador": "MULTIPLIER",
+        "Valor Hora": "HOURLY_VALUE",
+        "Valor Horario": "HOURLY_VALUE",
+        "Valor Dia": "DAILY_VALUE",
+        "Valor Diario": "DAILY_VALUE",
         "Total Remunerativo": "REMUNERATIVE_TOTAL",
         "Total No Remunerativo": "NON_REMUNERATIVE_TOTAL",
         "Total Haberes": "GROSS_SALARY",
@@ -53,6 +57,13 @@ class FormulaEngine:
         "ANTIGUEDAD_ANIOS": "YEARS",
         "ANTIGUEDAD_ANOS": "YEARS",
         "HOURS_PER_MONTH": "MONTHLY_HOURS",
+        "HORAS_MENSUALES": "MONTHLY_HOURS",
+        "VALOR_HORA": "HOURLY_VALUE",
+        "VALOR_HORARIO": "HOURLY_VALUE",
+        "HORA_NORMAL": "HOURLY_VALUE",
+        "VALOR_DIA": "DAILY_VALUE",
+        "VALOR_DIARIO": "DAILY_VALUE",
+        "JORNAL": "DAILY_VALUE",
         "REMUNERATIVE_TOTAL": "REMUNERATIVE_TOTAL",
         "TOTAL_REMUNERATIVO": "REMUNERATIVE_TOTAL",
         "NON_REMUNERATIVE_TOTAL": "NON_REMUNERATIVE_TOTAL",
@@ -99,6 +110,8 @@ class FormulaEngine:
     def _normalize_variables(self, variables: dict[str, Any]) -> dict[str, float]:
         normalized = {}
         for key, value in variables.items():
+            raw_token = re.sub(r"[^A-Z0-9]+", "_", self._ascii(str(key or "")).upper()).strip("_")
+            normalized[raw_token] = float(value or 0)
             normalized[self.canonical_token(key)] = float(value or 0)
         return normalized
 

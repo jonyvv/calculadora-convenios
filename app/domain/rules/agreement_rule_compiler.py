@@ -7,6 +7,7 @@ from app.domain.entities.monthly_event import Event, MonthlyEvent
 from app.domain.entities.payroll import Payroll, PayrollDetail
 from app.domain.rules.fiscal_rule import apply_fiscal_shields
 from app.domain.rules.formula_engine import FormulaEngine
+from app.domain.rules.liquidation_model import LiquidationModelResolver
 
 
 @dataclass
@@ -20,15 +21,24 @@ class PayrollExecutionContext:
     variables: dict[str, float] = field(default_factory=dict)
     monthly_hours: float = 200
     monthly_days: float = 30
+    hourly_value: float = 0
+    daily_value: float = 0
     category_name: str = ""
 
     def __post_init__(self) -> None:
+        hourly_value = self.hourly_value or (self.base_salary / self.monthly_hours if self.monthly_hours else 0)
+        daily_value = self.daily_value or (self.base_salary / self.monthly_days if self.monthly_days else 0)
         self.variables.update({
             "BASE_SALARY": self.base_salary,
             "BASIC": self.base_salary,
             "YEARS": self.employee.seniority_years,
             "MONTHLY_HOURS": self.monthly_hours,
             "DAYS_PER_MONTH": self.monthly_days,
+            "DAILY_VALUE": daily_value,
+            "VALOR_DIA": daily_value,
+            "VALOR_JORNAL": daily_value,
+            "HOURLY_VALUE": hourly_value,
+            "VALOR_HORA": hourly_value,
             "REMUNERATIVE_TOTAL": 0,
             "NON_REMUNERATIVE_TOTAL": 0,
             "GROSS_SALARY": 0,
@@ -66,12 +76,23 @@ class PayrollExecutionContext:
         return float(self.variables.get(token, self.variables.get(default, 0)))
 
     def has_effect_for_event(self, event: Event, effect: str) -> bool:
+        if self._default_effect_for_event(event, effect):
+            return True
         return any(
             rule.event_type == event.type
             and (rule.subtype is None or rule.subtype == event.subtype)
             and effect in rule.effects
             for rule in self.agreement.event_rules
         )
+
+    def _default_effect_for_event(self, event: Event, effect: str) -> bool:
+        event_type = str(event.type or "").upper()
+        subtype = str(event.subtype or "").upper()
+        if event_type == "ABSENCE" and subtype == "UNJUSTIFIED":
+            return effect in {"DISCOUNT_DAY", "LOSE_ATTENDANCE"}
+        if event_type == "HOLIDAY_WORKED" and subtype in {"", "WORKED"}:
+            return effect == "PAY_OVERTIME_100"
+        return False
 
 
 class ExecutableRule(Protocol):
@@ -178,7 +199,7 @@ class EventRuleStrategy:
     def execute(self, context: PayrollExecutionContext) -> None:
         for event in context.monthly_event.events:
             if context.has_effect_for_event(event, "DISCOUNT_DAY") and event.days:
-                amount = round((context.base_salary / context.monthly_days) * event.days, 2)
+                amount = round(context.daily_value * event.days, 2)
                 context.add_detail(PayrollDetail(
                     code=f"{event.type}_{event.subtype or 'DISCOUNT'}",
                     name=event.description or "Descuento por novedad",
@@ -186,7 +207,7 @@ class EventRuleStrategy:
                     amount=-amount,
                 ))
             if context.has_effect_for_event(event, "PAY_OVERTIME_100") and event.days:
-                amount = round((context.base_salary / context.monthly_days) * 2 * event.days, 2)
+                amount = round(context.daily_value * 2 * event.days, 2)
                 context.add_detail(PayrollDetail(
                     code=f"{event.type}_{event.subtype or 'WORKED'}",
                     name=event.description or "Feriado trabajado",
@@ -203,7 +224,7 @@ class OvertimeRuleStrategy:
                 continue
             multiplier = float(multipliers.get(event.subtype or "", 1))
             variables = {**context.variables, "MULTIPLIER": multiplier}
-            hourly_value = context.formula_engine.evaluate("BASE_SALARY / MONTHLY_HOURS", variables)
+            hourly_value = context.formula_engine.evaluate("HOURLY_VALUE", variables)
             context.add_detail(PayrollDetail(
                 code=event.subtype or "OVERTIME",
                 name=event.description or "Horas extra",
@@ -222,6 +243,24 @@ class BonusEventRuleStrategy:
                     type="REMUNERATIVE",
                     amount=round(event.amount, 2),
                 ))
+
+
+class SettlementTypeRuleStrategy:
+    def execute(self, context: PayrollExecutionContext) -> None:
+        for event in context.monthly_event.events:
+            if event.type != "LIQUIDATION":
+                continue
+            subtype = str(event.subtype or "").upper()
+            if subtype == "SAC":
+                context.refresh_totals()
+                amount = round(context.variables.get("REMUNERATIVE_TOTAL", 0) * 0.5, 2)
+                if amount > 0:
+                    context.add_detail(PayrollDetail(
+                        code="SAC",
+                        name=event.description or "SAC",
+                        type="REMUNERATIVE",
+                        amount=amount,
+                    ))
 
 
 class ManualSalaryItemRuleStrategy:
@@ -254,7 +293,7 @@ class ManualSalaryItemRuleStrategy:
         quantity = float(event.quantity or event.days or event.hours or 0)
         if quantity <= 0:
             return 0
-        variables = {**context.variables, "QUANTITY": quantity, "DAYS": float(event.days or 0), "HOURS": float(event.hours or 0)}
+        variables = {**context.variables, **self._quantity_variables(item, event, quantity)}
         if item.calculation_type == "FORMULA" and item.formula:
             amount = context.formula_engine.evaluate(item.formula, variables)
             formula_token = item.formula.upper()
@@ -265,6 +304,23 @@ class ManualSalaryItemRuleStrategy:
         if item.rate is not None:
             unit_value = context.base(item.base_reference) * float(item.rate) / 100
         return unit_value * quantity
+
+    def _quantity_variables(self, item: SalaryItem, event: Event, quantity: float) -> dict[str, float]:
+        unit = str(item.unit or self._infer_unit(item) or "").upper()
+        days = float(event.days or 0)
+        hours = float(event.hours or 0)
+        if unit == "DAY" and days <= 0:
+            days = quantity
+        if unit == "HOUR" and hours <= 0:
+            hours = quantity
+        return {
+            "QUANTITY": quantity,
+            "CANTIDAD": quantity,
+            "DAYS": days,
+            "DIAS": days,
+            "HOURS": hours,
+            "HORAS": hours,
+        }
 
     def _normalize_manual_item(self, item: SalaryItem) -> SalaryItem:
         updates = {"input_mode": "MANUAL", "unit": item.unit or self._infer_unit(item)}
@@ -351,25 +407,45 @@ class CompiledAgreementRules:
     event_rules: list[ExecutableRule]
     deduction_rules: list[ExecutableRule]
     formula_engine: FormulaEngine
+    liquidation_model_resolver: LiquidationModelResolver = field(default_factory=LiquidationModelResolver)
 
     def execute(self, agreement: Agreement, employee: Employee, monthly_event: MonthlyEvent) -> Payroll:
         category = next((category for category in agreement.categories if category.category_id == employee.category_id), None)
         if category is None:
             raise ValueError("Employee category is not present in agreement")
+        validation = self.liquidation_model_resolver.validate(agreement, monthly_event)
+        if validation.estado != "ok":
+            return Payroll(
+                employee_id=employee.employee_id,
+                period=monthly_event.period,
+                gross_salary=0,
+                deductions=0,
+                net_salary=0,
+                estado=validation.estado,
+                modelo_liquidacion=validation.modelo_liquidacion,
+                alertas=validation.alertas,
+                datos_faltantes=validation.datos_faltantes,
+                mensaje=validation.mensaje,
+            )
+        liquidation_base = self.liquidation_model_resolver.compute_base(agreement, category, monthly_event)
 
         context = PayrollExecutionContext(
             agreement=agreement,
             employee=employee,
             monthly_event=monthly_event,
-            base_salary=category.basic_salary,
+            base_salary=liquidation_base.bruto_base,
             formula_engine=self.formula_engine,
+            monthly_hours=self._monthly_hours(agreement, employee),
+            monthly_days=self._monthly_days(agreement),
+            hourly_value=liquidation_base.valor_hora,
+            daily_value=liquidation_base.valor_jornal,
             category_name=category.name,
         )
         context.add_detail(PayrollDetail(
             code="BASIC",
             name="Sueldo basico",
             type="REMUNERATIVE",
-            amount=round(category.basic_salary, 2),
+            amount=round(liquidation_base.bruto_base, 2),
         ))
 
         for rule in self.salary_rules:
@@ -392,7 +468,22 @@ class CompiledAgreementRules:
             deductions=deduction_total,
             net_salary=round(gross_salary - deduction_total, 2),
             details=context.details,
+            modelo_liquidacion=validation.modelo_liquidacion,
         )
+
+    def _monthly_hours(self, agreement: Agreement, employee: Employee) -> float:
+        jornada = agreement.jornada_tiempos.jornada_estandar or {}
+        for key in ("horas_mensuales", "monthly_hours"):
+            value = jornada.get(key)
+            if value:
+                return float(value)
+        workday = self.formula_engine.canonical_token(employee.workday)
+        if any(token in workday for token in ("PARCIAL", "REDUCIDA", "MEDIA")):
+            return 100
+        return 200
+
+    def _monthly_days(self, agreement: Agreement) -> float:
+        return self.liquidation_model_resolver.monthly_days(agreement)
 
 
 class AgreementRuleCompiler:
@@ -402,10 +493,37 @@ class AgreementRuleCompiler:
     def compile_rules(self, agreement: Agreement) -> CompiledAgreementRules:
         return CompiledAgreementRules(
             salary_rules=self._compile_salary_rules(agreement),
-            event_rules=[AttendanceGuardRule(), EventRuleStrategy(), OvertimeRuleStrategy(), BonusEventRuleStrategy(), ManualSalaryItemRuleStrategy()],
+            event_rules=[
+                AttendanceGuardRule(),
+                EventRuleStrategy(),
+                OvertimeRuleStrategy(),
+                BonusEventRuleStrategy(),
+                ManualSalaryItemRuleStrategy(),
+                SettlementTypeRuleStrategy(),
+            ],
             deduction_rules=[DeductionRuleStrategy(deduction) for deduction in agreement.salary_model.deductions],
             formula_engine=self.formula_engine,
+            liquidation_model_resolver=LiquidationModelResolver(),
         )
+
+    def _monthly_hours(self, agreement: Agreement, employee: Employee) -> float:
+        jornada = agreement.jornada_tiempos.jornada_estandar or {}
+        for key in ("horas_mensuales", "monthly_hours"):
+            value = jornada.get(key)
+            if value:
+                return float(value)
+        workday = self._ascii(employee.workday)
+        if any(token in workday for token in ("PARCIAL", "REDUCIDA", "MEDIA")):
+            return 100
+        return 200
+
+    def _monthly_days(self, agreement: Agreement) -> float:
+        jornada = agreement.jornada_tiempos.jornada_estandar or {}
+        for key in ("dias_mensuales", "monthly_days"):
+            value = jornada.get(key)
+            if value:
+                return float(value)
+        return 30
 
     def _compile_salary_rules(self, agreement: Agreement) -> list[ExecutableRule]:
         rules: list[ExecutableRule] = []

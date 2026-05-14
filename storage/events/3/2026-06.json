@@ -1,0 +1,15 @@
+{
+  "employee_id": "3",
+  "period": "2026-06",
+  "events": [
+    {
+      "type": "SALARY_ITEM",
+      "subtype": "ASIG_EXT_NR",
+      "days": null,
+      "hours": null,
+      "quantity": 1.0,
+      "amount": null,
+      "description": "Asig. Ext. No Rem"
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "employee_id": "5",
+  "period": "2026-01",
+  "events": [
+    {
+      "type": "SALARY_ITEM",
+      "subtype": "BAJA_TEMP",
+      "days": null,
+      "hours": null,
+      "quantity": 1.0,
+      "amount": null,
+      "description": "Adicional Baja Temperatura"
+    }
+  ]
+}

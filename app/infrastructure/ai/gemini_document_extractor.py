@@ -69,6 +69,21 @@ fuente:
 """
 
 
+MULTI_FILE_CONTEXT_PROMPT = """
+Los archivos adjuntos pertenecen al MISMO convenio colectivo o al mismo expediente salarial.
+Tratalos como documentos complementarios: convenio base, paritaria, escala salarial, acta acuerdo, resolucion, anexos o planillas.
+
+Reglas de asociacion entre archivos:
+- No crees convenios separados por archivo.
+- Si un archivo trae reglas y otro trae escalas, unifica reglas + escalas en una sola salida.
+- Si aparece el mismo CCT en un archivo y la escala salarial en otro, usa ese CCT para todo el resultado.
+- Si una tabla de escala esta en Excel/PDF separado, conserva la relacion de cada puesto/rol/categoria con su basico.
+- Si dos archivos tienen vigencias distintas, conserva el periodo original en la columna periodo y usa como version la vigencia salarial mas especifica.
+- Si hay informacion repetida, prioriza la tabla mas detallada y agrega la fuente en observaciones.
+- En observaciones indica el archivo fuente cuando ayude a entender de donde salio la regla.
+"""
+
+
 class GeminiDocumentTextExtractor:
     def __init__(self, client: GeminiClient):
         self.client = client
@@ -108,6 +123,51 @@ class GeminiDocumentTextExtractor:
             except PermissionError:
                 pass
 
+    def extract_documents(self, documents: list[tuple[str, bytes]]) -> str:
+        if len(documents) == 1:
+            filename, content = documents[0]
+            return self.extract_text(filename, content)
+        if not self.client.settings.gemini_api_key:
+            raise RuntimeError("GEMINI_API_KEY is required for Gemini document extraction")
+
+        import google.generativeai as genai
+
+        genai.configure(api_key=self.client.settings.gemini_api_key)
+        temp_paths = []
+        uploaded_files = []
+        try:
+            for filename, content in documents:
+                suffix = Path(filename).suffix or ".txt"
+                with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as temp:
+                    temp.write(content)
+                    temp_paths.append(temp.name)
+                uploaded_files.append(genai.upload_file(temp_paths[-1], display_name=filename))
+
+            file_list = "\n".join(f"- {filename}" for filename, _ in documents)
+            model = genai.GenerativeModel(self.client.settings.gemini_model)
+            response = model.generate_content(
+                [
+                    EXTRACTION_PROMPT,
+                    MULTI_FILE_CONTEXT_PROMPT,
+                    f"Archivos enviados para un unico convenio:\n{file_list}",
+                    *uploaded_files,
+                ],
+                generation_config={
+                    "temperature": 0,
+                    "max_output_tokens": self.client.settings.gemini_max_output_tokens,
+                },
+                request_options={"timeout": self.client.settings.gemini_timeout_seconds},
+            )
+            return response.text or ""
+        except Exception as exc:
+            raise RuntimeError(f"Gemini multi-document extraction failed: {exc}") from exc
+        finally:
+            for temp_path in temp_paths:
+                try:
+                    Path(temp_path).unlink(missing_ok=True)
+                except PermissionError:
+                    pass
+
 
 class MockGeminiDocumentTextExtractor(GeminiDocumentTextExtractor):
     def __init__(self):
@@ -115,3 +175,9 @@ class MockGeminiDocumentTextExtractor(GeminiDocumentTextExtractor):
 
     def extract_text(self, filename: str, content: bytes) -> str:
         return content.decode("utf-8", errors="ignore")
+
+    def extract_documents(self, documents: list[tuple[str, bytes]]) -> str:
+        return "\n\n".join(
+            f"## SOURCE_DOCUMENT: {filename}\n{content.decode('utf-8', errors='ignore')}"
+            for filename, content in documents
+        )

@@ -1,0 +1,9 @@
+{
+  "status": "SUCCESS",
+  "agreement_id": "CCT_607_2010",
+  "version": "2026_03",
+  "warnings": [],
+  "agent": "agreement_structuring_agent",
+  "generated_test": "tests\\conventions\\test_cct_607_2010_2026_03.py",
+  "processed_at": "2026-05-13T16:40:56.720090+00:00"
+}

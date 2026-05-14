@@ -1,5 +1,33 @@
 {
   "employee_id": "3",
   "period": "2026-05",
-  "events": []
+  "events": [
+    {
+      "type": "OVERTIME",
+      "subtype": "OT_50",
+      "days": null,
+      "hours": 2.0,
+      "quantity": null,
+      "amount": null,
+      "description": null
+    },
+    {
+      "type": "SALARY_ITEM",
+      "subtype": "ZONA_FRIA",
+      "days": null,
+      "hours": null,
+      "quantity": 1.0,
+      "amount": null,
+      "description": "Adicional Zona Fría"
+    },
+    {
+      "type": "SALARY_ITEM",
+      "subtype": "ASIG_EXT_NR",
+      "days": null,
+      "hours": null,
+      "quantity": 1.0,
+      "amount": null,
+      "description": "Asig. Ext. No Rem"
+    }
+  ]
 }

@@ -438,8 +438,20 @@ const buildWizardEvents = () => {
   pushDays("HOLIDAY_WORKED", "WORKED", "ev-holiday-worked");
   pushDays("HOLIDAY_WORKED", "NOT_WORKED", "ev-holiday-not-worked");
   pushDays("SUSPENSION", "GENERAL", "ev-suspensions");
+  const workedHours = Number(document.getElementById("ev-worked-hours").value || 0);
+  const workedDays = Number(document.getElementById("ev-worked-days").value || 0);
+  if (workedHours > 0) events.push({ type: "WORKED_HOURS", subtype: "HORAS_TRABAJADAS", hours: workedHours });
+  if (workedDays > 0) events.push({ type: "WORKED_DAYS", subtype: "DIAS_TRABAJADOS", days: workedDays });
   pushAmount("COMMISSION", "ev-commissions", "Comisiones");
   pushAmount("BONUS", "ev-bonuses", "Bonos");
+  const liquidationType = document.getElementById("wiz-liquidation-type").value;
+  if (liquidationType && liquidationType !== "mensual") {
+    events.push({
+      type: "LIQUIDATION",
+      subtype: liquidationType.toUpperCase(),
+      description: `Tipo de liquidacion: ${liquidationType}`,
+    });
+  }
 
   document.querySelectorAll("[data-overtime-code]").forEach((input) => {
     const hours = Number(input.value || 0);
@@ -921,6 +933,14 @@ const calculateWizardPayroll = async () => {
     employee_id: eventsPayload.employee_id,
     period: eventsPayload.period,
   });
+  if (wizardState.payroll.estado && wizardState.payroll.estado !== "ok") {
+    const missing = (wizardState.payroll.datos_faltantes || []).join(", ");
+    const alerts = (wizardState.payroll.alertas || []).join(" ");
+    showMessage("payroll-result", wizardState.payroll.mensaje || alerts || `Faltan datos: ${missing}`, wizardState.payroll.estado === "faltan_datos" ? "warning" : "error");
+    notify(wizardState.payroll.mensaje || "La liquidacion requiere revision.", "warning");
+    renderPayrollResult(wizardState.payroll);
+    return;
+  }
   showMessage("payroll-result", "Liquidacion calculada correctamente.", "success");
   notify("Liquidacion calculada correctamente.");
   renderPayrollResult(wizardState.payroll);
@@ -967,8 +987,6 @@ document.getElementById("upload-form").addEventListener("submit", async (event) 
   }
   const data = new FormData();
   Array.from(filesInput.files).forEach((file) => data.append("files", file));
-  const controller = new AbortController();
-  const timeout = window.setTimeout(() => controller.abort(), 240000);
 
   status.textContent = `Extrayendo texto de ${filesInput.files.length} archivo(s) con Gemini...`;
   status.className = "upload-status loading";
@@ -981,7 +999,6 @@ document.getElementById("upload-form").addEventListener("submit", async (event) 
     const response = await fetch("/agreements/upload-files", {
       method: "POST",
       body: data,
-      signal: controller.signal,
     });
     const result = await readResponse(response);
     const meta = result.agreement?.metadata;
@@ -997,11 +1014,8 @@ document.getElementById("upload-form").addEventListener("submit", async (event) 
     event.target.reset();
     await loadAgreements();
   } catch (error) {
-    const aborted = error.name === "AbortError";
     const quotaExceeded = /429|quota|rate-limit|rate limit/i.test(error.message);
-    status.textContent = aborted
-      ? "Gemini tardo demasiado en responder. Revisa cuota, modelo o tamano del archivo."
-      : quotaExceeded
+    status.textContent = quotaExceeded
         ? "Gemini no tiene cuota disponible para este proyecto. Active USE_MOCK_GEMINI=true para desarrollo o espere/restaure cuota para usar IA real."
         : `No se pudo crear el convenio: ${error.message}`;
     status.className = "upload-status error";
@@ -1010,7 +1024,6 @@ document.getElementById("upload-form").addEventListener("submit", async (event) 
       { name: "Extrayendo con Gemini", status: "ERROR" },
     ]);
   } finally {
-    window.clearTimeout(timeout);
     button.disabled = false;
     button.textContent = "Crear convenio";
   }

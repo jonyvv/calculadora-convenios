@@ -51,12 +51,30 @@ body {
 .brand-icon {
   display: grid;
   place-items: center;
+  flex: 0 0 48px;
   width: 48px;
+  min-width: 48px;
+  max-width: 48px;
   height: 48px;
+  min-height: 48px;
+  max-height: 48px;
   border-radius: 8px;
+  overflow: hidden;
   background: linear-gradient(180deg, #1477ff, #0754cf);
   box-shadow: 0 10px 24px rgba(0, 88, 219, .4);
   font-weight: 800;
+}
+
+.brand-cloud-logo {
+  display: block !important;
+  width: 34px !important;
+  min-width: 34px !important;
+  max-width: 34px !important;
+  height: 34px !important;
+  min-height: 34px !important;
+  max-height: 34px !important;
+  object-fit: contain;
+  object-position: center;
 }
 
 nav { display: grid; gap: 8px; }
