@@ -24,6 +24,8 @@ class Category(BaseModel):
     basic_salary: float
     valor_hora: float | None = None
     valor_jornal: float | None = None
+    zone: str | None = None
+    location: str | None = None
 
 
 class SalaryItem(BaseModel):
@@ -60,6 +62,10 @@ class Deduction(BaseModel):
     name: str = ""
     rate: float
     base: str = "REMUNERATIVE_TOTAL"
+    application_type: str = "MANDATORY"
+    applies_when: str | None = None
+    requires_employee_flag: str | None = None
+    source_article: str | None = None
 
 
 class OvertimeRule(BaseModel):

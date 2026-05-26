@@ -1,24 +1,5 @@
 {
   "employee_id": "1",
   "period": "2026-01",
-  "events": [
-    {
-      "type": "SALARY_ITEM",
-      "subtype": "VIAT",
-      "days": null,
-      "hours": null,
-      "quantity": 4.0,
-      "amount": null,
-      "description": "VIATICO (DAY)"
-    },
-    {
-      "type": "SALARY_ITEM",
-      "subtype": "ASIG_EXT",
-      "days": null,
-      "hours": null,
-      "quantity": 1.0,
-      "amount": null,
-      "description": "ASIG. EXT. NO REM"
-    }
-  ]
+  "events": []
 }

@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class CreateEmployeeRequest(BaseModel):
@@ -10,3 +10,5 @@ class CreateEmployeeRequest(BaseModel):
     hire_date: str | None = None
     zone: str | None = None
     workday: str | None = None
+    union_affiliated: bool = False
+    enabled_deductions: list[str] = Field(default_factory=list)

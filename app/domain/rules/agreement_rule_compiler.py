@@ -123,6 +123,24 @@ class SalaryRuleStrategy:
     def amount(self, context: PayrollExecutionContext) -> float:
         raise NotImplementedError
 
+    def depends_on_remunerative_total(self) -> bool:
+        return self.item_uses_remunerative_total(self.item.base_reference) or self.item_uses_remunerative_total(self.item.formula)
+
+    def item_uses_remunerative_total(self, value: str | None) -> bool:
+        token = FormulaEngine().canonical_token(value)
+        raw = FormulaEngine().canonical_token(str(value or "").replace("%", " "))
+        return token == "REMUNERATIVE_TOTAL" or any(
+            marker in raw
+            for marker in (
+                "REMUNERATIVE_TOTAL",
+                "TOTAL_REMUNERATIVO",
+                "TOTAL_RUBROS_REMUNERATIVOS",
+                "RUBROS_REMUNERATIVOS",
+                "HABERES_REMUNERATIVOS",
+                "CONCEPTOS_REMUNERATIVOS",
+            )
+        )
+
     def _applies_to_employee(self, context: PayrollExecutionContext) -> bool:
         category_filters = {context.formula_engine.canonical_token(value) for value in self.item.applies_to_categories}
         if category_filters:
@@ -130,7 +148,11 @@ class SalaryRuleStrategy:
                 context.formula_engine.canonical_token(context.employee.category_id),
                 context.formula_engine.canonical_token(context.category_name),
             }
-            if not any(self._category_tokens_match(category_filter, category_value) for category_filter in category_filters for category_value in category_values):
+            applies_to_all = self._applies_to_all_categories(category_filters)
+            excluded_filters = self._excluded_category_filters()
+            if excluded_filters and any(self._category_tokens_match(category_filter, category_value) for category_filter in excluded_filters for category_value in category_values):
+                return False
+            if not applies_to_all and not any(self._category_tokens_match(category_filter, category_value) for category_filter in category_filters for category_value in category_values):
                 return False
 
         tag_filters = {context.formula_engine.canonical_token(value) for value in self.item.applies_to_tags}
@@ -147,7 +169,9 @@ class SalaryRuleStrategy:
     def _category_tokens_match(self, category_filter: str, category_value: str) -> bool:
         if not category_filter or not category_value:
             return False
-        if category_filter == category_value or category_filter in category_value or category_value in category_filter:
+        if category_filter == category_value:
+            return True
+        if len(category_filter) > 2 and len(category_value) > 2 and (category_filter in category_value or category_value in category_filter):
             return True
         equivalents = (
             ("CHOFER", "CHOFERES", "CONDUCTOR", "CONDUCTORES"),
@@ -161,6 +185,22 @@ class SalaryRuleStrategy:
             and any(token in category_value for token in group)
             for group in equivalents
         )
+
+    def _applies_to_all_categories(self, filters: set[str]) -> bool:
+        if filters.intersection({"TODO", "TODOS", "TODA", "TODAS", "ALL"}):
+            return True
+        return bool(filters.intersection({"PERSONAL", "TRABAJADORES"}) and filters.intersection({"TODO", "TODOS", "TODA", "TODAS"}))
+
+    def _excluded_category_filters(self) -> set[str]:
+        filters = [self.item.applies_to_categories[index] for index in range(len(self.item.applies_to_categories))]
+        normalized = [self.item_code(value) for value in filters]
+        for marker in ("EXCEPTO", "EXCEPT", "SALVO"):
+            if marker in normalized:
+                return set(normalized[normalized.index(marker) + 1:])
+        return set()
+
+    def item_code(self, value: str) -> str:
+        return FormulaEngine().canonical_token(value)
 
 
 class FixedSalaryRule(SalaryRuleStrategy):
@@ -276,6 +316,8 @@ class ManualSalaryItemRuleStrategy:
             item = items.get(event.subtype)
             if not item:
                 continue
+            if not self._applies_to_employee(item, context):
+                continue
             amount = self._amount(item, event, context)
             if amount <= 0:
                 continue
@@ -284,8 +326,52 @@ class ManualSalaryItemRuleStrategy:
                 name=event.description or item.name,
                 type=item.type,
                 amount=round(amount, 2),
-                taxable=item.type == "REMUNERATIVE",
+            taxable=item.type == "REMUNERATIVE",
             ))
+
+    def _applies_to_employee(self, item: SalaryItem, context: PayrollExecutionContext) -> bool:
+        category_filters = [context.formula_engine.canonical_token(value) for value in item.applies_to_categories]
+        if not category_filters:
+            return True
+        category_values = {
+            context.formula_engine.canonical_token(context.employee.category_id),
+            context.formula_engine.canonical_token(context.category_name),
+        }
+        applies_to_all = self._applies_to_all_categories(set(category_filters))
+        for marker in ("EXCEPTO", "EXCEPT", "SALVO"):
+            if marker in category_filters:
+                excluded_filters = category_filters[category_filters.index(marker) + 1:]
+                if any(self._category_tokens_match(category_filter, category_value) for category_filter in excluded_filters for category_value in category_values):
+                    return False
+                return applies_to_all
+        if applies_to_all:
+            return True
+        return any(self._category_tokens_match(category_filter, category_value) for category_filter in category_filters for category_value in category_values)
+
+    def _category_tokens_match(self, category_filter: str, category_value: str) -> bool:
+        if not category_filter or not category_value:
+            return False
+        if category_filter == category_value:
+            return True
+        if len(category_filter) > 2 and len(category_value) > 2 and (category_filter in category_value or category_value in category_filter):
+            return True
+        equivalents = (
+            ("CHOFER", "CHOFERES", "CONDUCTOR", "CONDUCTORES"),
+            ("AUXILIAR", "AYUDANTE", "AYUDANTES"),
+            ("PEON", "PEONES"),
+            ("RECOLECTOR", "RECOLECTORES", "RECOLECCION", "RESIDUOS"),
+            ("ADMINISTRATIVO", "ADMINISTRACION"),
+        )
+        return any(
+            any(token in category_filter for token in group)
+            and any(token in category_value for token in group)
+            for group in equivalents
+        )
+
+    def _applies_to_all_categories(self, filters: set[str]) -> bool:
+        if filters.intersection({"TODO", "TODOS", "TODA", "TODAS", "ALL"}):
+            return True
+        return bool(filters.intersection({"PERSONAL", "TRABAJADORES"}) and filters.intersection({"TODO", "TODOS", "TODA", "TODAS"}))
 
     def _amount(self, item: SalaryItem, event: Event, context: PayrollExecutionContext) -> float:
         if event.amount is not None and event.amount > 0:
@@ -341,6 +427,8 @@ class ManualSalaryItemRuleStrategy:
             return True
         if any(token in value for token in ("ADIC", "ADICIONAL", "PLUS", "RAMA", "DIFERENCIAL", "PLURALIDAD")):
             return True
+        if self._has_daily_viatico_code(item):
+            return True
         manual_tokens = (
             "KM",
             "KILOMETRO",
@@ -363,7 +451,7 @@ class ManualSalaryItemRuleStrategy:
         value = self._ascii(f"{item.code} {item.name} {item.base_reference}")
         if "KM" in value or "KILOMETRO" in value:
             return "KM"
-        if "DIA" in value or "DIARIO" in value or "REVISTA" in value or "COMIDA" in value:
+        if "DIA" in value or "DIARIO" in value or "REVISTA" in value or "COMIDA" in value or self._has_daily_viatico_code(item):
             return "DAY"
         if "VIAJE" in value:
             return "TRIP"
@@ -372,6 +460,10 @@ class ManualSalaryItemRuleStrategy:
         if "COMISION" in value:
             return "AMOUNT"
         return None
+
+    def _has_daily_viatico_code(self, item: SalaryItem) -> bool:
+        code = self._ascii(item.code).upper()
+        return code.startswith("VIAT_") or code.startswith("VIATICO_")
 
     def _ascii(self, value: str) -> str:
         replacements = {
@@ -390,6 +482,8 @@ class DeductionRuleStrategy:
         self.deduction = deduction
 
     def execute(self, context: PayrollExecutionContext) -> None:
+        if not self._applies_to_employee(context):
+            return
         base = context.base(self.deduction.base, "REMUNERATIVE_TOTAL")
         amount = round(base * self.deduction.rate / 100, 2)
         context.add_detail(PayrollDetail(
@@ -399,6 +493,16 @@ class DeductionRuleStrategy:
             amount=-amount,
             taxable=False,
         ))
+
+    def _applies_to_employee(self, context: PayrollExecutionContext) -> bool:
+        application_type = str(self.deduction.application_type or "MANDATORY").upper()
+        if application_type == "MANDATORY":
+            return True
+        if str(self.deduction.requires_employee_flag or "").lower() == "union_affiliated":
+            return bool(context.employee.union_affiliated)
+        enabled = {str(value).upper() for value in context.employee.enabled_deductions}
+        code = str(self.deduction.code or "").upper()
+        return code in enabled
 
 
 @dataclass
@@ -448,10 +552,16 @@ class CompiledAgreementRules:
             amount=round(liquidation_base.bruto_base, 2),
         ))
 
-        for rule in self.salary_rules:
+        total_based_salary_rules = [rule for rule in self.salary_rules if self._depends_on_remunerative_total(rule)]
+        regular_salary_rules = [rule for rule in self.salary_rules if not self._depends_on_remunerative_total(rule)]
+
+        for rule in regular_salary_rules:
             rule.execute(context)
         context.refresh_totals()
         for rule in self.event_rules:
+            rule.execute(context)
+        context.refresh_totals()
+        for rule in total_based_salary_rules:
             rule.execute(context)
         context.refresh_totals()
         for rule in self.deduction_rules:
@@ -477,6 +587,10 @@ class CompiledAgreementRules:
             value = jornada.get(key)
             if value:
                 return float(value)
+        daily_hours = jornada.get("maximo_horas_diarias") or jornada.get("horas_diarias") or jornada.get("daily_hours")
+        monthly_days = jornada.get("dias_mensuales") or jornada.get("monthly_days")
+        if daily_hours and monthly_days:
+            return float(daily_hours) * float(monthly_days)
         workday = self.formula_engine.canonical_token(employee.workday)
         if any(token in workday for token in ("PARCIAL", "REDUCIDA", "MEDIA")):
             return 100
@@ -485,12 +599,29 @@ class CompiledAgreementRules:
     def _monthly_days(self, agreement: Agreement) -> float:
         return self.liquidation_model_resolver.monthly_days(agreement)
 
+    def _depends_on_remunerative_total(self, rule: ExecutableRule) -> bool:
+        return hasattr(rule, "depends_on_remunerative_total") and rule.depends_on_remunerative_total()
+
 
 class AgreementRuleCompiler:
     def __init__(self, formula_engine: FormulaEngine | None = None):
         self.formula_engine = formula_engine or FormulaEngine()
 
+    def normalize_agreement(self, agreement: Agreement) -> Agreement:
+        normalized = agreement.model_copy(deep=True)
+        normalized.salary_model.remunerative_items = [
+            self._normalize_item(item) for item in normalized.salary_model.remunerative_items
+        ]
+        normalized.salary_model.non_remunerative_items = [
+            self._normalize_item(item) for item in normalized.salary_model.non_remunerative_items
+        ]
+        normalized.salary_model.deductions = [
+            self._normalize_deduction(deduction) for deduction in normalized.salary_model.deductions
+        ]
+        return normalized
+
     def compile_rules(self, agreement: Agreement) -> CompiledAgreementRules:
+        agreement = self.normalize_agreement(agreement)
         return CompiledAgreementRules(
             salary_rules=self._compile_salary_rules(agreement),
             event_rules=[
@@ -512,6 +643,10 @@ class AgreementRuleCompiler:
             value = jornada.get(key)
             if value:
                 return float(value)
+        daily_hours = jornada.get("maximo_horas_diarias") or jornada.get("horas_diarias") or jornada.get("daily_hours")
+        monthly_days = jornada.get("dias_mensuales") or jornada.get("monthly_days")
+        if daily_hours and monthly_days:
+            return float(daily_hours) * float(monthly_days)
         workday = self._ascii(employee.workday)
         if any(token in workday for token in ("PARCIAL", "REDUCIDA", "MEDIA")):
             return 100
@@ -564,13 +699,104 @@ class AgreementRuleCompiler:
         is_percentage = item.rate is not None or item.calculation_type == "PERCENTAGE"
         looks_like_wage_additional = any(token in value for token in ("RAMA", "DIFERENCIAL", "RECOLECCION", "PLURALIDAD"))
         inferred_tags = self._inferred_tags(item)
+        if self._is_core_auto_item(value) and item.applies_to_categories:
+            item = item.model_copy(update={"applies_to_categories": []})
         if self._is_manual_like(item):
             item = item.model_copy(update={"input_mode": "MANUAL", "unit": item.unit or self._infer_unit(item)})
+        if item.input_mode == "MANUAL" and self._manual_category_filters_are_conditions(item):
+            item = item.model_copy(update={"applies_to_categories": []})
         if inferred_tags and not item.applies_to_tags:
             item = item.model_copy(update={"applies_to_tags": inferred_tags})
         if item.type == "NON_REMUNERATIVE" and is_percentage and looks_like_wage_additional:
             return item.model_copy(update={"type": "REMUNERATIVE"})
         return item
+
+    def _normalize_deduction(self, deduction: Deduction) -> Deduction:
+        explicit_application_type = str(deduction.application_type or "").upper()
+        value = self._ascii(
+            " ".join(str(part or "") for part in [
+                deduction.code,
+                deduction.name,
+                deduction.application_type,
+                deduction.applies_when,
+                deduction.source_article,
+            ])
+        )
+        if explicit_application_type in {"MANDATORY", "OBLIGATORIA", "OBLIGATORIO"}:
+            if (
+                self._looks_like_employee_opt_in_deduction(value)
+                and not self._looks_like_mandatory_deduction(value)
+                and not self._has_explicit_mandatory_condition(deduction)
+            ):
+                flag = self._deduction_flag_from_text(value)
+                return deduction.model_copy(update={
+                    "application_type": "EMPLOYEE_OPT_IN",
+                    "requires_employee_flag": deduction.requires_employee_flag or flag,
+                    "applies_when": deduction.applies_when or self._default_deduction_condition(flag),
+                })
+            return deduction.model_copy(update={
+                "application_type": "MANDATORY",
+                "requires_employee_flag": None,
+            })
+        if explicit_application_type in {"EMPLOYEE_OPT_IN", "OPTATIVA", "OPTATIVO", "VOLUNTARIA", "VOLUNTARIO"}:
+            flag = deduction.requires_employee_flag or self._deduction_flag_from_text(
+                self._ascii(f"{deduction.code} {deduction.name} {deduction.applies_when or ''}")
+            )
+            return deduction.model_copy(update={
+                "application_type": "EMPLOYEE_OPT_IN",
+                "requires_employee_flag": flag,
+                "applies_when": deduction.applies_when or self._default_deduction_condition(flag),
+            })
+        if self._looks_like_mandatory_deduction(value):
+            return deduction.model_copy(update={
+                "application_type": "MANDATORY",
+                "requires_employee_flag": None,
+            })
+        if self._looks_like_employee_opt_in_deduction(value):
+            flag = self._deduction_flag_from_text(value)
+            return deduction.model_copy(update={
+                "application_type": "EMPLOYEE_OPT_IN",
+                "requires_employee_flag": deduction.requires_employee_flag or flag,
+                "applies_when": deduction.applies_when or self._default_deduction_condition(flag),
+            })
+        return deduction
+
+    def _deduction_flag_from_text(self, value: str) -> str:
+        return "union_affiliated" if self._looks_like_union_deduction(value) else "enabled_deductions"
+
+    def _has_explicit_mandatory_condition(self, deduction: Deduction) -> bool:
+        value = self._ascii(f"{deduction.applies_when or ''} {deduction.source_article or ''}")
+        return any(token in value for token in ("TODOS", "TODO_EL_PERSONAL", "OBLIGATOR", "AFILIADOS_Y_NO_AFILIADOS"))
+
+    def _looks_like_mandatory_deduction(self, value: str) -> bool:
+        statutory_tokens = ("JUBIL", "SIPA", "19032", "19_032", "PAMI", "INSSJP", "OBRA_SOCIAL")
+        collective_mandatory_tokens = ("APORTE_SOLIDARIO", "CONTRIBUCION_SOLIDARIA", "SOLIDARIA", "OBLIGATOR")
+        return any(token in value for token in statutory_tokens + collective_mandatory_tokens)
+
+    def _looks_like_employee_opt_in_deduction(self, value: str) -> bool:
+        tokens = (
+            "CUOTA_SINDICAL",
+            "SINDIC",
+            "AFILIAD",
+            "ADHERID",
+            "ADHESION",
+            "VOLUNTAR",
+            "AUTORIZACION",
+            "MUTUAL",
+            "OPTAT",
+            "SEGURO",
+        )
+        return any(token in value for token in tokens)
+
+    def _looks_like_union_deduction(self, value: str) -> bool:
+        if any(token in value for token in ("MUTUAL", "SEGURO")):
+            return False
+        return any(token in value for token in ("CUOTA_SINDICAL", "SINDIC", "AFILIAD", "ADHERID"))
+
+    def _default_deduction_condition(self, flag: str) -> str:
+        if flag == "union_affiliated":
+            return "Solo trabajadores afiliados o adheridos al sindicato"
+        return "Solo si el trabajador tiene la retencion habilitada"
 
     def _is_manual_like(self, item: SalaryItem) -> bool:
         if item.input_mode == "MANUAL" or item.unit:
@@ -581,6 +807,8 @@ class AgreementRuleCompiler:
         if item.applies_to_categories or item.applies_to_tags:
             return True
         if any(token in value for token in ("ADIC", "ADICIONAL", "PLUS", "RAMA", "DIFERENCIAL", "PLURALIDAD")):
+            return True
+        if self._has_daily_viatico_code(item):
             return True
         manual_tokens = (
             "KM",
@@ -604,7 +832,7 @@ class AgreementRuleCompiler:
         value = self._ascii(f"{item.code} {item.name} {item.base_reference}")
         if "KM" in value or "KILOMETRO" in value:
             return "KM"
-        if "DIA" in value or "DIARIO" in value or "REVISTA" in value or "COMIDA" in value:
+        if "DIA" in value or "DIARIO" in value or "REVISTA" in value or "COMIDA" in value or self._has_daily_viatico_code(item):
             return "DAY"
         if "VIAJE" in value:
             return "TRIP"
@@ -613,6 +841,33 @@ class AgreementRuleCompiler:
         if "COMISION" in value:
             return "AMOUNT"
         return None
+
+    def _has_daily_viatico_code(self, item: SalaryItem) -> bool:
+        code = self._ascii(item.code).upper()
+        return code.startswith("VIAT_") or code.startswith("VIATICO_")
+
+    def _manual_category_filters_are_conditions(self, item: SalaryItem) -> bool:
+        if not item.applies_to_categories:
+            return False
+        filters = {self.formula_engine.canonical_token(value) for value in item.applies_to_categories}
+        if filters.intersection({"TODOS", "TODAS", "ALL", "EXCEPTO", "EXCEPT", "SALVO"}):
+            return False
+        condition_tokens = {
+            "PERSONAL",
+            "QUE",
+            "QUIEN",
+            "QUIENES",
+            "PERNOCTA",
+            "PERNOCTA",
+            "FUERA",
+            "VIAJA",
+            "VIAJE",
+            "REALIZA",
+            "TRABAJA",
+            "CON",
+            "SIN",
+        }
+        return bool(filters) and filters.issubset(condition_tokens)
 
     def _inferred_tags(self, item: SalaryItem) -> list[str]:
         value = self._ascii(f"{item.code} {item.name} {item.base_reference}")

@@ -23,6 +23,33 @@ const money = (value) => new Intl.NumberFormat("es-AR", {
   minimumFractionDigits: 2,
 }).format(Number(value || 0));
 
+const quantityLabel = (value) => {
+  const number = Number(value || 0);
+  return new Intl.NumberFormat("es-AR", {
+    minimumFractionDigits: Number.isInteger(number) ? 0 : 2,
+    maximumFractionDigits: Number.isInteger(number) ? 0 : 2,
+  }).format(number);
+};
+
+const canonical = (value) => String(value || "")
+  .normalize("NFD")
+  .replace(/[\u0300-\u036f]/g, "")
+  .toUpperCase()
+  .replace(/[^A-Z0-9]+/g, "_")
+  .replace(/^_+|_+$/g, "");
+
+const agreementWorkdayMetrics = () => {
+  const jornada = wizardState.agreement?.jornada_tiempos?.jornada_estandar || {};
+  const monthlyDays = Number(jornada.dias_mensuales || jornada.monthly_days || 30);
+  const dailyHours = Number(jornada.maximo_horas_diarias || jornada.horas_diarias || jornada.daily_hours || 0);
+  const monthlyHours = Number(jornada.horas_mensuales || jornada.monthly_hours || (dailyHours && monthlyDays ? dailyHours * monthlyDays : 200));
+  return {
+    monthlyHours,
+    monthlyDays,
+    dailyHours: dailyHours || (monthlyDays > 0 ? monthlyHours / monthlyDays : 0),
+  };
+};
+
 const show = (id) => {
   document.querySelectorAll(".view").forEach((view) => view.classList.remove("active"));
   document.querySelectorAll(".nav-item").forEach((button) => button.classList.remove("active"));
@@ -179,23 +206,67 @@ const populateAgreementSelects = () => {
 
 const agreementById = (agreementId) => activeAgreementsById().find((agreement) => agreement.metadata?.agreement_id === agreementId);
 
-const populateCategorySelect = (selectId, agreementId, selected = "") => {
+const categoryZone = (category) => category?.zone || category?.location || "";
+
+const categoriesForAgreement = (agreement, zone = "") => {
+  const categories = agreement?.categories || [];
+  const zoneFilter = canonical(zone);
+  if (!zoneFilter) return categories;
+  return categories.filter((category) => canonical(categoryZone(category)) === zoneFilter);
+};
+
+const agreementZones = (agreement) => {
+  const zones = [];
+  (agreement?.categories || []).forEach((category) => {
+    const zone = categoryZone(category);
+    if (zone && !zones.some((current) => canonical(current) === canonical(zone))) zones.push(zone);
+  });
+  return zones;
+};
+
+const syncEmployeeZoneField = (agreementId, selected = "") => {
+  const field = document.getElementById("employee-zone-field");
+  const select = document.getElementById("employee-zone-select");
+  const agreement = agreementById(agreementId);
+  const zones = agreementZones(agreement);
+  if (!field || !select) return "";
+  field.classList.toggle("hidden", zones.length === 0);
+  if (!zones.length) {
+    select.innerHTML = "";
+    select.value = "";
+    return "";
+  }
+  const current = selected || select.value;
+  const extra = current && !zones.some((zone) => canonical(zone) === canonical(current))
+    ? `<option value="${current}">${current}</option>`
+    : "";
+  select.innerHTML = `<option value="">Todas las zonas</option>${extra}${zones.map((zone) => (
+    `<option value="${zone}">${zone}</option>`
+  )).join("")}`;
+  select.value = current || "";
+  return select.value;
+};
+
+const populateCategorySelect = (selectId, agreementId, selected = "", options = {}) => {
   const select = document.getElementById(selectId);
   const agreement = agreementById(agreementId);
   if (!select) return;
-  select.innerHTML = (agreement?.categories || []).map((category) => (
-    `<option value="${category.category_id}">${category.category_id} - ${category.name}</option>`
+  const categories = categoriesForAgreement(agreement, options.zone);
+  select.innerHTML = categories.map((category) => (
+    `<option value="${category.category_id}">${category.category_id} - ${category.name}${categoryZone(category) ? ` (${categoryZone(category)})` : ""}</option>`
   )).join("") || `<option value="">Sin puestos / roles</option>`;
-  if (selected) select.value = selected;
+  if (selected && categories.some((category) => category.category_id === selected)) select.value = selected;
 };
 
 const categoryLabel = (agreementId, categoryId) => {
   const category = agreementById(agreementId)?.categories?.find((item) => item.category_id === categoryId);
-  return category ? `${category.category_id} - ${category.name}` : categoryId;
+  return category ? `${category.category_id} - ${category.name}${categoryZone(category) ? ` (${categoryZone(category)})` : ""}` : categoryId;
 };
 
-const populateEmployeeCategorySelect = () => {
-  populateCategorySelect("employee-category-select", document.getElementById("employee-agreement-select")?.value);
+const populateEmployeeCategorySelect = (selectedCategory = "", selectedZone = "") => {
+  const agreementId = document.getElementById("employee-agreement-select")?.value;
+  const zone = syncEmployeeZoneField(agreementId, selectedZone);
+  populateCategorySelect("employee-category-select", agreementId, selectedCategory, { zone });
 };
 
 const yearsFromHireDate = (value) => {
@@ -257,10 +328,11 @@ const renderCategoryRows = (rows) => {
     <tr>
       <td>${editableInput("category_id", row.category_id)}</td>
       <td>${editableInput("name", row.name)}</td>
+      <td>${editableInput("zone", row.zone || row.location || "")}</td>
       <td>${editableInput("basic_salary", row.basic_salary, "number")}</td>
       <td>${removeButton()}</td>
     </tr>
-  `).join("") || `<tr><td colspan="4">Sin puestos / roles</td></tr>`;
+  `).join("") || `<tr><td colspan="5">Sin puestos / roles</td></tr>`;
 };
 
 const renderSalaryRows = (target, rows) => {
@@ -283,9 +355,16 @@ const renderDeductionRows = (rows) => {
       <td>${editableInput("name", row.name)}</td>
       <td>${editableInput("rate", row.rate, "number")}</td>
       <td>${editableInput("base", row.base || "REMUNERATIVE_TOTAL")}</td>
+      <td>
+        <select data-field="application_type">
+          <option value="MANDATORY" ${row.application_type !== "EMPLOYEE_OPT_IN" ? "selected" : ""}>Obligatoria</option>
+          <option value="EMPLOYEE_OPT_IN" ${row.application_type === "EMPLOYEE_OPT_IN" ? "selected" : ""}>Depende del trabajador</option>
+        </select>
+      </td>
+      <td>${editableInput("applies_when", row.applies_when || "")}</td>
       <td>${removeButton()}</td>
     </tr>
-  `).join("") || `<tr><td colspan="5">Sin descuentos</td></tr>`;
+  `).join("") || `<tr><td colspan="7">Sin descuentos</td></tr>`;
 };
 
 const renderOvertimeRows = (rows) => {
@@ -330,13 +409,27 @@ const collectAgreementFromEditor = () => {
   const agreement = structuredClone(selectedAgreement);
   agreement.categories = rowsFromTable("editor-categories", (row) => {
     const data = fieldMap(row);
-    return { category_id: data.category_id, name: data.name, basic_salary: Number(data.basic_salary || 0) };
+    return {
+      category_id: data.category_id,
+      name: data.name,
+      zone: data.zone || null,
+      location: data.zone || null,
+      basic_salary: Number(data.basic_salary || 0),
+    };
   });
   agreement.salary_model.remunerative_items = collectSalaryRows("editor-remunerative", "REMUNERATIVE");
   agreement.salary_model.non_remunerative_items = collectSalaryRows("editor-non-remunerative", "NON_REMUNERATIVE");
   agreement.salary_model.deductions = rowsFromTable("editor-deductions", (row) => {
     const data = fieldMap(row);
-    return { code: data.code, name: data.name, rate: Number(data.rate || 0), base: data.base || "REMUNERATIVE_TOTAL" };
+    return {
+      code: data.code,
+      name: data.name,
+      rate: Number(data.rate || 0),
+      base: data.base || "REMUNERATIVE_TOTAL",
+      application_type: data.application_type || "MANDATORY",
+      applies_when: data.applies_when || null,
+      requires_employee_flag: data.application_type === "EMPLOYEE_OPT_IN" ? "union_affiliated" : null,
+    };
   });
   agreement.salary_model.overtime_rules = rowsFromTable("editor-overtime", (row) => {
     const data = fieldMap(row);
@@ -363,7 +456,7 @@ const renderEmployees = (employees) => {
   const tbody = document.getElementById("employees-table");
   if (!tbody) return;
   if (!employees.length) {
-    tbody.innerHTML = `<tr><td colspan="7">Sin empleados cargados</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="8">Sin empleados cargados</td></tr>`;
     return;
   }
   tbody.innerHTML = employees.map((employee) => `
@@ -374,6 +467,7 @@ const renderEmployees = (employees) => {
       <td>${categoryLabel(employee.agreement_id, employee.category_id)}</td>
       <td>${employee.hire_date || "-"}</td>
       <td>${employee.seniority_years}</td>
+      <td>${employee.union_affiliated ? "Si" : "No"}</td>
       <td><button class="icon-button" data-edit-employee="${employee.employee_id}">Editar</button></td>
     </tr>
   `).join("");
@@ -392,7 +486,9 @@ const resetEmployeeForm = () => {
   document.getElementById("employee-save-button").textContent = "Guardar empleado";
   document.querySelector("#employee-form [name='employee_id']").disabled = false;
   document.getElementById("employee-seniority-preview").value = 0;
+  form.elements.union_affiliated.checked = false;
   populateAgreementSelects();
+  populateEmployeeCategorySelect();
 };
 
 const fillEmployeeForm = (employee) => {
@@ -403,9 +499,10 @@ const fillEmployeeForm = (employee) => {
   form.elements.cuil.value = employee.cuil || "";
   form.elements.hire_date.value = employee.hire_date || "";
   form.elements.agreement_id.value = employee.agreement_id;
-  populateCategorySelect("employee-category-select", employee.agreement_id, employee.category_id);
-  form.elements.zone.value = employee.zone || "";
+  const category = agreementById(employee.agreement_id)?.categories?.find((item) => item.category_id === employee.category_id);
+  populateEmployeeCategorySelect(employee.category_id, employee.zone || categoryZone(category));
   form.elements.workday.value = employee.workday || "";
+  form.elements.union_affiliated.checked = Boolean(employee.union_affiliated);
   document.getElementById("employee-seniority-preview").value = employee.seniority_years || 0;
   document.getElementById("employee-save-button").textContent = "Actualizar empleado";
 };
@@ -485,13 +582,6 @@ const buildWizardEvents = () => {
   };
 };
 
-const canonical = (value) => String(value || "")
-  .normalize("NFD")
-  .replace(/[\u0300-\u036f]/g, "")
-  .toUpperCase()
-  .replace(/[^A-Z0-9]+/g, "_")
-  .replace(/^_+|_+$/g, "");
-
 const captureManualConceptValues = () => {
   document.querySelectorAll("[data-manual-concept-quantity]").forEach((input) => {
     wizardState.manualConceptValues[input.dataset.manualConceptQuantity] = input.value;
@@ -510,6 +600,11 @@ const unitLabel = (unit) => ({
   HOUR: "Horas",
 })[String(unit || "").toUpperCase()] || "Cantidad";
 
+const hasDailyViaticoCode = (item) => {
+  const code = canonical(item?.code || "");
+  return code.startsWith("VIAT_") || code.startsWith("VIATICO_");
+};
+
 const effectiveUnit = (item) => {
   const explicit = String(item.unit || "").toUpperCase();
   if (explicit) return explicit;
@@ -519,7 +614,8 @@ const effectiveUnit = (item) => {
   if (value.includes("VIAJE")) return "TRIP";
   if (value.includes("HORA")) return "HOUR";
   if (
-    value.includes("DIA")
+    hasDailyViaticoCode(item)
+    || value.includes("DIA")
     || value.includes("DIAS")
     || value.includes("DAYS")
     || value.includes("DIARIO")
@@ -527,7 +623,7 @@ const effectiveUnit = (item) => {
     || value.includes("REVISTA")
     || value.includes("COMIDA")
   ) return "DAY";
-  if (item.input_mode === "MANUAL" && value.includes("VIATIC")) return "DAY";
+  if (item.input_mode === "MANUAL" && hasDailyViaticoCode(item)) return "DAY";
   if (value.includes("COMISION")) return "AMOUNT";
   return "";
 };
@@ -545,7 +641,16 @@ const itemAppliesToWizardEmployee = (item, category) => {
   if (categoryFilters.length) {
     if (!category) return true;
     const categoryValues = [category?.category_id, category?.name].map(canonical).filter(Boolean);
-    if (!categoryFilters.some((filter) => categoryValues.some((value) => categoryTokensMatch(filter, value)))) return false;
+    const appliesToAll = categoryFilters.some((filter) => ["TODO", "TODOS", "TODA", "TODAS", "ALL"].includes(filter))
+      || categoryFilters.some((filter) => ["PERSONAL", "TRABAJADORES"].includes(filter))
+        && categoryFilters.some((filter) => ["TODO", "TODOS", "TODA", "TODAS"].includes(filter));
+    const exceptIndex = categoryFilters.findIndex((filter) => ["EXCEPTO", "EXCEPT", "SALVO"].includes(filter));
+    if (exceptIndex >= 0) {
+      const excludedFilters = categoryFilters.slice(exceptIndex + 1);
+      if (excludedFilters.some((filter) => categoryValues.some((value) => categoryTokensMatch(filter, value)))) return false;
+      if (appliesToAll) return true;
+    }
+    if (!appliesToAll && !categoryFilters.some((filter) => categoryValues.some((value) => categoryTokensMatch(filter, value)))) return false;
   }
 
   const tagFilters = (item.applies_to_tags || []).map(canonical).filter(Boolean);
@@ -555,6 +660,8 @@ const itemAppliesToWizardEmployee = (item, category) => {
     document.getElementById("wiz-zone").value,
     document.getElementById("wiz-workday").value,
     category?.name,
+    category?.zone,
+    category?.location,
   ].map(canonical).filter(Boolean);
   const blob = employeeValues.join("_");
   return tagFilters.some((tag) => employeeValues.includes(tag) || blob.includes(tag));
@@ -576,6 +683,7 @@ const isManualSalaryItem = (item) => {
   ];
   if ((item.applies_to_categories || []).length || (item.applies_to_tags || []).length) return true;
   if (conditionalTokens.some((token) => value.includes(token))) return true;
+  if (hasDailyViaticoCode(item)) return true;
   return [
     "KM",
     "KILOMETRO",
@@ -668,6 +776,17 @@ const conceptSection = (title, items, emptyText, renderer) => `
   </section>
 `;
 
+const deductionCard = (deduction) => `
+  <article class="concept-card">
+    <div>
+      <strong>${deduction.name || deduction.code}</strong>
+      <small>${deduction.code} - Base: ${deduction.base || "REMUNERATIVE_TOTAL"}</small>
+      ${deduction.applies_when ? `<small>${deduction.applies_when}</small>` : ""}
+    </div>
+    <span>${Number(deduction.rate || 0)}%</span>
+  </article>
+`;
+
 const renderAgreementDrivenSections = () => {
   captureManualConceptValues();
   const additionals = document.getElementById("agreement-additionals");
@@ -683,18 +802,22 @@ const renderAgreementDrivenSections = () => {
   }
 
   const salaryModel = agreement.salary_model || {};
-  const items = [
+  const allItems = [
     ...(salaryModel.remunerative_items || []),
     ...(salaryModel.non_remunerative_items || []),
-  ].filter((item) => item.code !== "BASIC" && itemAppliesToWizardEmployee(item, category));
-  const automaticItems = items.filter((item) => !isManualSalaryItem(item));
-  const manualItems = items.filter((item) => isManualSalaryItem(item));
+  ].filter((item) => item.code !== "BASIC");
+  const automaticItems = allItems.filter((item) => !isManualSalaryItem(item) && itemAppliesToWizardEmployee(item, category));
+  const manualItems = allItems.filter((item) => isManualSalaryItem(item));
+  const visibleItems = [...automaticItems, ...manualItems];
   const automaticRemunerative = automaticItems.filter((item) => item.type === "REMUNERATIVE");
   const automaticNonRemunerative = automaticItems.filter((item) => item.type === "NON_REMUNERATIVE");
   const manualRemunerative = manualItems.filter((item) => item.type === "REMUNERATIVE");
   const manualNonRemunerative = manualItems.filter((item) => item.type === "NON_REMUNERATIVE");
+  const deductions = salaryModel.deductions || [];
+  const mandatoryDeductions = deductions.filter((item) => String(item.application_type || "MANDATORY").toUpperCase() === "MANDATORY");
+  const conditionalDeductions = deductions.filter((item) => String(item.application_type || "MANDATORY").toUpperCase() !== "MANDATORY");
 
-  additionals.innerHTML = items.length
+  additionals.innerHTML = visibleItems.length || deductions.length
     ? [
       conceptSection("Haberes remunerativos automaticos", automaticRemunerative, "Sin haberes remunerativos automaticos para este convenio.", (item) => `
           <article class="concept-card">
@@ -716,11 +839,14 @@ const renderAgreementDrivenSections = () => {
           </article>
         `),
       conceptSection("Haberes no remunerativos de carga manual", manualNonRemunerative, "Este convenio no tiene haberes no remunerativos manuales activos.", manualConceptCard),
+      conceptSection("Retenciones obligatorias del convenio", mandatoryDeductions, "Este convenio no declara retenciones obligatorias.", deductionCard),
+      conceptSection("Retenciones segun condicion del trabajador", conditionalDeductions, "Este convenio no declara retenciones condicionales.", deductionCard),
     ].join("")
     : `<div class="empty-state">El convenio no declara adicionales en salary_model.</div>`;
 
   const baseSalary = Number(category?.basic_salary || 0);
-  const hourly = baseSalary / 200;
+  const metrics = agreementWorkdayMetrics();
+  const hourly = metrics.monthlyHours > 0 ? baseSalary / metrics.monthlyHours : 0;
   overtime.innerHTML = (salaryModel.overtime_rules || []).map((rule) => `
     <article class="overtime-card">
       <div>
@@ -775,10 +901,18 @@ const setWizardStep = (step) => {
   if (wizardState.step === 4 || wizardState.step === 5) renderAgreementDrivenSections();
 };
 
+const receiptAmount = (item) => item.type === "DEDUCTION"
+  ? Math.abs(Number(item.amount || 0))
+  : Number(item.amount || 0);
+
 const receiptGroup = (title, items) => `
   <article class="receipt-card">
     <h3>${title}</h3>
-    ${items.length ? items.map((item) => `<div><span>${item.name}</span><strong>${money(Math.abs(item.amount))}</strong></div>`).join("") : "<small>Sin conceptos</small>"}
+    ${items.length ? items.map((item) => {
+      const value = receiptAmount(item);
+      return `<div class="${value < 0 ? "negative" : ""}"><span>${item.name}</span><strong>${money(value)}</strong></div>`;
+    }).join("") : "<small>Sin conceptos</small>"}
+    <div class="receipt-total"><span>Total ${title.toLowerCase()}</span><strong>${money(items.reduce((total, item) => total + receiptAmount(item), 0))}</strong></div>
   </article>
 `;
 
@@ -838,7 +972,8 @@ const explainPayrollDetail = (detail) => {
   if (overtime || detail.code.startsWith("OT_")) {
     const hours = Number(event?.hours || 0);
     const multiplier = Number(overtime?.multiplier || 1);
-    const hourly = baseSalary / 200;
+    const metrics = agreementWorkdayMetrics();
+    const hourly = metrics.monthlyHours > 0 ? baseSalary / metrics.monthlyHours : 0;
     return `Horas extra = ${money(hourly)} valor hora x ${multiplier} x ${hours} horas`;
   }
 
@@ -872,11 +1007,29 @@ const renderPayrollResult = (payroll) => {
   const remunerative = details.filter((detail) => detail.type === "REMUNERATIVE");
   const nonRemunerative = details.filter((detail) => detail.type === "NON_REMUNERATIVE");
   const deductions = details.filter((detail) => detail.type === "DEDUCTION");
+  const category = activeCategory();
+  const metrics = agreementWorkdayMetrics();
+  const monthlyHours = metrics.monthlyHours;
+  const monthlyDays = metrics.monthlyDays;
+  const dailyHours = metrics.dailyHours;
+  const baseSalary = Number(category?.basic_salary || 0);
+  const hourlyValue = monthlyHours > 0 ? baseSalary / monthlyHours : 0;
+  const dailyValue = monthlyDays > 0 ? baseSalary / monthlyDays : 0;
+  const workdayInfo = `
+    <article class="receipt-card workday-card">
+      <h3>Jornada del convenio</h3>
+      <div><span>Horas de jornada diaria</span><strong>${quantityLabel(dailyHours)}</strong></div>
+      <div><span>Dias base de liquidacion</span><strong>${quantityLabel(monthlyDays)}</strong></div>
+      <div><span>Valor hora calculado</span><strong>${money(hourlyValue)}</strong></div>
+      <div><span>Valor dia calculado</span><strong>${money(dailyValue)}</strong></div>
+    </article>
+  `;
 
   document.getElementById("summary-gross").textContent = money(payroll.gross_salary);
   document.getElementById("summary-deductions").textContent = `-${money(payroll.deductions)}`;
   document.getElementById("summary-net").textContent = money(payroll.net_salary);
   document.getElementById("receipt-detail").innerHTML = [
+    workdayInfo,
     receiptGroup("Haberes remunerativos", remunerative),
     receiptGroup("Haberes no remunerativos", nonRemunerative),
     receiptGroup("Retenciones", deductions),
@@ -1061,7 +1214,7 @@ document.getElementById("agreement-friendly-editor").addEventListener("click", (
 document.getElementById("add-category-row").addEventListener("click", () => {
   const agreement = collectAgreementFromEditor();
   if (!agreement) return;
-  renderCategoryRows([...(agreement.categories || []), { category_id: "NUEVO", name: "Nuevo puesto / rol", basic_salary: 0 }]);
+  renderCategoryRows([...(agreement.categories || []), { category_id: "NUEVO", name: "Nuevo puesto / rol", zone: "", basic_salary: 0 }]);
 });
 
 document.getElementById("add-remunerative-row").addEventListener("click", () => {
@@ -1122,6 +1275,9 @@ document.getElementById("employee-form").addEventListener("submit", async (event
   event.preventDefault();
   const form = event.target;
   const data = Object.fromEntries(new FormData(form));
+  data.union_affiliated = form.elements.union_affiliated.checked;
+  const selectedCategory = agreementById(data.agreement_id)?.categories?.find((category) => category.category_id === data.category_id);
+  data.zone = data.zone || categoryZone(selectedCategory) || "";
   const editingId = document.getElementById("employee-editing-id").value;
   if (editingId) data.employee_id = editingId;
   const result = editingId
@@ -1133,7 +1289,8 @@ document.getElementById("employee-form").addEventListener("submit", async (event
   await loadEmployees();
 });
 
-document.getElementById("employee-agreement-select").addEventListener("change", populateEmployeeCategorySelect);
+document.getElementById("employee-agreement-select").addEventListener("change", () => populateEmployeeCategorySelect());
+document.getElementById("employee-zone-select").addEventListener("change", () => populateEmployeeCategorySelect());
 document.querySelector("#employee-form [name='hire_date']").addEventListener("change", (event) => {
   document.getElementById("employee-seniority-preview").value = yearsFromHireDate(event.target.value);
 });

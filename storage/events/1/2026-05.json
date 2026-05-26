@@ -1,15 +1,5 @@
 {
   "employee_id": "1",
   "period": "2026-05",
-  "events": [
-    {
-      "type": "SALARY_ITEM",
-      "subtype": "COMIDA",
-      "days": null,
-      "hours": null,
-      "quantity": 24.0,
-      "amount": null,
-      "description": "Comida (DAY)"
-    }
-  ]
+  "events": []
 }

@@ -1,0 +1,13 @@
+{
+  "status": "DRAFT",
+  "agreement_id": "CCT_40_1989",
+  "version": "2026_05",
+  "warnings": [
+    "Formula faltante para HE_KILOMETRAJE_LARGA_DISTANCIA",
+    "Formula faltante para BONIFICACION_FERIADOS_NACIONALES_50",
+    "Formula faltante para BONIFICACION_FERIADOS_NACIONALES_100"
+  ],
+  "agent": "agreement_structuring_agent",
+  "generated_test": "tests\\conventions\\test_cct_40_1989_2026_05.py",
+  "processed_at": "2026-05-26T15:57:39.454497+00:00"
+}

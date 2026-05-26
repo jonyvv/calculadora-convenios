@@ -1,11 +1,13 @@
 {
   "employee_id": "4",
   "agreement_id": "CCT_130_75",
-  "category_id": "A",
-  "seniority_years": 5,
+  "category_id": "B",
+  "seniority_years": 3,
   "cuil": "20451434162",
-  "hire_date": "2020-12-20",
+  "hire_date": "2023-01-01",
   "zone": "",
   "workday": "completa",
+  "union_affiliated": true,
+  "enabled_deductions": [],
   "active": true
 }

@@ -1,11 +1,13 @@
 {
   "employee_id": "3",
   "agreement_id": "CCT_281_1996",
-  "category_id": "C",
+  "category_id": "NO_INDICADO_2",
   "seniority_years": 5,
   "cuil": "20451434161",
   "hire_date": "2020-06-10",
   "zone": "",
   "workday": "",
+  "union_affiliated": true,
+  "enabled_deductions": [],
   "active": true
 }

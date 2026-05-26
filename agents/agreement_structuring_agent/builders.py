@@ -58,16 +58,30 @@ class TextTools:
                 continue
 
             headers = [TextTools.code(header).lower() for header in TextTools._split_table_line(table_lines[0])]
+            context = TextTools._heading_context(lines, heading_index)
             for line in table_lines[1:]:
                 values = TextTools._split_table_line(line)
                 if not values or all(re.fullmatch(r"-+", value.strip()) for value in values):
                     continue
-                rows.append({headers[index]: values[index].strip() if index < len(values) else "" for index in range(len(headers))})
+                row = {headers[index]: values[index].strip() if index < len(values) else "" for index in range(len(headers))}
+                row["_table_context"] = context
+                rows.append(row)
         return rows
 
     @staticmethod
     def _split_table_line(line: str) -> list[str]:
         return [cell.strip() for cell in line.strip().strip("|").split("|")]
+
+    @staticmethod
+    def _heading_context(lines: list[str], heading_index: int) -> str:
+        for line in reversed(lines[:heading_index]):
+            stripped = line.strip().strip("# ").strip()
+            if not stripped or "|" in stripped or stripped.startswith("---"):
+                continue
+            if "SOURCE_DOCUMENT" in stripped.upper():
+                continue
+            return stripped
+        return ""
 
 
 class MetadataBuilder:
@@ -228,18 +242,47 @@ class CategoryBuilder:
                     "total_remunerativo",
                 )
             )
+            zone = self._normalize_zone(
+                self._first_value(
+                    row,
+                    "zona_geografica",
+                    "zona_geogr_fica",
+                    "zona",
+                    "ubicacion",
+                    "ubicaci_n",
+                    "region",
+                    "regi_n",
+                    "provincia",
+                    "localidad",
+                    "ambito_geografico",
+                    "mbito_geogr_fico",
+                    "jurisdiccion",
+                    "jurisdicci_n",
+                    "territorio",
+                )
+                or self._zone_from_context(row.get("_table_context") or "")
+            )
             if not name or amount <= 0 or "NO_INDICADO" in name.upper() or self._looks_like_non_category(name):
                 continue
-            category_id = TextTools.code(
+            base_category_id = TextTools.code(
                 self._first_value(row, "category_id", "codigo", "c_digo", "cod", "categor_a_n", "categoria_n")
                 or category_value
                 or name
             )[:30] or "A"
+            category_id = self._category_id_with_zone(base_category_id, zone)
             category_id = self._unique_category_id(category_id, seen)
             if category_id in seen:
                 continue
             seen.add(category_id)
-            categories.append(Category(category_id=category_id, name=self._normalize_display_name(name), basic_salary=amount))
+            categories.append(
+                Category(
+                    category_id=category_id,
+                    name=self._normalize_display_name(name),
+                    basic_salary=amount,
+                    zone=zone or None,
+                    location=zone or None,
+                )
+            )
         return categories
 
     def _first_value(self, row: dict[str, str], *keys: str) -> str:
@@ -256,6 +299,34 @@ class CategoryBuilder:
         while f"{category_id}_{index}" in seen:
             index += 1
         return f"{category_id}_{index}"
+
+    def _category_id_with_zone(self, category_id: str, zone: str) -> str:
+        if not zone:
+            return category_id
+        suffix = TextTools.code(zone)[:24]
+        if not suffix or suffix in category_id:
+            return category_id
+        base = category_id[: max(1, 60 - len(suffix) - 1)]
+        return f"{base}_{suffix}"
+
+    def _normalize_zone(self, value: str) -> str:
+        cleaned = re.sub(r"\s+", " ", str(value or "")).strip(" .:-")
+        if not cleaned or "NO_INDICADO" in cleaned.upper():
+            return ""
+        return cleaned
+
+    def _zone_from_context(self, context: str) -> str:
+        cleaned = re.sub(r"\s+", " ", str(context or "")).strip(" .:-")
+        if not cleaned:
+            return ""
+        match = re.search(
+            r"\b(?:zona|region|regi[oó]n|provincia|localidad|ambito|[aá]mbito|territorio|area|[aá]rea)\b\s*[:\-]?\s*(.{2,80})",
+            cleaned,
+            flags=re.IGNORECASE,
+        )
+        if not match:
+            return ""
+        return self._normalize_zone(match.group(1))
 
     def _normalize_display_name(self, name: str) -> str:
         cleaned = re.sub(r"\s+", " ", str(name or "")).strip(" .:-")
@@ -397,7 +468,7 @@ class SalaryModelBuilder:
         if "obra social" in lower:
             if not any(deduction.code == "OBRA_SOCIAL" for deduction in deductions):
                 deductions.append(Deduction(code="OBRA_SOCIAL", name="Obra social", rate=self._near_percentage(text, "obra social") or 3))
-        if "sindicato" in lower or "cuota sindical" in lower:
+        if self._mentions_worker_union_deduction(text):
             if not any("SINDIC" in TextTools.code(f"{deduction.code} {deduction.name}") for deduction in deductions):
                 deductions.append(Deduction(code="SINDICATO", name="Sindicato", rate=self._near_percentage(text, "sindicato") or 2))
         deductions = self._ensure_argentina_statutory_deductions(deductions, text)
@@ -437,6 +508,9 @@ class SalaryModelBuilder:
                 name=concept or code,
                 rate=rate,
                 base=self._first_value(row, "base", "base_calculo", "base_de_calculo", "base_imponible", "sobre", "aplica_sobre") or "REMUNERATIVE_TOTAL",
+                application_type=self._deduction_application_type(concept, row),
+                applies_when=self._deduction_applies_when(concept, row),
+                requires_employee_flag=self._deduction_employee_flag(concept, row),
             ))
         return deductions
 
@@ -460,6 +534,27 @@ class SalaryModelBuilder:
     def _has_aggregate_legal_contribution(self, deductions: list[Deduction]) -> bool:
         return any("APORTES_DE_LEY" in TextTools.code(f"{deduction.code} {deduction.name}") for deduction in deductions)
 
+    def _mentions_worker_union_deduction(self, text: str) -> bool:
+        value = TextTools.code(text)
+        patterns = (
+            "CUOTA_SINDICAL",
+            "APORTE_SINDICAL",
+            "RETENCION_SINDICAL",
+            "DESCUENTO_SINDICAL",
+            "CONTRIBUCION_SINDICAL",
+            "CUOTA_DE_AFILIACION",
+            "APORTE_DE_AFILIADO",
+            "AFILIADO_AL_SINDICATO",
+        )
+        if any(pattern in value for pattern in patterns):
+            return True
+        context_markers = ("RETENCION", "RETENCIONES", "DEDUCCION", "DEDUCCIONES", "DESCUENTO", "DESCUENTOS", "APORTE", "APORTES")
+        return any(
+            "SINDIC" in TextTools.code(line)
+            and any(marker in TextTools.code(line) for marker in context_markers)
+            for line in text.splitlines()
+        )
+
     def _statutory_key(self, deduction: Deduction) -> str:
         value = TextTools.code(f"{deduction.code} {deduction.name}")
         if "JUBIL" in value:
@@ -470,10 +565,12 @@ class SalaryModelBuilder:
             return "OBRA_SOCIAL"
         if "CUOTA_SINDICAL" in value:
             return "CUOTA_SINDICAL"
-        if "SINDIC" in value:
-            return "SINDICATO"
+        if "MUTUAL" in value:
+            return "MUTUAL"
         if "SEGURO" in value and "SEPEL" in value:
             return "SEGURO_SEPELIO"
+        if "SINDIC" in value:
+            return "SINDICATO"
         return deduction.code
 
     def _deduction_code(self, concept: str, raw_code: str) -> str:
@@ -490,6 +587,8 @@ class SalaryModelBuilder:
             return "LEY_19032"
         if "OBRA_SOCIAL" in value:
             return "OBRA_SOCIAL"
+        if "MUTUAL" in value:
+            return "MUTUAL"
         if "SEGURO" in value and "SEPEL" in value:
             return "SEGURO_SEPELIO"
         if "CUOTA_SINDICAL" in value:
@@ -497,6 +596,46 @@ class SalaryModelBuilder:
         if "SINDIC" in value:
             return "SINDICATO"
         return None
+
+    def _deduction_application_type(self, concept: str, row: dict[str, str]) -> str:
+        explicit = TextTools.code(self._first_value(row, "application_type", "aplicacion", "tipo_aplicacion", "obligatoriedad"))
+        if explicit in {"MANDATORY", "OBLIGATORIA", "OBLIGATORIO", "GENERAL", "TODOS"}:
+            return "MANDATORY"
+        if explicit in {"EMPLOYEE_OPT_IN", "OPTATIVA", "OPTATIVO", "AFILIADO", "AFILIADOS", "ADHESION", "VOLUNTARIA", "VOLUNTARIO"}:
+            return "EMPLOYEE_OPT_IN"
+        value = TextTools.code(" ".join(str(part or "") for part in [
+            concept,
+            row.get("applies_when"),
+            row.get("condicion"),
+            row.get("observaciones"),
+        ]))
+        if any(token in value for token in ("JUBIL", "19032", "19_032", "PAMI", "INSSJP", "OBRA_SOCIAL")):
+            return "MANDATORY"
+        if any(token in value for token in ("APORTE_SOLIDARIO", "CONTRIBUCION_SOLIDARIA", "OBLIGATOR")):
+            return "MANDATORY"
+        if any(token in value for token in ("CUOTA_SINDICAL", "AFILIAD", "ADHERID", "ADHESION", "VOLUNTAR", "AUTORIZACION", "MUTUAL", "OPTAT")):
+            return "EMPLOYEE_OPT_IN"
+        if "SINDIC" in value:
+            return "EMPLOYEE_OPT_IN"
+        return "MANDATORY"
+
+    def _deduction_applies_when(self, concept: str, row: dict[str, str]) -> str | None:
+        value = self._first_value(row, "applies_when", "condicion", "condiciones", "cuando", "observaciones")
+        if value:
+            return value
+        if self._deduction_application_type(concept, row) == "EMPLOYEE_OPT_IN":
+            return "Depende de condicion individual del trabajador"
+        return None
+
+    def _deduction_employee_flag(self, concept: str, row: dict[str, str]) -> str | None:
+        if self._deduction_application_type(concept, row) != "EMPLOYEE_OPT_IN":
+            return None
+        value = TextTools.code(f"{concept} {row.get('observaciones') or ''} {row.get('applies_when') or ''}")
+        if "MUTUAL" in value or "SEGURO" in value:
+            return "enabled_deductions"
+        if "SINDIC" in value or "AFILIAD" in value or "CUOTA" in value:
+            return "union_affiliated"
+        return "enabled_deductions"
 
     def _dedupe_deductions(self, deductions: list[Deduction]) -> list[Deduction]:
         result = {}
@@ -506,7 +645,7 @@ class SalaryModelBuilder:
 
     def _deduction_key(self, deduction: Deduction) -> str:
         semantic = self._statutory_key(deduction)
-        if semantic in {"JUBILACION", "LEY_19032", "OBRA_SOCIAL", "CUOTA_SINDICAL", "SINDICATO", "SEGURO_SEPELIO"}:
+        if semantic in {"JUBILACION", "LEY_19032", "OBRA_SOCIAL", "CUOTA_SINDICAL", "SINDICATO", "MUTUAL", "SEGURO_SEPELIO"}:
             return semantic
         code = TextTools.code(deduction.code)
         name = TextTools.code(deduction.name)
@@ -581,7 +720,24 @@ class SalaryModelBuilder:
         cleaned = TextTools.code(value)
         if not cleaned or cleaned in {"TODAS", "TODOS", "NO_INDICADO", "ALL"}:
             return []
-        return [part for part in cleaned.split("_") if part]
+        parts = [part for part in cleaned.split("_") if part]
+        condition_tokens = {
+            "PERSONAL",
+            "QUE",
+            "QUIEN",
+            "QUIENES",
+            "PERNOCTA",
+            "FUERA",
+            "VIAJA",
+            "VIAJE",
+            "REALIZA",
+            "TRABAJA",
+            "CON",
+            "SIN",
+        }
+        if parts and set(parts).issubset(condition_tokens):
+            return []
+        return parts
 
     def _applies_to_tags(self, concept: str, observations: str) -> list[str]:
         value = TextTools.code(f"{concept} {observations}")
@@ -616,6 +772,7 @@ class SalaryModelBuilder:
             "UNIDADES",
             "VIAJE",
             "VIAJES",
+            "VIAT",
             "VIATICO",
             "VIATICOS",
             "COMIDA",
@@ -639,7 +796,7 @@ class SalaryModelBuilder:
         value = TextTools.code(" ".join(str(part or "") for part in [concept, row.get("base"), row.get("formula"), row.get("observaciones")]))
         if "KILOMETRO" in value or "KM" in value:
             return "KM"
-        if "DIA" in value or "COMIDA" in value:
+        if "DIA" in value or "COMIDA" in value or "VIAT" in value:
             return "DAY"
         if "VIAJE" in value:
             return "TRIP"
@@ -727,6 +884,8 @@ class LegalStructureBuilder:
                     "codigo": category.category_id,
                     "nombre": category.name,
                     "salario_basico": category.basic_salary,
+                    "zona_geografica": category.zone,
+                    "ubicacion": category.location,
                 }
                 for category in categories
             ],
@@ -741,7 +900,10 @@ class LegalStructureBuilder:
                 base_calculo="categoria_profesional",
                 importe_fijo=category.basic_salary,
                 fuente_articulo="escala_salarial",
-                observaciones=f"Categoria {category.category_id}",
+                observaciones=(
+                    f"Categoria {category.category_id}"
+                    + (f" - zona geografica: {category.zone}" if category.zone else "")
+                ),
             )
             for category in categories
         ]
@@ -819,6 +981,7 @@ class LegalStructureBuilder:
         return "adicionales_variables"
 
     def _jornada_tiempos(self, text: str, salary_model: SalaryModel) -> ModuloJornadaTiempos:
+        dias_mensuales = self._dias_base_liquidacion(text)
         overtime = [
             {
                 "codigo": rule.code,
@@ -832,6 +995,7 @@ class LegalStructureBuilder:
             jornada_estandar={
                 "maximo_horas_diarias": 8,
                 "maximo_horas_semanales": 48,
+                "dias_mensuales": dias_mensuales,
                 "fuente_normativa": "LCT 20.744 y Ley 11.544",
                 "fuente_convenio": self._contains(text, "jornada"),
             },
@@ -843,6 +1007,45 @@ class LegalStructureBuilder:
             jornada_insalubre={"maximo_horas": 6, "fuente_normativa": "LCT 20.744"},
             descansos={"descanso_minimo_entre_jornadas_horas": 12, "fuente_normativa": "LCT 20.744"},
         )
+
+    def _dias_base_liquidacion(self, text: str) -> int:
+        rows = TextTools.tables_after_heading(text, "JORNADA_Y_BASES")
+        for row in rows:
+            concept = TextTools.code(" ".join(str(row.get(key) or "") for key in ("concepto", "fuente", "observaciones")))
+            unit = TextTools.code(row.get("unidad") or "")
+            value = self._integer_value(row.get("valor") or "")
+            if value and 1 <= value <= 31 and ("DIA" in unit or "DIA" in concept or "LIQUIDACION" in concept or "JORNAL" in concept):
+                return value
+
+        patterns = (
+            r"(?:dias?\s+base\s+(?:de\s+)?liquidacion|base\s+(?:de\s+)?liquidacion)\D{0,40}(\d{1,2})\s*dias?",
+            r"(?:divisor|base)\s+(?:mensual|diario|jornal)\D{0,30}(\d{1,2})\s*dias?",
+            r"(?:se\s+liquida|liquidacion|jornal|valor\s+diario|viaticos?)\D{0,60}(?:sobre|en\s+base\s+a|a)\s+(\d{1,2})\s*dias?",
+            r"(\d{1,2})\s*dias?\D{0,40}(?:base\s+(?:de\s+)?liquidacion|para\s+liquidar|para\s+el\s+calculo\s+diario)",
+        )
+        normalized = self._ascii(text).lower()
+        for pattern in patterns:
+            match = re.search(pattern, normalized, flags=re.IGNORECASE)
+            if match:
+                value = int(match.group(1))
+                if 1 <= value <= 31:
+                    return value
+        return 30
+
+    def _integer_value(self, value: str) -> int | None:
+        match = re.search(r"\d{1,2}", str(value or ""))
+        return int(match.group(0)) if match else None
+
+    def _ascii(self, value: str) -> str:
+        replacements = {
+            "á": "a", "é": "e", "í": "i", "ó": "o", "ú": "u", "ü": "u", "ñ": "n",
+            "Á": "A", "É": "E", "Í": "I", "Ó": "O", "Ú": "U", "Ü": "U", "Ñ": "N",
+            "Ã¡": "a", "Ã©": "e", "Ã­": "i", "Ã³": "o", "Ãº": "u", "Ã¼": "u", "Ã±": "n",
+            "Ã": "A", "Ã‰": "E", "Ã": "I", "Ã“": "O", "Ãš": "U", "Ãœ": "U", "Ã‘": "N",
+        }
+        for source, target in replacements.items():
+            value = value.replace(source, target)
+        return value
 
     def _licencias_descansos(self, text: str) -> ModuloLicenciasDescansos:
         return ModuloLicenciasDescansos(

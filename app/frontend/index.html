@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Liquidacion de Sueldos</title>
-  <link rel="stylesheet" href="/static/styles.css?v=3">
+  <link rel="stylesheet" href="/static/styles.css?v=8">
 </head>
 <body>
   <aside class="sidebar">
@@ -139,7 +139,7 @@
         <div class="editor-grid">
           <section>
             <h3>Puestos / roles</h3>
-            <div class="table-wrap"><table><thead><tr><th>Codigo</th><th>Nombre</th><th>Basico</th><th></th></tr></thead><tbody id="editor-categories"></tbody></table></div>
+            <div class="table-wrap"><table><thead><tr><th>Codigo</th><th>Nombre</th><th>Zona</th><th>Basico</th><th></th></tr></thead><tbody id="editor-categories"></tbody></table></div>
           </section>
           <section>
             <h3>Haberes remunerativos</h3>
@@ -151,7 +151,7 @@
           </section>
           <section>
             <h3>Descuentos</h3>
-            <div class="table-wrap"><table><thead><tr><th>Codigo</th><th>Nombre</th><th>Alicuota</th><th>Base</th><th></th></tr></thead><tbody id="editor-deductions"></tbody></table></div>
+            <div class="table-wrap"><table><thead><tr><th>Codigo</th><th>Nombre</th><th>Alicuota</th><th>Base</th><th>Aplicacion</th><th>Condicion</th><th></th></tr></thead><tbody id="editor-deductions"></tbody></table></div>
           </section>
           <section>
             <h3>Horas extra</h3>
@@ -175,10 +175,11 @@
           <label>CUIL<input name="cuil" placeholder="20-12345678-9"></label>
           <label>Fecha ingreso<input name="hire_date" type="date"></label>
           <label>Convenio<select id="employee-agreement-select" name="agreement_id"></select></label>
+          <label id="employee-zone-field" class="hidden">Zona / ubicacion<select id="employee-zone-select" name="zone"></select></label>
           <label>Puesto / rol<select id="employee-category-select" name="category_id"></select></label>
-          <label>Zona<input name="zone" placeholder="General"></label>
           <label>Jornada<input name="workday" placeholder="Completa"></label>
           <label>Antiguedad<input id="employee-seniority-preview" type="number" value="0" disabled></label>
+          <label class="inline-check"><input name="union_affiliated" type="checkbox"> Afiliado sindical</label>
           <button class="primary" id="employee-save-button">Guardar empleado</button>
           <button class="secondary" type="button" id="employee-cancel-edit">Cancelar edicion</button>
         </form>
@@ -199,11 +200,12 @@
                 <th>Puesto</th>
                 <th>Ingreso</th>
                 <th>Antiguedad</th>
+                <th>Sindicato</th>
                 <th>Acciones</th>
               </tr>
             </thead>
             <tbody id="employees-table">
-              <tr><td colspan="7">Sin empleados cargados</td></tr>
+              <tr><td colspan="8">Sin empleados cargados</td></tr>
             </tbody>
           </table>
         </div>
@@ -386,6 +388,6 @@
     </section>
   </main>
   <div id="toast-stack" class="toast-stack"></div>
-  <script src="/static/app.js"></script>
+  <script src="/static/app.js?v=17"></script>
 </body>
 </html>

@@ -152,10 +152,11 @@ def test_full_smart_calculator_case_from_multi_file_cct(tmp_path, monkeypatch):
     | VIAT_DIA | Viatico diario | FIXED | $ 10.000,00 | NO_INDICADO | BASIC | A | Junio 2026 | CARGA_MANUAL dias trabajados |
 
     ## RETENCIONES_DEDUCCIONES
-    | code | concepto | porcentaje | importe | base | observaciones |
-    | JUBILACION | Jubilacion | 11% | NO_INDICADO | REMUNERATIVE_TOTAL | legal |
-    | LEY_19032 | Ley 19.032 | 3% | NO_INDICADO | REMUNERATIVE_TOTAL | legal |
-    | OBRA_SOCIAL | Obra Social | 3% | NO_INDICADO | REMUNERATIVE_TOTAL | legal |
+    | code | concepto | porcentaje | importe | base | application_type | applies_when | observaciones |
+    | JUBILACION | Jubilacion | 11% | NO_INDICADO | REMUNERATIVE_TOTAL | MANDATORY | todo el personal | legal |
+    | LEY_19032 | Ley 19.032 | 3% | NO_INDICADO | REMUNERATIVE_TOTAL | MANDATORY | todo el personal | legal |
+    | OBRA_SOCIAL | Obra Social | 3% | NO_INDICADO | REMUNERATIVE_TOTAL | MANDATORY | todo el personal | legal |
+    | CUOTA_SINDICAL | Cuota sindical | 2% | NO_INDICADO | REMUNERATIVE_TOTAL | EMPLOYEE_OPT_IN | solo afiliados al sindicato | afiliacion |
     """
 
     upload = client.post("/agreements/upload-files", files=[
@@ -172,7 +173,7 @@ def test_full_smart_calculator_case_from_multi_file_cct(tmp_path, monkeypatch):
     assert agreement["remuneraciones"]["antiguedad"]
     assert agreement["remuneraciones"]["presentismo_asistencia"]
     assert agreement["remuneraciones"]["viaticos"]
-    assert {item["code"] for item in agreement["salary_model"]["deductions"]} >= {"JUBILACION", "LEY_19032", "OBRA_SOCIAL", "SINDICATO"}
+    assert {item["code"] for item in agreement["salary_model"]["deductions"]} >= {"JUBILACION", "LEY_19032", "OBRA_SOCIAL", "CUOTA_SINDICAL"}
 
     employee = client.post("/employees", json={
         "employee_id": "E_SMART",
@@ -180,6 +181,7 @@ def test_full_smart_calculator_case_from_multi_file_cct(tmp_path, monkeypatch):
         "category_id": "A",
         "seniority_years": 4,
         "workday": "Completa",
+        "union_affiliated": True,
     })
     assert employee.status_code == 200
 
@@ -206,7 +208,7 @@ def test_full_smart_calculator_case_from_multi_file_cct(tmp_path, monkeypatch):
     assert details["VIAT_DIA"]["amount"] == 30000
     assert details["SAC"]["amount"] == 182250
     assert result["gross_salary"] == 576750
-    assert details["SINDICATO"]["amount"] == -10935
+    assert details["CUOTA_SINDICAL"]["amount"] == -10935
     assert result["deductions"] == 103882.5
     assert result["net_salary"] == 472867.5
 

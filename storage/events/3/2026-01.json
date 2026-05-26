@@ -5,29 +5,11 @@
     {
       "type": "ABSENCE",
       "subtype": "UNJUSTIFIED",
-      "days": 1.0,
+      "days": 2.0,
       "hours": null,
       "quantity": null,
       "amount": null,
       "description": null
-    },
-    {
-      "type": "SALARY_ITEM",
-      "subtype": "VIATICO",
-      "days": null,
-      "hours": null,
-      "quantity": 1.0,
-      "amount": null,
-      "description": "Viático (Remunerativo)"
-    },
-    {
-      "type": "SALARY_ITEM",
-      "subtype": "ASIG_EXT_NR",
-      "days": null,
-      "hours": null,
-      "quantity": 1.0,
-      "amount": null,
-      "description": "Asig. Ext. No Rem"
     }
   ]
 }

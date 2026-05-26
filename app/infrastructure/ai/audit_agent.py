@@ -18,6 +18,7 @@ Reglas de criterio:
 - Los adicionales de rama solo deben observarse si aparecen liquidados para
   ramas incompatibles en payroll.details; no adviertas por reglas existentes
   en agreement.salary_model que no fueron aplicadas.
+- Responder siempre en español 
 Devolve SOLO JSON con este formato exacto:
 {{
   "status": "APPROVED|WARNING|ERROR",

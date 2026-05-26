@@ -2,13 +2,13 @@
   "metadata": {
     "agreement_id": "CCT_130_75",
     "name": "Convenio_Unificado",
-    "version": "2026_04",
-    "valid_from": "2026-04-01",
-    "valid_to": "2031-03-31",
-    "source_document": "escalas-comercio-2026.pdf, 📚 CATÁLOGO MAESTRO DE CONCEPTOS_ CCT 130_75 (COMERCIO).pdf, 📘 Manual de Ingeniería_ Estrategia de Selección de Conceptos.pdf, 📘 Manual de Ingeniería de Fórmulas_ Comercio CCT 130_75.pdf, 📘 Manual de Fórmula_ Concepto 1 - SUELDO BÁSICO.pdf, 📘 Concepto 1 - SUELDO BÁSICO.pdf, 📘 LOS TOTALIZADORES (Serie 990).pdf",
-    "created_at": "2026-05-13T14:33:52.495527+00:00",
+    "version": "1975_06",
+    "valid_from": "1975-06-01",
+    "valid_to": "1976-05-31",
+    "source_document": "Convenio-colectivo-13075.pdf, escalas-comercio-2026 (1).pdf",
+    "created_at": "2026-05-20T15:23:15.542729+00:00",
     "status": "ACTIVE",
-    "union": "FAECYS",
+    "union": "Federación Argentina de Empleados de Comercio y Servicios (FAECYS)",
     "activity": "Empleados de Comercio",
     "jurisdiction": "Nacional",
     "parity_terms": []
@@ -17,134 +17,148 @@
     {
       "category_id": "A",
       "name": "Administrativo A",
-      "basic_salary": 1090613.0
+      "basic_salary": 1090613.0,
+      "valor_hora": null,
+      "valor_jornal": null
     },
     {
       "category_id": "B",
       "name": "Administrativo B",
-      "basic_salary": 1095298.0
+      "basic_salary": 1095298.0,
+      "valor_hora": null,
+      "valor_jornal": null
     },
     {
       "category_id": "C",
       "name": "Administrativo C",
-      "basic_salary": 1099977.0
+      "basic_salary": 1099977.0,
+      "valor_hora": null,
+      "valor_jornal": null
     },
     {
       "category_id": "D",
       "name": "Administrativo D",
-      "basic_salary": 1114022.0
+      "basic_salary": 1114022.0,
+      "valor_hora": null,
+      "valor_jornal": null
     },
     {
       "category_id": "E",
       "name": "Administrativo E",
-      "basic_salary": 1125724.0
+      "basic_salary": 1125724.0,
+      "valor_hora": null,
+      "valor_jornal": null
     },
     {
       "category_id": "F",
       "name": "Administrativo F",
-      "basic_salary": 1142890.0
+      "basic_salary": 1142890.0,
+      "valor_hora": null,
+      "valor_jornal": null
     },
     {
       "category_id": "A_2",
-      "name": "Auxiliar Especializado A",
-      "basic_salary": 1103879.0
+      "name": "Maestranza A",
+      "basic_salary": 1078911.0,
+      "valor_hora": null,
+      "valor_jornal": null
     },
     {
       "category_id": "B_2",
-      "name": "Auxiliar Especializado B",
-      "basic_salary": 1117922.0
+      "name": "Maestranza B",
+      "basic_salary": 1082029.0,
+      "valor_hora": null,
+      "valor_jornal": null
+    },
+    {
+      "category_id": "C_2",
+      "name": "Maestranza C",
+      "basic_salary": 1092951.0,
+      "valor_hora": null,
+      "valor_jornal": null
     },
     {
       "category_id": "A_3",
       "name": "Cajeros A",
-      "basic_salary": 1094513.0
+      "basic_salary": 1094513.0,
+      "valor_hora": null,
+      "valor_jornal": null
     },
     {
       "category_id": "B_3",
       "name": "Cajeros B",
-      "basic_salary": 1099977.0
-    },
-    {
-      "category_id": "C_2",
-      "name": "Cajeros C",
-      "basic_salary": 1106999.0
-    },
-    {
-      "category_id": "A_4",
-      "name": "Maestranza A",
-      "basic_salary": 1078911.0
-    },
-    {
-      "category_id": "B_4",
-      "name": "Maestranza B",
-      "basic_salary": 1082029.0
+      "basic_salary": 1099977.0,
+      "valor_hora": null,
+      "valor_jornal": null
     },
     {
       "category_id": "C_3",
-      "name": "Maestranza C",
-      "basic_salary": 1092951.0
+      "name": "Cajeros C",
+      "basic_salary": 1106999.0,
+      "valor_hora": null,
+      "valor_jornal": null
     },
     {
-      "category_id": "A_5",
+      "category_id": "A_4",
       "name": "Personal Auxiliar A",
-      "basic_salary": 1094513.0
+      "basic_salary": 1094513.0,
+      "valor_hora": null,
+      "valor_jornal": null
     },
     {
-      "category_id": "B_5",
+      "category_id": "B_4",
       "name": "Personal Auxiliar B",
-      "basic_salary": 1102315.0
+      "basic_salary": 1102315.0,
+      "valor_hora": null,
+      "valor_jornal": null
     },
     {
       "category_id": "C_4",
       "name": "Personal Auxiliar C",
-      "basic_salary": 1128065.0
+      "basic_salary": 1128065.0,
+      "valor_hora": null,
+      "valor_jornal": null
     },
     {
-      "category_id": "A_6",
-      "name": "Vendedores A",
-      "basic_salary": 1094513.0
+      "category_id": "A_5",
+      "name": "Auxiliar Especializado A",
+      "basic_salary": 1103879.0,
+      "valor_hora": null,
+      "valor_jornal": null
     },
     {
-      "category_id": "B_6",
-      "name": "Vendedores B",
-      "basic_salary": 1117925.0
-    },
-    {
-      "category_id": "C_5",
-      "name": "Vendedores C",
-      "basic_salary": 1125724.0
-    },
-    {
-      "category_id": "D_2",
-      "name": "Vendedores D",
-      "basic_salary": 1142890.0
+      "category_id": "B_5",
+      "name": "Auxiliar Especializado B",
+      "basic_salary": 1117922.0,
+      "valor_hora": null,
+      "valor_jornal": null
     }
   ],
   "salary_model": {
     "remunerative_items": [
       {
-        "code": "303",
-        "name": "ASISTENCIA Y PUNTUALIDAD",
+        "code": "ANTIGUEDAD",
+        "name": "Adicional por antigüedad",
         "type": "REMUNERATIVE",
         "calculation_type": "PERCENTAGE",
-        "base_reference": "R[1]+R[117]+A[777]",
+        "base_reference": "Basico",
         "amount": null,
-        "rate": 8.33,
-        "formula": "R[1]+R[117]+A[777] * 8.33%",
+        "rate": 1.0,
+        "formula": "Basico * 1.0%",
         "applies_to_categories": [],
         "applies_to_tags": [],
         "input_mode": "AUTO",
         "unit": null
       },
       {
-        "code": "117_197",
-        "name": "ANTIGÜEDAD",
+        "code": "ASISTENCIA",
+        "name": "Asignación por asistencia y puntualidad",
         "type": "REMUNERATIVE",
         "calculation_type": "PERCENTAGE",
-        "base_reference": "Básico",
+        "base_reference": "Remuneración mensual",
         "amount": null,
-        "rate": 1.0,
-        "formula": "Básico * 1.0%",
+        "rate": 8.33,
+        "formula": "Remuneración mensual * 8.33%",
         "applies_to_categories": [],
         "applies_to_tags": [],
         "input_mode": "AUTO",
@@ -153,8 +167,22 @@
     ],
     "non_remunerative_items": [
       {
-        "code": "437",
-        "name": "RECOMPOSICIÓN NO REMUNERATIVA",
+        "code": "INC_ABRIL_2026",
+        "name": "Incremento No Remunerativo",
+        "type": "NON_REMUNERATIVE",
+        "calculation_type": "FIXED",
+        "base_reference": "NO_INDICADO",
+        "amount": 100000.0,
+        "rate": null,
+        "formula": "100000.0",
+        "applies_to_categories": [],
+        "applies_to_tags": [],
+        "input_mode": "AUTO",
+        "unit": null
+      },
+      {
+        "code": "RECOMP_ABRIL_2026",
+        "name": "Recomposición No Remunerativa",
         "type": "NON_REMUNERATIVE",
         "calculation_type": "FIXED",
         "base_reference": "NO_INDICADO",
@@ -170,27 +198,53 @@
     "deductions": [
       {
         "code": "JUBILACION",
-        "name": "JUBILACION SIPA",
+        "name": "Jubilación",
         "rate": 11.0,
-        "base": "R[993]"
+        "base": "Remunerativo",
+        "application_type": "MANDATORY",
+        "applies_when": "Todos",
+        "requires_employee_flag": null,
+        "source_article": null
       },
       {
         "code": "LEY_19032",
-        "name": "LEY 19.032 / INSSJP",
+        "name": "Ley 19.032 / PAMI",
         "rate": 3.0,
-        "base": "R[993]"
+        "base": "Remunerativo",
+        "application_type": "MANDATORY",
+        "applies_when": "Todos",
+        "requires_employee_flag": null,
+        "source_article": null
       },
       {
         "code": "OBRA_SOCIAL",
-        "name": "OBRA SOCIAL",
+        "name": "Obra Social",
         "rate": 3.0,
-        "base": "R[993]"
+        "base": "Remunerativo",
+        "application_type": "MANDATORY",
+        "applies_when": "Todos",
+        "requires_employee_flag": null,
+        "source_article": null
+      },
+      {
+        "code": "CONTRIBUCION_SOLIDARIA",
+        "name": "Contribución solidaria",
+        "rate": 2.5,
+        "base": "Remuneración total",
+        "application_type": "MANDATORY",
+        "applies_when": "Todos",
+        "requires_employee_flag": null,
+        "source_article": null
       },
       {
         "code": "SINDICATO",
         "name": "Sindicato",
         "rate": 2.0,
-        "base": "REMUNERATIVE_TOTAL"
+        "base": "REMUNERATIVE_TOTAL",
+        "application_type": "MANDATORY",
+        "applies_when": null,
+        "requires_employee_flag": null,
+        "source_article": null
       }
     ],
     "employer_contributions": [
@@ -236,11 +290,11 @@
   ],
   "identificacion_alcance": {
     "partes_signatarias": [
-      "FAECYS"
+      "Federación Argentina de Empleados de Comercio y Servicios (FAECYS)"
     ],
     "vigencia": {
-      "desde": "2026-04-01",
-      "hasta": "2031-03-31",
+      "desde": "1975-06-01",
+      "hasta": "1976-05-31",
       "paritarias": []
     },
     "ambito_aplicacion": {
@@ -282,13 +336,18 @@
       },
       {
         "codigo": "A_2",
-        "nombre": "Auxiliar Especializado A",
-        "salario_basico": 1103879.0
+        "nombre": "Maestranza A",
+        "salario_basico": 1078911.0
       },
       {
         "codigo": "B_2",
-        "nombre": "Auxiliar Especializado B",
-        "salario_basico": 1117922.0
+        "nombre": "Maestranza B",
+        "salario_basico": 1082029.0
+      },
+      {
+        "codigo": "C_2",
+        "nombre": "Maestranza C",
+        "salario_basico": 1092951.0
       },
       {
         "codigo": "A_3",
@@ -301,32 +360,17 @@
         "salario_basico": 1099977.0
       },
       {
-        "codigo": "C_2",
+        "codigo": "C_3",
         "nombre": "Cajeros C",
         "salario_basico": 1106999.0
       },
       {
         "codigo": "A_4",
-        "nombre": "Maestranza A",
-        "salario_basico": 1078911.0
-      },
-      {
-        "codigo": "B_4",
-        "nombre": "Maestranza B",
-        "salario_basico": 1082029.0
-      },
-      {
-        "codigo": "C_3",
-        "nombre": "Maestranza C",
-        "salario_basico": 1092951.0
-      },
-      {
-        "codigo": "A_5",
         "nombre": "Personal Auxiliar A",
         "salario_basico": 1094513.0
       },
       {
-        "codigo": "B_5",
+        "codigo": "B_4",
         "nombre": "Personal Auxiliar B",
         "salario_basico": 1102315.0
       },
@@ -336,24 +380,14 @@
         "salario_basico": 1128065.0
       },
       {
-        "codigo": "A_6",
-        "nombre": "Vendedores A",
-        "salario_basico": 1094513.0
+        "codigo": "A_5",
+        "nombre": "Auxiliar Especializado A",
+        "salario_basico": 1103879.0
       },
       {
-        "codigo": "B_6",
-        "nombre": "Vendedores B",
-        "salario_basico": 1117925.0
-      },
-      {
-        "codigo": "C_5",
-        "nombre": "Vendedores C",
-        "salario_basico": 1125724.0
-      },
-      {
-        "codigo": "D_2",
-        "nombre": "Vendedores D",
-        "salario_basico": 1142890.0
+        "codigo": "B_5",
+        "nombre": "Auxiliar Especializado B",
+        "salario_basico": 1117922.0
       }
     ]
   },
@@ -438,12 +472,12 @@
         "observaciones": "Categoria F"
       },
       {
-        "nombre": "Salario basico - Auxiliar Especializado A",
+        "nombre": "Salario basico - Maestranza A",
         "tipo": "remunerativo",
         "formula": "importe_fijo",
         "base_calculo": "categoria_profesional",
         "porcentaje": null,
-        "importe_fijo": 1103879.0,
+        "importe_fijo": 1078911.0,
         "condiciones": [],
         "excepciones": [],
         "fuente_articulo": "escala_salarial",
@@ -451,17 +485,30 @@
         "observaciones": "Categoria A_2"
       },
       {
-        "nombre": "Salario basico - Auxiliar Especializado B",
+        "nombre": "Salario basico - Maestranza B",
         "tipo": "remunerativo",
         "formula": "importe_fijo",
         "base_calculo": "categoria_profesional",
         "porcentaje": null,
-        "importe_fijo": 1117922.0,
+        "importe_fijo": 1082029.0,
         "condiciones": [],
         "excepciones": [],
         "fuente_articulo": "escala_salarial",
         "requiere_validacion": false,
         "observaciones": "Categoria B_2"
+      },
+      {
+        "nombre": "Salario basico - Maestranza C",
+        "tipo": "remunerativo",
+        "formula": "importe_fijo",
+        "base_calculo": "categoria_profesional",
+        "porcentaje": null,
+        "importe_fijo": 1092951.0,
+        "condiciones": [],
+        "excepciones": [],
+        "fuente_articulo": "escala_salarial",
+        "requiere_validacion": false,
+        "observaciones": "Categoria C_2"
       },
       {
         "nombre": "Salario basico - Cajeros A",
@@ -500,45 +547,6 @@
         "excepciones": [],
         "fuente_articulo": "escala_salarial",
         "requiere_validacion": false,
-        "observaciones": "Categoria C_2"
-      },
-      {
-        "nombre": "Salario basico - Maestranza A",
-        "tipo": "remunerativo",
-        "formula": "importe_fijo",
-        "base_calculo": "categoria_profesional",
-        "porcentaje": null,
-        "importe_fijo": 1078911.0,
-        "condiciones": [],
-        "excepciones": [],
-        "fuente_articulo": "escala_salarial",
-        "requiere_validacion": false,
-        "observaciones": "Categoria A_4"
-      },
-      {
-        "nombre": "Salario basico - Maestranza B",
-        "tipo": "remunerativo",
-        "formula": "importe_fijo",
-        "base_calculo": "categoria_profesional",
-        "porcentaje": null,
-        "importe_fijo": 1082029.0,
-        "condiciones": [],
-        "excepciones": [],
-        "fuente_articulo": "escala_salarial",
-        "requiere_validacion": false,
-        "observaciones": "Categoria B_4"
-      },
-      {
-        "nombre": "Salario basico - Maestranza C",
-        "tipo": "remunerativo",
-        "formula": "importe_fijo",
-        "base_calculo": "categoria_profesional",
-        "porcentaje": null,
-        "importe_fijo": 1092951.0,
-        "condiciones": [],
-        "excepciones": [],
-        "fuente_articulo": "escala_salarial",
-        "requiere_validacion": false,
         "observaciones": "Categoria C_3"
       },
       {
@@ -552,7 +560,7 @@
         "excepciones": [],
         "fuente_articulo": "escala_salarial",
         "requiere_validacion": false,
-        "observaciones": "Categoria A_5"
+        "observaciones": "Categoria A_4"
       },
       {
         "nombre": "Salario basico - Personal Auxiliar B",
@@ -565,7 +573,7 @@
         "excepciones": [],
         "fuente_articulo": "escala_salarial",
         "requiere_validacion": false,
-        "observaciones": "Categoria B_5"
+        "observaciones": "Categoria B_4"
       },
       {
         "nombre": "Salario basico - Personal Auxiliar C",
@@ -581,95 +589,82 @@
         "observaciones": "Categoria C_4"
       },
       {
-        "nombre": "Salario basico - Vendedores A",
+        "nombre": "Salario basico - Auxiliar Especializado A",
         "tipo": "remunerativo",
         "formula": "importe_fijo",
         "base_calculo": "categoria_profesional",
         "porcentaje": null,
-        "importe_fijo": 1094513.0,
+        "importe_fijo": 1103879.0,
         "condiciones": [],
         "excepciones": [],
         "fuente_articulo": "escala_salarial",
         "requiere_validacion": false,
-        "observaciones": "Categoria A_6"
+        "observaciones": "Categoria A_5"
       },
       {
-        "nombre": "Salario basico - Vendedores B",
+        "nombre": "Salario basico - Auxiliar Especializado B",
         "tipo": "remunerativo",
         "formula": "importe_fijo",
         "base_calculo": "categoria_profesional",
         "porcentaje": null,
-        "importe_fijo": 1117925.0,
+        "importe_fijo": 1117922.0,
         "condiciones": [],
         "excepciones": [],
         "fuente_articulo": "escala_salarial",
         "requiere_validacion": false,
-        "observaciones": "Categoria B_6"
-      },
-      {
-        "nombre": "Salario basico - Vendedores C",
-        "tipo": "remunerativo",
-        "formula": "importe_fijo",
-        "base_calculo": "categoria_profesional",
-        "porcentaje": null,
-        "importe_fijo": 1125724.0,
-        "condiciones": [],
-        "excepciones": [],
-        "fuente_articulo": "escala_salarial",
-        "requiere_validacion": false,
-        "observaciones": "Categoria C_5"
-      },
-      {
-        "nombre": "Salario basico - Vendedores D",
-        "tipo": "remunerativo",
-        "formula": "importe_fijo",
-        "base_calculo": "categoria_profesional",
-        "porcentaje": null,
-        "importe_fijo": 1142890.0,
-        "condiciones": [],
-        "excepciones": [],
-        "fuente_articulo": "escala_salarial",
-        "requiere_validacion": false,
-        "observaciones": "Categoria D_2"
+        "observaciones": "Categoria B_5"
       }
     ],
     "adicionales_fijos": [],
     "adicionales_variables": [],
     "antiguedad": [
       {
-        "nombre": "ANTIGÜEDAD",
+        "nombre": "Adicional por antigüedad",
         "tipo": "remunerativo",
-        "formula": "Básico * 1.0%",
-        "base_calculo": "Básico",
+        "formula": "Basico * 1.0%",
+        "base_calculo": "Basico",
         "porcentaje": 1.0,
         "importe_fijo": null,
         "condiciones": [],
         "excepciones": [],
         "fuente_articulo": "salary_model",
         "requiere_validacion": false,
-        "observaciones": "117_197"
+        "observaciones": "ANTIGUEDAD"
       }
     ],
     "presentismo_asistencia": [
       {
-        "nombre": "ASISTENCIA Y PUNTUALIDAD",
+        "nombre": "Asignación por asistencia y puntualidad",
         "tipo": "remunerativo",
-        "formula": "R[1]+R[117]+A[777] * 8.33%",
-        "base_calculo": "R[1]+R[117]+A[777]",
+        "formula": "Remuneración mensual * 8.33%",
+        "base_calculo": "Remuneración mensual",
         "porcentaje": 8.33,
         "importe_fijo": null,
         "condiciones": [],
         "excepciones": [],
         "fuente_articulo": "salary_model",
         "requiere_validacion": false,
-        "observaciones": "303"
+        "observaciones": "ASISTENCIA"
       }
     ],
     "titulos_tecnicos_profesionales": [],
     "remuneraciones_por_rendimiento": [],
     "beneficios_no_remunerativos": [
       {
-        "nombre": "RECOMPOSICIÓN NO REMUNERATIVA",
+        "nombre": "Incremento No Remunerativo",
+        "tipo": "no_remunerativo",
+        "formula": "importe_fijo",
+        "base_calculo": "NO_INDICADO",
+        "porcentaje": null,
+        "importe_fijo": 100000.0,
+        "condiciones": [],
+        "excepciones": [],
+        "fuente_articulo": "salary_model",
+        "requiere_validacion": false,
+        "observaciones": "INC_ABRIL_2026"
+      },
+      {
+        "nombre": "Recomposición No Remunerativa",
         "tipo": "no_remunerativo",
         "formula": "importe_fijo",
         "base_calculo": "NO_INDICADO",
@@ -679,17 +674,17 @@
         "excepciones": [],
         "fuente_articulo": "salary_model",
         "requiere_validacion": false,
-        "observaciones": "437"
+        "observaciones": "RECOMP_ABRIL_2026"
       }
     ],
     "viaticos": [],
     "asignaciones_familiares": [],
     "descuentos": [
       {
-        "nombre": "JUBILACION SIPA",
+        "nombre": "Jubilación",
         "tipo": "descuento",
-        "formula": "R[993] * 11.0%",
-        "base_calculo": "R[993]",
+        "formula": "Remunerativo * 11.0%",
+        "base_calculo": "Remunerativo",
         "porcentaje": 11.0,
         "importe_fijo": null,
         "condiciones": [],
@@ -699,10 +694,10 @@
         "observaciones": "JUBILACION"
       },
       {
-        "nombre": "LEY 19.032 / INSSJP",
+        "nombre": "Ley 19.032 / PAMI",
         "tipo": "descuento",
-        "formula": "R[993] * 3.0%",
-        "base_calculo": "R[993]",
+        "formula": "Remunerativo * 3.0%",
+        "base_calculo": "Remunerativo",
         "porcentaje": 3.0,
         "importe_fijo": null,
         "condiciones": [],
@@ -712,10 +707,10 @@
         "observaciones": "LEY_19032"
       },
       {
-        "nombre": "OBRA SOCIAL",
+        "nombre": "Obra Social",
         "tipo": "descuento",
-        "formula": "R[993] * 3.0%",
-        "base_calculo": "R[993]",
+        "formula": "Remunerativo * 3.0%",
+        "base_calculo": "Remunerativo",
         "porcentaje": 3.0,
         "importe_fijo": null,
         "condiciones": [],
@@ -723,6 +718,19 @@
         "fuente_articulo": "retenciones_deducciones",
         "requiere_validacion": true,
         "observaciones": "OBRA_SOCIAL"
+      },
+      {
+        "nombre": "Contribución solidaria",
+        "tipo": "descuento",
+        "formula": "Remuneración total * 2.5%",
+        "base_calculo": "Remuneración total",
+        "porcentaje": 2.5,
+        "importe_fijo": null,
+        "condiciones": [],
+        "excepciones": [],
+        "fuente_articulo": "retenciones_deducciones",
+        "requiere_validacion": true,
+        "observaciones": "CONTRIBUCION_SOLIDARIA"
       },
       {
         "nombre": "Sindicato",
@@ -743,8 +751,9 @@
     "jornada_estandar": {
       "maximo_horas_diarias": 8,
       "maximo_horas_semanales": 48,
+      "dias_mensuales": 30,
       "fuente_normativa": "LCT 20.744 y Ley 11.544",
-      "fuente_convenio": false
+      "fuente_convenio": true
     },
     "horas_suplementarias": [
       {
@@ -908,7 +917,7 @@
     {
       "tipo": "convenio_colectivo",
       "referencia": "CCT_130_75",
-      "documento": "escalas-comercio-2026.pdf, 📚 CATÁLOGO MAESTRO DE CONCEPTOS_ CCT 130_75 (COMERCIO).pdf, 📘 Manual de Ingeniería_ Estrategia de Selección de Conceptos.pdf, 📘 Manual de Ingeniería de Fórmulas_ Comercio CCT 130_75.pdf, 📘 Manual de Fórmula_ Concepto 1 - SUELDO BÁSICO.pdf, 📘 Concepto 1 - SUELDO BÁSICO.pdf, 📘 LOS TOTALIZADORES (Serie 990).pdf"
+      "documento": "Convenio-colectivo-13075.pdf, escalas-comercio-2026 (1).pdf"
     },
     {
       "tipo": "ley",
@@ -928,5 +937,16 @@
       "codigo": "deductions_apply_only_to_remunerative_total",
       "mensaje": "Regla de auditoria generada desde el convenio"
     }
-  ]
+  ],
+  "modelo_liquidacion": {
+    "tipo": "sueldo_base",
+    "unidad_principal": "mensual",
+    "periodicidad": "mensual",
+    "base_calculo": "salario_basico_categoria",
+    "formula_base": "salario_basico_categoria",
+    "requiere_horas_trabajadas": false,
+    "requiere_dias_trabajados": false,
+    "requiere_categoria": true,
+    "requiere_jornada": false
+  }
 }

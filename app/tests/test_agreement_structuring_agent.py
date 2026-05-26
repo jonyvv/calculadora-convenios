@@ -162,11 +162,11 @@ def test_agreement_structuring_agent_reads_gemini_salary_tables(tmp_path):
         | SUMA_NR | Suma no remunerativa acuerdo | FIXED | $ 40.000,00 | NO_INDICADO | BASIC | TODAS | Abril 2026 | no remunerativo |
 
         ## RETENCIONES_DEDUCCIONES
-        | code | concepto | porcentaje | importe | base | observaciones |
-        | --- | --- | --- | --- | --- | --- |
-        | JUBILACION | Jubilacion | 11% | NO_INDICADO | REMUNERATIVE_TOTAL | ley |
-        | OBRA_SOCIAL | Obra social | 3% | NO_INDICADO | REMUNERATIVE_TOTAL | ley |
-        | SINDICATO | Sindicato | 2% | NO_INDICADO | REMUNERATIVE_TOTAL | convenio |
+        | code | concepto | porcentaje | importe | base | application_type | applies_when | observaciones |
+        | --- | --- | --- | --- | --- | --- | --- | --- |
+        | JUBILACION | Jubilacion | 11% | NO_INDICADO | REMUNERATIVE_TOTAL | MANDATORY | todos los trabajadores | ley |
+        | OBRA_SOCIAL | Obra social | 3% | NO_INDICADO | REMUNERATIVE_TOTAL | MANDATORY | todos los trabajadores | ley |
+        | SINDICATO | Sindicato | 2% | NO_INDICADO | REMUNERATIVE_TOTAL | EMPLOYEE_OPT_IN | solo afiliados al sindicato | convenio |
         """,
     })
 
@@ -190,6 +190,10 @@ def test_agreement_structuring_agent_reads_gemini_salary_tables(tmp_path):
         "OBRA_SOCIAL": 3,
         "SINDICATO": 2,
     }
+    deductions = {deduction["code"]: deduction for deduction in agreement["salary_model"]["deductions"]}
+    assert deductions["JUBILACION"]["application_type"] == "MANDATORY"
+    assert deductions["SINDICATO"]["application_type"] == "EMPLOYEE_OPT_IN"
+    assert deductions["SINDICATO"]["requires_employee_flag"] == "union_affiliated"
 
 
 def test_agreement_structuring_agent_reads_salary_scale_with_accented_headers_and_full_roles(tmp_path):
@@ -224,6 +228,46 @@ def test_agreement_structuring_agent_reads_salary_scale_with_accented_headers_an
         "Coord. C (Media Jornada)",
     ]
     assert [category["basic_salary"] for category in agreement["categories"]] == [468486, 231993, 203661]
+
+
+def test_agreement_structuring_agent_preserves_geographic_salary_scales(tmp_path):
+    result = agent(tmp_path).process({
+        "document_metadata": {"source_document": "escala-zonas.pdf"},
+        "full_text": """
+        Convenio CCT 999/26 actividad regional.
+        Vigencia desde 01/06/2026.
+
+        ## ESCALA_SALARIAL_CATEGORIAS
+        | category_id | puesto_rol_categoria | zona_geografica | periodo | basico | total_remunerativo | observaciones |
+        | --- | --- | --- | --- | --- | --- | --- |
+        | A | Operario especializado | CABA y Gran Buenos Aires | Junio 2026 | $ 900.000,00 | $ 900.000,00 | escala salarial |
+        | A | Operario especializado | Patagonia | Junio 2026 | $ 1.150.000,00 | $ 1.150.000,00 | escala salarial |
+        | B | Administrativo | CABA y Gran Buenos Aires | Junio 2026 | $ 850.000,00 | $ 850.000,00 | escala salarial |
+
+        ## HABERES_REMUNERATIVOS
+        | code | concepto | calculation_type | importe | porcentaje | base | aplica_a_categoria | periodo | observaciones |
+        | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+        | PRESENTISMO | Presentismo | PERCENTAGE | NO_INDICADO | 10% | BASIC | TODAS | Junio 2026 | remunerativo |
+        """,
+    })
+
+    agreement_path = tmp_path / "storage" / "convenios" / result["agreement_id"] / f"{result['version']}.json"
+    agreement = json.loads(agreement_path.read_text(encoding="utf-8"))
+
+    assert result["status"] == "SUCCESS"
+    assert [category["name"] for category in agreement["categories"]] == [
+        "Operario Especializado",
+        "Operario Especializado",
+        "Administrativo",
+    ]
+    assert [category["zone"] for category in agreement["categories"]] == [
+        "CABA y Gran Buenos Aires",
+        "Patagonia",
+        "CABA y Gran Buenos Aires",
+    ]
+    assert [category["basic_salary"] for category in agreement["categories"]] == [900000, 1150000, 850000]
+    assert len({category["category_id"] for category in agreement["categories"]}) == 3
+    assert agreement["identificacion_alcance"]["categorias_profesionales"][0]["zona_geografica"] == "CABA y Gran Buenos Aires"
 
 
 def test_agreement_structuring_agent_merges_salary_scale_from_second_document(tmp_path):
@@ -415,6 +459,76 @@ def test_agreement_structuring_agent_completes_statutory_deductions_when_table_o
     assert deductions["OBRA_SOCIAL"] == 3
     assert deductions["CUOTA_SINDICAL"] == 2.5
     assert "SINDICATO" not in deductions
+    deduction_data = {deduction["code"]: deduction for deduction in agreement["salary_model"]["deductions"]}
+    assert deduction_data["CUOTA_SINDICAL"]["application_type"] == "EMPLOYEE_OPT_IN"
+    assert deduction_data["CUOTA_SINDICAL"]["requires_employee_flag"] == "union_affiliated"
+
+
+def test_agreement_structuring_agent_does_not_create_union_fee_from_signatory_metadata(tmp_path):
+    result = agent(tmp_path).process({
+        "document_metadata": {"source_document": "convenio-sin-cuota.pdf"},
+        "full_text": """
+        Convenio CCT 777/2026 Servicios.
+        Sindicato: Sindicato de Trabajadores de Servicios.
+        Vigencia desde 01/02/2026.
+
+        ## ESCALA_SALARIAL_CATEGORIAS
+        | category_id | puesto_rol_categoria | periodo | basico | total_remunerativo | observaciones |
+        | --- | --- | --- | --- | --- | --- |
+        | A | Operario | Febrero 2026 | $ 500.000,00 | $ 500.000,00 | escala salarial |
+
+        ## RETENCIONES_DEDUCCIONES
+        | code | concepto | porcentaje | base | observaciones |
+        | --- | --- | --- | --- | --- |
+        | JUBILACION | Jubilacion | 11% | Remunerativo | ley |
+        | OBRA_SOCIAL | Obra social | 3% | Remunerativo | ley |
+        """,
+    })
+
+    agreement_path = tmp_path / "storage" / "convenios" / result["agreement_id"] / f"{result['version']}.json"
+    agreement = json.loads(agreement_path.read_text(encoding="utf-8"))
+    deduction_codes = {deduction["code"] for deduction in agreement["salary_model"]["deductions"]}
+
+    assert "SINDICATO" not in deduction_codes
+    assert "CUOTA_SINDICAL" not in deduction_codes
+
+
+def test_agreement_structuring_agent_classifies_multiple_worker_deductions(tmp_path):
+    result = agent(tmp_path).process({
+        "document_metadata": {"source_document": "retenciones-completas.pdf"},
+        "full_text": """
+        Convenio CCT 778/2026 Servicios.
+        Vigencia desde 01/02/2026.
+
+        ## ESCALA_SALARIAL_CATEGORIAS
+        | category_id | puesto_rol_categoria | periodo | basico | total_remunerativo | observaciones |
+        | --- | --- | --- | --- | --- | --- |
+        | A | Operario | Febrero 2026 | $ 500.000,00 | $ 500.000,00 | escala salarial |
+
+        ## RETENCIONES_DEDUCCIONES
+        | code | concepto | porcentaje | base | application_type | applies_when | observaciones |
+        | --- | --- | --- | --- | --- | --- | --- |
+        | JUBILACION | Jubilacion | 11% | Remunerativo | MANDATORY | todo el personal | ley |
+        | LEY_19032 | Ley 19.032 | 3% | Remunerativo | MANDATORY | todo el personal | ley |
+        | OBRA_SOCIAL | Obra social | 3% | Remunerativo | MANDATORY | todo el personal | ley |
+        | CUOTA_SINDICAL | Cuota sindical | 2,5% | Remunerativo | EMPLOYEE_OPT_IN | solo afiliados al sindicato | afiliacion |
+        | MUTUAL | Mutual sindical | 1% | Remunerativo | EMPLOYEE_OPT_IN | trabajador adherido a mutual | voluntario |
+        | SOLIDARIA | Contribucion solidaria obligatoria | 1,5% | Remunerativo | MANDATORY | afiliados y no afiliados | obligatorio |
+        """,
+    })
+
+    agreement_path = tmp_path / "storage" / "convenios" / result["agreement_id"] / f"{result['version']}.json"
+    agreement = json.loads(agreement_path.read_text(encoding="utf-8"))
+    deductions = {deduction["code"]: deduction for deduction in agreement["salary_model"]["deductions"]}
+
+    assert deductions["JUBILACION"]["application_type"] == "MANDATORY"
+    assert deductions["LEY_19032"]["application_type"] == "MANDATORY"
+    assert deductions["OBRA_SOCIAL"]["application_type"] == "MANDATORY"
+    assert deductions["CUOTA_SINDICAL"]["application_type"] == "EMPLOYEE_OPT_IN"
+    assert deductions["CUOTA_SINDICAL"]["requires_employee_flag"] == "union_affiliated"
+    assert deductions["MUTUAL"]["application_type"] == "EMPLOYEE_OPT_IN"
+    assert deductions["MUTUAL"]["requires_employee_flag"] == "enabled_deductions"
+    assert deductions["SOLIDARIA"]["application_type"] == "MANDATORY"
 
 
 def test_agreement_structuring_agent_reads_deductions_with_accented_headers(tmp_path):
@@ -547,3 +661,28 @@ def test_agreement_structuring_agent_normalizes_manual_km_items_without_formula(
     assert items["VIAT_KM"]["amount"] == 80
     assert items["VIAT_KM"]["input_mode"] == "MANUAL"
     assert items["VIAT_KM"]["unit"] == "KM"
+
+
+def test_agreement_structuring_agent_extracts_monthly_liquidation_days(tmp_path):
+    result = agent(tmp_path).process({
+        "document_metadata": {"source_document": "camioneros-24-dias.pdf"},
+        "full_text": """
+        Convenio CCT 40/89 vigencia desde 01/05/2026.
+        Los viaticos y el valor diario se liquidan sobre una base de 24 dias.
+
+        ## ESCALA_SALARIAL_CATEGORIAS
+        | category_id | puesto_rol_categoria | periodo | basico | total_remunerativo | observaciones |
+        | --- | --- | --- | --- | --- | --- |
+        | 1 | Chofer de primera categoria | Mayo 2026 | $ 984.000,00 | $ 984.000,00 | escala salarial |
+
+        ## JORNADA_Y_BASES
+        | concepto | valor | unidad | fuente | observaciones |
+        | --- | --- | --- | --- | --- |
+        | dias_base_liquidacion | 24 | dias | convenio | divisor para valor diario |
+        """,
+    })
+
+    agreement_path = tmp_path / "storage" / "convenios" / result["agreement_id"] / f"{result['version']}.json"
+    agreement = json.loads(agreement_path.read_text(encoding="utf-8"))
+
+    assert agreement["jornada_tiempos"]["jornada_estandar"]["dias_mensuales"] == 24

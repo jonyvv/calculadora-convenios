@@ -1,6 +1,6 @@
 from app.domain.entities.monthly_event import Event, MonthlyEvent
 from app.application.use_cases.calcular_liquidacion import CalcularLiquidacion
-from app.domain.entities.agreement import Agreement, EventRule
+from app.domain.entities.agreement import Agreement, Category, EventRule
 from app.domain.rules.agreement_rule_compiler import AgreementRuleCompiler
 from app.domain.rules.formula_engine import FormulaEngine
 from app.domain.rules.payroll_engine import PayrollEngine
@@ -107,6 +107,242 @@ def test_calculator_uses_agreement_defined_bases_formulas_and_deduction_aliases(
     assert payroll.net_salary == 239500
 
 
+def test_employee_dependent_deductions_apply_only_when_employee_condition_matches(employee):
+    agreement = Agreement.model_validate({
+        "metadata": {
+            "agreement_id": "CCT_RETENCIONES",
+            "name": "Convenio retenciones",
+            "version": "2026_05",
+            "valid_from": "2026-05-01",
+            "valid_to": None,
+            "source_document": "test.txt",
+            "created_at": "2026-05-08T00:00:00+00:00",
+        },
+        "categories": [{"category_id": "A", "name": "Operario", "basic_salary": 100000}],
+        "salary_model": {
+            "remunerative_items": [],
+            "non_remunerative_items": [],
+            "deductions": [
+                {"code": "JUBILACION", "name": "Jubilacion", "rate": 11, "base": "REMUNERATIVE_TOTAL", "application_type": "MANDATORY"},
+                {
+                    "code": "CUOTA_SINDICAL",
+                    "name": "Cuota sindical",
+                    "rate": 2.5,
+                    "base": "REMUNERATIVE_TOTAL",
+                    "application_type": "EMPLOYEE_OPT_IN",
+                    "requires_employee_flag": "union_affiliated",
+                },
+            ],
+            "fiscal_shields": [],
+            "overtime_rules": [],
+        },
+        "event_rules": [],
+        "audit_rules": [],
+    })
+
+    not_affiliated = PayrollEngine().calculate(
+        agreement,
+        employee.model_copy(update={"category_id": "A", "union_affiliated": False}),
+        MonthlyEvent(employee_id="E1", period="2026-05"),
+    )
+    affiliated = PayrollEngine().calculate(
+        agreement,
+        employee.model_copy(update={"category_id": "A", "union_affiliated": True}),
+        MonthlyEvent(employee_id="E1", period="2026-05"),
+    )
+
+    assert {detail.code for detail in not_affiliated.details if detail.type == "DEDUCTION"} == {"JUBILACION"}
+    assert not_affiliated.deductions == 11000
+    assert {detail.code for detail in affiliated.details if detail.type == "DEDUCTION"} == {"JUBILACION", "CUOTA_SINDICAL"}
+    assert affiliated.deductions == 13500
+
+
+def test_compiler_infers_old_union_fee_as_employee_dependent_and_solidary_fee_as_mandatory(employee):
+    agreement = Agreement.model_validate({
+        "metadata": {
+            "agreement_id": "CCT_RETENCIONES_OLD",
+            "name": "Convenio retenciones viejo",
+            "version": "2026_05",
+            "valid_from": "2026-05-01",
+            "valid_to": None,
+            "source_document": "test.txt",
+            "created_at": "2026-05-08T00:00:00+00:00",
+        },
+        "categories": [{"category_id": "A", "name": "Operario", "basic_salary": 100000}],
+        "salary_model": {
+            "remunerative_items": [],
+            "non_remunerative_items": [],
+            "deductions": [
+                {"code": "SINDICATO", "name": "Cuota sindical", "rate": 2, "base": "REMUNERATIVE_TOTAL"},
+                {"code": "SOLIDARIA", "name": "Contribucion solidaria obligatoria", "rate": 1, "base": "REMUNERATIVE_TOTAL"},
+            ],
+            "fiscal_shields": [],
+            "overtime_rules": [],
+        },
+        "event_rules": [],
+        "audit_rules": [],
+    })
+
+    normalized = AgreementRuleCompiler().normalize_agreement(agreement)
+    deduction_by_code = {deduction.code: deduction for deduction in normalized.salary_model.deductions}
+    payroll = PayrollEngine().calculate(
+        agreement,
+        employee.model_copy(update={"category_id": "A", "union_affiliated": False}),
+        MonthlyEvent(employee_id="E1", period="2026-05"),
+    )
+
+    assert deduction_by_code["SINDICATO"].application_type == "EMPLOYEE_OPT_IN"
+    assert deduction_by_code["SINDICATO"].requires_employee_flag == "union_affiliated"
+    assert deduction_by_code["SOLIDARIA"].application_type == "MANDATORY"
+    assert {detail.code for detail in payroll.details if detail.type == "DEDUCTION"} == {"SOLIDARIA"}
+    assert payroll.deductions == 1000
+
+
+def test_core_automatic_items_are_not_hidden_by_bad_category_tokens(employee):
+    agreement = Agreement.model_validate({
+        "metadata": {
+            "agreement_id": "CCT_CORE_FILTERS",
+            "name": "Convenio filtros",
+            "version": "2026_05",
+            "valid_from": "2026-05-01",
+            "valid_to": None,
+            "source_document": "test.txt",
+            "created_at": "2026-05-08T00:00:00+00:00",
+        },
+        "categories": [{"category_id": "A", "name": "Operario general", "basic_salary": 100000}],
+        "salary_model": {
+            "remunerative_items": [
+                {
+                    "code": "PREMIO_PRESENTISMO",
+                    "name": "Premio por Presentismo y Puntualidad",
+                    "type": "REMUNERATIVE",
+                    "calculation_type": "FIXED",
+                    "amount": 60000,
+                    "applies_to_categories": ["RAMAS", "TRANSPORTE", "CLEARING", "CARGA"],
+                },
+                {
+                    "code": "ANTIGUEDAD",
+                    "name": "Antiguedad",
+                    "type": "REMUNERATIVE",
+                    "calculation_type": "PERCENTAGE",
+                    "rate": 1,
+                    "base_reference": "BASIC",
+                    "applies_to_categories": ["TODO", "EL", "PERSONAL"],
+                },
+            ],
+            "non_remunerative_items": [],
+            "deductions": [],
+            "fiscal_shields": [],
+            "overtime_rules": [],
+        },
+        "event_rules": [],
+        "audit_rules": [],
+    })
+
+    normalized = AgreementRuleCompiler().normalize_agreement(agreement)
+    payroll = PayrollEngine().calculate(
+        agreement,
+        employee.model_copy(update={"category_id": "A", "seniority_years": 2}),
+        MonthlyEvent(employee_id="E1", period="2026-05"),
+    )
+
+    assert all(not item.applies_to_categories for item in normalized.salary_model.remunerative_items)
+    assert next(detail for detail in payroll.details if detail.code == "PREMIO_PRESENTISMO").amount == 60000
+    assert next(detail for detail in payroll.details if detail.code == "ANTIGUEDAD").amount == 2000
+
+
+def test_calculator_applies_non_union_optional_deduction_only_when_enabled(employee):
+    agreement = Agreement.model_validate({
+        "metadata": {
+            "agreement_id": "CCT_MUTUAL",
+            "name": "Convenio mutual",
+            "version": "2026_05",
+            "valid_from": "2026-05-01",
+            "valid_to": None,
+            "source_document": "test.txt",
+            "created_at": "2026-05-08T00:00:00+00:00",
+        },
+        "categories": [{"category_id": "A", "name": "Operario", "basic_salary": 100000}],
+        "salary_model": {
+            "remunerative_items": [],
+            "non_remunerative_items": [],
+            "deductions": [
+                {"code": "JUBILACION", "name": "Jubilacion", "rate": 11, "base": "REMUNERATIVE_TOTAL"},
+                {
+                    "code": "MUTUAL",
+                    "name": "Mutual",
+                    "rate": 1.5,
+                    "base": "REMUNERATIVE_TOTAL",
+                    "application_type": "EMPLOYEE_OPT_IN",
+                    "requires_employee_flag": "enabled_deductions",
+                },
+            ],
+            "fiscal_shields": [],
+            "overtime_rules": [],
+        },
+        "event_rules": [],
+        "audit_rules": [],
+    })
+
+    without_mutual = PayrollEngine().calculate(
+        agreement,
+        employee.model_copy(update={"category_id": "A", "enabled_deductions": []}),
+        MonthlyEvent(employee_id="E1", period="2026-05"),
+    )
+    with_mutual = PayrollEngine().calculate(
+        agreement,
+        employee.model_copy(update={"category_id": "A", "enabled_deductions": ["MUTUAL"]}),
+        MonthlyEvent(employee_id="E1", period="2026-05"),
+    )
+
+    assert {detail.code for detail in without_mutual.details if detail.type == "DEDUCTION"} == {"JUBILACION"}
+    assert {detail.code for detail in with_mutual.details if detail.type == "DEDUCTION"} == {"JUBILACION", "MUTUAL"}
+    assert with_mutual.deductions == 12500
+
+
+def test_calculator_respects_explicit_mandatory_sepelio_insurance(employee):
+    agreement = Agreement.model_validate({
+        "metadata": {
+            "agreement_id": "CCT_SEPELIO",
+            "name": "Convenio seguro sepelio",
+            "version": "2026_05",
+            "valid_from": "2026-05-01",
+            "valid_to": None,
+            "source_document": "test.txt",
+            "created_at": "2026-05-08T00:00:00+00:00",
+        },
+        "categories": [{"category_id": "A", "name": "Operario", "basic_salary": 100000}],
+        "salary_model": {
+            "remunerative_items": [],
+            "non_remunerative_items": [],
+            "deductions": [
+                {
+                    "code": "SEGURO_SEPELIO",
+                    "name": "Seguro de sepelio",
+                    "rate": 1.5,
+                    "base": "Remuneracion",
+                    "application_type": "MANDATORY",
+                    "applies_when": "Todos",
+                },
+            ],
+            "fiscal_shields": [],
+            "overtime_rules": [],
+        },
+        "event_rules": [],
+        "audit_rules": [],
+    })
+
+    payroll = PayrollEngine().calculate(
+        agreement,
+        employee.model_copy(update={"category_id": "A", "enabled_deductions": []}),
+        MonthlyEvent(employee_id="E1", period="2026-05"),
+    )
+
+    sepelio = next(detail for detail in payroll.details if detail.code == "SEGURO_SEPELIO")
+    assert sepelio.amount == -1500
+    assert payroll.deductions == 1500
+
+
 def test_calculator_applies_discount_day_from_event_rules(agreement, employee):
     agreement = agreement.model_copy(deep=True)
     agreement.event_rules = [EventRule(event_type="ABSENCE", subtype="UNJUSTIFIED", effects=["DISCOUNT_DAY", "LOSE_ATTENDANCE"])]
@@ -122,6 +358,21 @@ def test_calculator_applies_discount_day_from_event_rules(agreement, employee):
     assert payroll.gross_salary == 101333.33
 
 
+def test_calculator_uses_agreement_monthly_days_for_daily_values(agreement, employee):
+    agreement = agreement.model_copy(deep=True)
+    agreement.jornada_tiempos.jornada_estandar["dias_mensuales"] = 24
+    agreement.event_rules = [EventRule(event_type="ABSENCE", subtype="UNJUSTIFIED", effects=["DISCOUNT_DAY"])]
+
+    payroll = PayrollEngine().calculate(
+        agreement,
+        employee,
+        MonthlyEvent(employee_id="E1", period="2026-04", events=[Event(type="ABSENCE", subtype="UNJUSTIFIED", days=1)]),
+    )
+
+    discount = next(detail for detail in payroll.details if detail.code == "ABSENCE_UNJUSTIFIED")
+    assert discount.amount == -4166.67
+
+
 def test_formula_engine_resolves_payroll_variables():
     result = FormulaEngine().evaluate(
         "(BASE_SALARY / MONTHLY_HOURS) * MULTIPLIER * 8 + BASE_SALARY * 1% * YEARS",
@@ -129,6 +380,74 @@ def test_formula_engine_resolves_payroll_variables():
     )
 
     assert result == 18000
+
+
+def test_formula_engine_resolves_spanish_remunerative_total_aliases():
+    result = FormulaEngine().evaluate(
+        "Todos los conceptos remunerativos * 1.0% * YEARS",
+        {"REMUNERATIVE_TOTAL": 100000, "YEARS": 3},
+    )
+
+    assert result == 3000
+
+    result = FormulaEngine().evaluate(
+        "Total rubros remunerativos * 1.0% * YEARS",
+        {"REMUNERATIVE_TOTAL": 100000, "YEARS": 3},
+    )
+
+    assert result == 3000
+
+
+def test_total_remunerative_based_salary_item_runs_after_period_remuneratives(employee):
+    agreement = Agreement.model_validate({
+        "metadata": {
+            "agreement_id": "CCT_TOTAL_REM",
+            "name": "Convenio total remunerativo",
+            "version": "2026_05",
+            "valid_from": "2026-05-01",
+            "valid_to": None,
+            "source_document": "test.txt",
+            "created_at": "2026-05-08T00:00:00+00:00",
+        },
+        "categories": [{"category_id": "A", "name": "Operario", "basic_salary": 100000}],
+        "salary_model": {
+            "remunerative_items": [
+                {
+                    "code": "PLUS_MANUAL",
+                    "name": "Plus manual",
+                    "type": "REMUNERATIVE",
+                    "calculation_type": "FIXED",
+                    "amount": 20000,
+                    "input_mode": "MANUAL",
+                },
+                {
+                    "code": "ADIC_ANTIGUEDAD",
+                    "name": "Adicional por antiguedad",
+                    "type": "REMUNERATIVE",
+                    "calculation_type": "PERCENTAGE",
+                    "rate": 1,
+                    "base_reference": "Total rubros remunerativos",
+                },
+            ],
+            "non_remunerative_items": [],
+            "deductions": [],
+            "fiscal_shields": [],
+            "overtime_rules": [],
+        },
+        "event_rules": [],
+        "audit_rules": [],
+    })
+
+    payroll = PayrollEngine().calculate(
+        agreement,
+        employee.model_copy(update={"category_id": "A"}),
+        MonthlyEvent(employee_id="E1", period="2026-05", events=[
+            Event(type="SALARY_ITEM", subtype="PLUS_MANUAL", quantity=1),
+        ]),
+    )
+
+    antiguedad = next(detail for detail in payroll.details if detail.code == "ADIC_ANTIGUEDAD")
+    assert antiguedad.amount == 3600
 
 
 def test_agreement_rule_compiler_returns_executable_rules(agreement):
@@ -285,6 +604,209 @@ def test_manual_salary_items_are_not_automatic_and_require_event(employee):
     assert all(detail.code != "VIATICO_KM" for detail in without_event.details)
     viatico = next(detail for detail in with_event.details if detail.code == "VIATICO_KM")
     assert viatico.amount == 6000
+
+
+def test_manual_salary_item_with_todos_category_filter_is_added_when_event_exists(employee):
+    agreement = Agreement.model_validate({
+        "metadata": {
+            "agreement_id": "CCT_MANUAL_TODOS",
+            "name": "Convenio manual todos",
+            "version": "2026_05",
+            "valid_from": "2026-05-01",
+            "valid_to": None,
+            "source_document": "test.txt",
+            "created_at": "2026-05-08T00:00:00+00:00",
+        },
+        "categories": [{"category_id": "A", "name": "Operario", "basic_salary": 100000}],
+        "salary_model": {
+            "remunerative_items": [
+                {
+                    "code": "PLUS_MANUAL",
+                    "name": "Plus manual",
+                    "type": "REMUNERATIVE",
+                    "calculation_type": "FIXED",
+                    "amount": 5000,
+                    "input_mode": "MANUAL",
+                    "applies_to_categories": ["TODO", "EL", "PERSONAL"],
+                },
+            ],
+            "non_remunerative_items": [
+                {
+                    "code": "SUMA_NR_MANUAL",
+                    "name": "Suma no remunerativa manual",
+                    "type": "NON_REMUNERATIVE",
+                    "calculation_type": "FIXED",
+                    "amount": 7000,
+                    "input_mode": "MANUAL",
+                    "applies_to_categories": ["TODOS", "LOS", "TRABAJADORES"],
+                },
+            ],
+            "deductions": [],
+            "fiscal_shields": [],
+            "overtime_rules": [],
+        },
+        "event_rules": [],
+        "audit_rules": [],
+    })
+
+    payroll = PayrollEngine().calculate(
+        agreement,
+        employee.model_copy(update={"category_id": "A"}),
+        MonthlyEvent(employee_id="E1", period="2026-05", events=[
+            Event(type="SALARY_ITEM", subtype="PLUS_MANUAL", quantity=1),
+            Event(type="SALARY_ITEM", subtype="SUMA_NR_MANUAL", quantity=1),
+        ]),
+    )
+
+    assert next(detail for detail in payroll.details if detail.code == "PLUS_MANUAL").amount == 5000
+    assert next(detail for detail in payroll.details if detail.code == "SUMA_NR_MANUAL").amount == 7000
+    assert payroll.gross_salary == 112000
+
+
+def test_abbreviated_viatico_is_inferred_as_manual_day_item(employee):
+    agreement = Agreement.model_validate({
+        "metadata": {
+            "agreement_id": "CCT_VIAT",
+            "name": "Convenio viaticos",
+            "version": "2026_05",
+            "valid_from": "2026-05-01",
+            "valid_to": None,
+            "source_document": "test.txt",
+            "created_at": "2026-05-08T00:00:00+00:00",
+        },
+        "categories": [{"category_id": "A", "name": "Chofer", "basic_salary": 100000}],
+        "salary_model": {
+            "remunerative_items": [],
+            "non_remunerative_items": [
+                {
+                    "code": "VIAT_ESP",
+                    "name": "Viatico especial",
+                    "type": "NON_REMUNERATIVE",
+                    "calculation_type": "FIXED",
+                    "amount": 1000,
+                    "input_mode": "AUTO",
+                    "unit": None,
+                },
+            ],
+            "deductions": [],
+            "fiscal_shields": [],
+            "overtime_rules": [],
+        },
+        "event_rules": [],
+        "audit_rules": [],
+    })
+
+    without_event = PayrollEngine().calculate(agreement, employee, MonthlyEvent(employee_id="E1", period="2026-05"))
+    with_event = PayrollEngine().calculate(
+        agreement,
+        employee,
+        MonthlyEvent(employee_id="E1", period="2026-05", events=[Event(type="SALARY_ITEM", subtype="VIAT_ESP", quantity=12)]),
+    )
+
+    assert all(detail.code != "VIAT_ESP" for detail in without_event.details)
+    viatico = next(detail for detail in with_event.details if detail.code == "VIAT_ESP")
+    assert viatico.amount == 12000
+
+
+def test_viatico_special_code_is_inferred_as_manual_day_item(employee):
+    agreement = Agreement.model_validate({
+        "metadata": {
+            "agreement_id": "CCT_VIATICO",
+            "name": "Convenio viatico",
+            "version": "2026_05",
+            "valid_from": "2026-05-01",
+            "valid_to": None,
+            "source_document": "test.txt",
+            "created_at": "2026-05-08T00:00:00+00:00",
+        },
+        "categories": [{"category_id": "A", "name": "Chofer", "basic_salary": 100000}],
+        "salary_model": {
+            "remunerative_items": [],
+            "non_remunerative_items": [
+                {
+                    "code": "VIATICO_ESP",
+                    "name": "Viatico especial",
+                    "type": "NON_REMUNERATIVE",
+                    "calculation_type": "FIXED",
+                    "amount": 1000,
+                    "input_mode": "AUTO",
+                    "unit": None,
+                    "applies_to_categories": ["TODOS", "EXCEPTO", "LARGA", "DISTANCIA"],
+                },
+            ],
+            "deductions": [],
+            "fiscal_shields": [],
+            "overtime_rules": [],
+        },
+        "event_rules": [],
+        "audit_rules": [],
+    })
+
+    without_event = PayrollEngine().calculate(agreement, employee, MonthlyEvent(employee_id="E1", period="2026-05"))
+    with_event = PayrollEngine().calculate(
+        agreement,
+        employee,
+        MonthlyEvent(employee_id="E1", period="2026-05", events=[Event(type="SALARY_ITEM", subtype="VIATICO_ESP", quantity=12)]),
+    )
+    excluded_employee = employee.model_copy(update={"category_id": "B"})
+    excluded_agreement = agreement.model_copy(deep=True)
+    excluded_agreement.categories.append(Category(category_id="B", name="Chofer Larga Distancia", basic_salary=100000))
+    excluded_payroll = PayrollEngine().calculate(
+        excluded_agreement,
+        excluded_employee,
+        MonthlyEvent(employee_id="E1", period="2026-05", events=[Event(type="SALARY_ITEM", subtype="VIATICO_ESP", quantity=12)]),
+    )
+
+    assert all(detail.code != "VIATICO_ESP" for detail in without_event.details)
+    viatico = next(detail for detail in with_event.details if detail.code == "VIATICO_ESP")
+    assert viatico.amount == 12000
+    assert all(detail.code != "VIATICO_ESP" for detail in excluded_payroll.details)
+
+
+def test_manual_condition_text_is_not_treated_as_category_filter(employee):
+    agreement = Agreement.model_validate({
+        "metadata": {
+            "agreement_id": "CCT_PERNOCTADA",
+            "name": "Convenio pernoctada",
+            "version": "2026_05",
+            "valid_from": "2026-05-01",
+            "valid_to": None,
+            "source_document": "test.txt",
+            "created_at": "2026-05-08T00:00:00+00:00",
+        },
+        "categories": [{"category_id": "A", "name": "Chofer", "basic_salary": 100000}],
+        "salary_model": {
+            "remunerative_items": [],
+            "non_remunerative_items": [
+                {
+                    "code": "PERNOCTADA",
+                    "name": "Pernoctada",
+                    "type": "NON_REMUNERATIVE",
+                    "calculation_type": "FIXED",
+                    "amount": 2000,
+                    "input_mode": "MANUAL",
+                    "unit": "NIGHT",
+                    "applies_to_categories": ["PERSONAL", "QUE", "PERNOCTA", "FUERA"],
+                },
+            ],
+            "deductions": [],
+            "fiscal_shields": [],
+            "overtime_rules": [],
+        },
+        "event_rules": [],
+        "audit_rules": [],
+    })
+
+    normalized = AgreementRuleCompiler().normalize_agreement(agreement)
+    payroll = PayrollEngine().calculate(
+        agreement,
+        employee,
+        MonthlyEvent(employee_id="E1", period="2026-05", events=[Event(type="SALARY_ITEM", subtype="PERNOCTADA", quantity=2)]),
+    )
+
+    pernoctada = next(detail for detail in payroll.details if detail.code == "PERNOCTADA")
+    assert normalized.salary_model.non_remunerative_items[0].applies_to_categories == []
+    assert pernoctada.amount == 4000
 
 
 def test_manual_salary_item_category_filter_accepts_chofer_conductor_equivalence(employee):
@@ -538,6 +1060,44 @@ def test_hourly_liquidation_uses_category_hour_value(employee):
     assert next(detail for detail in payroll.details if detail.code == "BASIC").amount == 300000
     assert next(detail for detail in payroll.details if detail.code == "PRESENTISMO").amount == 30000
     assert next(detail for detail in payroll.details if detail.code == "OT_50").amount == 15000
+
+
+def test_overtime_hour_value_uses_convention_days_and_daily_hours(employee):
+    agreement = Agreement.model_validate({
+        "metadata": {
+            "agreement_id": "CCT_HORA_CONVENIO",
+            "name": "Convenio horas convenio",
+            "version": "2026_05",
+            "valid_from": "2026-05-01",
+            "valid_to": None,
+            "source_document": "test.txt",
+            "created_at": "2026-05-08T00:00:00+00:00",
+        },
+        "categories": [{"category_id": "A", "name": "Chofer", "basic_salary": 960000}],
+        "salary_model": {
+            "remunerative_items": [],
+            "non_remunerative_items": [],
+            "deductions": [],
+            "fiscal_shields": [],
+            "overtime_rules": [{"code": "OT_50", "multiplier": 1.5}],
+        },
+        "jornada_tiempos": {
+            "jornada_estandar": {
+                "maximo_horas_diarias": 8,
+                "dias_mensuales": 24,
+            },
+        },
+        "event_rules": [],
+        "audit_rules": [],
+    })
+
+    payroll = PayrollEngine().calculate(
+        agreement,
+        employee.model_copy(update={"category_id": "A"}),
+        MonthlyEvent(employee_id="E1", period="2026-05", events=[Event(type="OVERTIME", subtype="OT_50", hours=1)]),
+    )
+
+    assert next(detail for detail in payroll.details if detail.code == "OT_50").amount == 7500
 
 
 def test_jornal_liquidation_uses_worked_days(employee):

@@ -1,3 +1,4 @@
+from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -14,3 +15,13 @@ class Settings(BaseSettings):
     database_url: str = "postgresql://postgres:postgres@postgres:5432/payroll"
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
+
+    @field_validator("gemini_api_key", mode="before")
+    @classmethod
+    def normalize_gemini_api_key(cls, value):
+        if value is None:
+            return value
+        cleaned = str(value).strip().strip('"').strip("'")
+        if cleaned.startswith("AAIza"):
+            raise ValueError("GEMINI_API_KEY parece tener una 'A' extra al inicio. Debe empezar con 'AIza'.")
+        return cleaned

@@ -1,0 +1,11 @@
+{
+  "status": "DRAFT",
+  "agreement_id": "CCT_40_1989",
+  "version": "2026_05",
+  "warnings": [
+    "Formula faltante para KM_LARGA_DIST"
+  ],
+  "agent": "agreement_structuring_agent",
+  "generated_test": "tests\\conventions\\test_cct_40_1989_2026_05.py",
+  "processed_at": "2026-05-15T14:21:35.169398+00:00"
+}

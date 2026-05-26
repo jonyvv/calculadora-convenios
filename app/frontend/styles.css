@@ -374,6 +374,20 @@ label {
 .compact { padding: 0; grid-template-columns: repeat(2, minmax(160px, 1fr)); }
 .payroll-grid { grid-template-columns: repeat(3, minmax(180px, 1fr)); }
 
+.inline-check {
+  display: flex;
+  min-height: 44px;
+  align-items: center;
+  gap: 10px;
+  color: var(--ink);
+}
+
+.inline-check input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--blue-700);
+}
+
 .actions-row {
   display: flex;
   gap: 10px;
@@ -861,6 +875,22 @@ legend {
   gap: 12px;
   padding: 8px 0;
   border-top: 1px solid #edf1f7;
+}
+
+.receipt-card .receipt-total {
+  margin-top: 10px;
+  padding-top: 12px;
+  border-top: 2px solid #dce6f5;
+  font-weight: 800;
+  color: var(--blue-900);
+}
+
+.receipt-card.workday-card {
+  background: #f8fbff;
+}
+
+.receipt-card div.negative {
+  color: var(--red);
 }
 
 .receipt-card.total {

@@ -1,0 +1,142 @@
+[INFO] 2026-05-15T13:36:56.138308+00:00 Gemini multi-document extraction started: CCT_40_1989_Reglas_Liquidacion.pdf, Informe Normativo_ Reglas y Condiciones Generales de Trabajo - CCT 40_89 (Camioneros).pdf, Manual de Liquidación de Sueldos_ CCT 40_89 (Edición Abril 2026).pdf, planillamayo2026.pdf
+[ERROR] 2026-05-15T13:37:17.252144+00:00 Gemini multi-document extraction failed: CCT_40_1989_Reglas_Liquidacion.pdf, Informe Normativo_ Reglas y Condiciones Generales de Trabajo - CCT 40_89 (Camioneros).pdf, Manual de Liquidación de Sueldos_ CCT 40_89 (Edición Abril 2026).pdf, planillamayo2026.pdf: Gemini multi-document extraction failed: 403 Your project has been denied access. Please contact support.
+[INFO] 2026-05-15T13:42:56.853262+00:00 Gemini multi-document extraction started: CCT_40_1989_Reglas_Liquidacion.pdf, Informe Normativo_ Reglas y Condiciones Generales de Trabajo - CCT 40_89 (Camioneros).pdf, Manual de Liquidación de Sueldos_ CCT 40_89 (Edición Abril 2026).pdf, planillamayo2026.pdf
+[ERROR] 2026-05-15T13:43:13.843625+00:00 Gemini multi-document extraction failed: CCT_40_1989_Reglas_Liquidacion.pdf, Informe Normativo_ Reglas y Condiciones Generales de Trabajo - CCT 40_89 (Camioneros).pdf, Manual de Liquidación de Sueldos_ CCT 40_89 (Edición Abril 2026).pdf, planillamayo2026.pdf: Gemini multi-document extraction failed: 403 Your project has been denied access. Please contact support.
+[INFO] 2026-05-15T13:44:23.632874+00:00 Gemini multi-document extraction started: Informe Normativo_ Reglas y Condiciones Generales de Trabajo - CCT 40_89 (Camioneros).pdf, Manual de Liquidación de Sueldos_ CCT 40_89 (Edición Abril 2026).pdf, Manual Técnico de Liquidación de Haberes_ CCT 40_89 (Actualización  Mayo 2026).pdf, planillamayo2026.pdf
+[ERROR] 2026-05-15T13:44:28.020642+00:00 Gemini multi-document extraction failed: Informe Normativo_ Reglas y Condiciones Generales de Trabajo - CCT 40_89 (Camioneros).pdf, Manual de Liquidación de Sueldos_ CCT 40_89 (Edición Abril 2026).pdf, Manual Técnico de Liquidación de Haberes_ CCT 40_89 (Actualización  Mayo 2026).pdf, planillamayo2026.pdf: Gemini multi-document extraction failed: <HttpError 400 when requesting https://generativelanguage.googleapis.com/$discovery/rest?version=v1beta&key=AAIzaSyBSQ13XNAzYJxx9LWUuFhIg8tUZ6MIko1w returned "API key not valid. Please pass a valid API key.". Details: "[{'@type': 'type.googleapis.com/google.rpc.ErrorInfo', 'reason': 'API_KEY_INVALID', 'domain': 'googleapis.com', 'metadata': {'service': 'generativelanguage.googleapis.com'}}, {'@type': 'type.googleapis.com/google.rpc.LocalizedMessage', 'locale': 'en-US', 'message': 'API key not valid. Please pass a valid API key.'}]">
+[INFO] 2026-05-15T13:46:37.373869+00:00 Gemini multi-document extraction started: CCT_40_1989_Reglas_Liquidacion.pdf, Informe Normativo_ Reglas y Condiciones Generales de Trabajo - CCT 40_89 (Camioneros).pdf, Manual de Liquidación de Sueldos_ CCT 40_89 (Edición Abril 2026).pdf, Manual Técnico de Liquidación de Haberes_ CCT 40_89 (Actualización  Mayo 2026).pdf, planillamayo2026.pdf
+[ERROR] 2026-05-15T13:46:38.918508+00:00 Gemini multi-document extraction failed: CCT_40_1989_Reglas_Liquidacion.pdf, Informe Normativo_ Reglas y Condiciones Generales de Trabajo - CCT 40_89 (Camioneros).pdf, Manual de Liquidación de Sueldos_ CCT 40_89 (Edición Abril 2026).pdf, Manual Técnico de Liquidación de Haberes_ CCT 40_89 (Actualización  Mayo 2026).pdf, planillamayo2026.pdf: Gemini multi-document extraction failed: <HttpError 400 when requesting https://generativelanguage.googleapis.com/$discovery/rest?version=v1beta&key=AAIzaSyBSQ13XNAzYJxx9LWUuFhIg8tUZ6MIko1w returned "API key not valid. Please pass a valid API key.". Details: "[{'@type': 'type.googleapis.com/google.rpc.ErrorInfo', 'reason': 'API_KEY_INVALID', 'domain': 'googleapis.com', 'metadata': {'service': 'generativelanguage.googleapis.com'}}, {'@type': 'type.googleapis.com/google.rpc.LocalizedMessage', 'locale': 'en-US', 'message': 'API key not valid. Please pass a valid API key.'}]">
+[INFO] 2026-05-15T13:47:12.505197+00:00 Gemini multi-document extraction started: CCT_40_1989_Reglas_Liquidacion.pdf, Informe Normativo_ Reglas y Condiciones Generales de Trabajo - CCT 40_89 (Camioneros).pdf, Manual de Liquidación de Sueldos_ CCT 40_89 (Edición Abril 2026).pdf, Manual Técnico de Liquidación de Haberes_ CCT 40_89 (Actualización  Mayo 2026).pdf, planillamayo2026.pdf
+[ERROR] 2026-05-15T13:47:14.037225+00:00 Gemini multi-document extraction failed: CCT_40_1989_Reglas_Liquidacion.pdf, Informe Normativo_ Reglas y Condiciones Generales de Trabajo - CCT 40_89 (Camioneros).pdf, Manual de Liquidación de Sueldos_ CCT 40_89 (Edición Abril 2026).pdf, Manual Técnico de Liquidación de Haberes_ CCT 40_89 (Actualización  Mayo 2026).pdf, planillamayo2026.pdf: Gemini multi-document extraction failed: <HttpError 400 when requesting https://generativelanguage.googleapis.com/$discovery/rest?version=v1beta&key=AAIzaSyBSQ13XNAzYJxx9LWUuFhIg8tUZ6MIko1w returned "API key not valid. Please pass a valid API key.". Details: "[{'@type': 'type.googleapis.com/google.rpc.ErrorInfo', 'reason': 'API_KEY_INVALID', 'domain': 'googleapis.com', 'metadata': {'service': 'generativelanguage.googleapis.com'}}, {'@type': 'type.googleapis.com/google.rpc.LocalizedMessage', 'locale': 'en-US', 'message': 'API key not valid. Please pass a valid API key.'}]">
+[INFO] 2026-05-15T13:57:11.496839+00:00 Gemini extraction started: cct.txt
+[INFO] 2026-05-15T13:57:11.500489+00:00 Gemini extraction success: cct.txt
+[INFO] 2026-05-15T13:57:12.305654+00:00 Gemini multi-document extraction started: CCT_130_75.txt, paritaria_2026.txt
+[INFO] 2026-05-15T13:57:12.310851+00:00 Gemini multi-document extraction success: CCT_130_75.txt, paritaria_2026.txt
+[INFO] 2026-05-15T13:57:12.893055+00:00 Gemini extraction started: CCT_130_75.txt
+[INFO] 2026-05-15T13:57:12.895783+00:00 Gemini extraction success: CCT_130_75.txt
+[INFO] 2026-05-15T13:57:13.327820+00:00 Gemini extraction started: CCT_130_75.txt
+[INFO] 2026-05-15T13:57:13.331555+00:00 Gemini extraction success: CCT_130_75.txt
+[INFO] 2026-05-15T13:57:13.875032+00:00 Gemini multi-document extraction started: CCT_999_26_reglas.txt, CCT_999_26_escala.txt
+[INFO] 2026-05-15T13:57:13.880881+00:00 Gemini multi-document extraction success: CCT_999_26_reglas.txt, CCT_999_26_escala.txt
+[INFO] 2026-05-15T14:01:16.377434+00:00 Gemini multi-document extraction started: CCT_40_1989_Reglas_Liquidacion.pdf, Informe Normativo_ Reglas y Condiciones Generales de Trabajo - CCT 40_89 (Camioneros).pdf, Manual Técnico de Liquidación de Haberes_ CCT 40_89 (Actualización  Mayo 2026).pdf, planillamayo2026.pdf
+[INFO] 2026-05-15T14:03:08.635779+00:00 Gemini multi-document extraction success: CCT_40_1989_Reglas_Liquidacion.pdf, Informe Normativo_ Reglas y Condiciones Generales de Trabajo - CCT 40_89 (Camioneros).pdf, Manual Técnico de Liquidación de Haberes_ CCT 40_89 (Actualización  Mayo 2026).pdf, planillamayo2026.pdf
+[INFO] 2026-05-15T14:11:53.814470+00:00 Gemini multi-document extraction started: CCT_40_1989_Reglas_Liquidacion.pdf, Informe Normativo_ Reglas y Condiciones Generales de Trabajo - CCT 40_89 (Camioneros).pdf, planillamayo2026.pdf
+[INFO] 2026-05-15T14:12:20.428440+00:00 Gemini multi-document extraction success: CCT_40_1989_Reglas_Liquidacion.pdf, Informe Normativo_ Reglas y Condiciones Generales de Trabajo - CCT 40_89 (Camioneros).pdf, planillamayo2026.pdf
+[INFO] 2026-05-15T14:20:10.805759+00:00 Gemini multi-document extraction started: CCT_40_1989_Reglas_Liquidacion.pdf, Informe Normativo_ Reglas y Condiciones Generales de Trabajo - CCT 40_89 (Camioneros).pdf, Manual Técnico de Liquidación de Haberes_ CCT 40_89 (Actualización  Mayo 2026).pdf, planillamayo2026.pdf
+[INFO] 2026-05-15T14:21:34.989123+00:00 Gemini multi-document extraction success: CCT_40_1989_Reglas_Liquidacion.pdf, Informe Normativo_ Reglas y Condiciones Generales de Trabajo - CCT 40_89 (Camioneros).pdf, Manual Técnico de Liquidación de Haberes_ CCT 40_89 (Actualización  Mayo 2026).pdf, planillamayo2026.pdf
+[INFO] 2026-05-15T14:22:49.088409+00:00 Gemini multi-document extraction started: CCT_40_1989_Reglas_Liquidacion.pdf, Informe Normativo_ Reglas y Condiciones Generales de Trabajo - CCT 40_89 (Camioneros).pdf, planillamayo2026.pdf
+[INFO] 2026-05-15T14:23:19.498873+00:00 Gemini multi-document extraction success: CCT_40_1989_Reglas_Liquidacion.pdf, Informe Normativo_ Reglas y Condiciones Generales de Trabajo - CCT 40_89 (Camioneros).pdf, planillamayo2026.pdf
+[INFO] 2026-05-15T14:28:04.358480+00:00 Gemini multi-document extraction started: CCT_40_1989_texto_completo.pdf, planillamayo2026.pdf, Transporte de cargas, CCT 40_1989. Convenio colectivo.pdf
+[INFO] 2026-05-15T14:28:51.140802+00:00 Gemini multi-document extraction success: CCT_40_1989_texto_completo.pdf, planillamayo2026.pdf, Transporte de cargas, CCT 40_1989. Convenio colectivo.pdf
+[INFO] 2026-05-15T14:43:07.317870+00:00 Gemini extraction started: cct.txt
+[INFO] 2026-05-15T14:43:07.323706+00:00 Gemini extraction success: cct.txt
+[INFO] 2026-05-15T14:43:07.703674+00:00 Gemini multi-document extraction started: CCT_130_75.txt, paritaria_2026.txt
+[INFO] 2026-05-15T14:43:07.706866+00:00 Gemini multi-document extraction success: CCT_130_75.txt, paritaria_2026.txt
+[INFO] 2026-05-15T14:43:08.174346+00:00 Gemini extraction started: CCT_130_75.txt
+[INFO] 2026-05-15T14:43:08.179269+00:00 Gemini extraction success: CCT_130_75.txt
+[INFO] 2026-05-15T14:43:08.537808+00:00 Gemini extraction started: CCT_130_75.txt
+[INFO] 2026-05-15T14:43:08.540022+00:00 Gemini extraction success: CCT_130_75.txt
+[INFO] 2026-05-15T14:43:08.875718+00:00 Gemini multi-document extraction started: CCT_999_26_reglas.txt, CCT_999_26_escala.txt
+[INFO] 2026-05-15T14:43:08.878468+00:00 Gemini multi-document extraction success: CCT_999_26_reglas.txt, CCT_999_26_escala.txt
+[INFO] 2026-05-15T14:46:41.004783+00:00 Gemini multi-document extraction started: CCT_40_1989_texto_completo.pdf, planillamayo2026.pdf, Transporte de cargas, CCT 40_1989. Convenio colectivo.pdf
+[INFO] 2026-05-15T14:47:23.763865+00:00 Gemini multi-document extraction success: CCT_40_1989_texto_completo.pdf, planillamayo2026.pdf, Transporte de cargas, CCT 40_1989. Convenio colectivo.pdf
+[INFO] 2026-05-15T14:52:07.309972+00:00 Gemini extraction started: cct.txt
+[INFO] 2026-05-15T14:52:07.313407+00:00 Gemini extraction success: cct.txt
+[INFO] 2026-05-15T14:52:08.217619+00:00 Gemini multi-document extraction started: CCT_130_75.txt, paritaria_2026.txt
+[INFO] 2026-05-15T14:52:08.221171+00:00 Gemini multi-document extraction success: CCT_130_75.txt, paritaria_2026.txt
+[INFO] 2026-05-15T14:52:09.008233+00:00 Gemini extraction started: CCT_130_75.txt
+[INFO] 2026-05-15T14:52:09.011145+00:00 Gemini extraction success: CCT_130_75.txt
+[INFO] 2026-05-15T14:52:09.556020+00:00 Gemini extraction started: CCT_130_75.txt
+[INFO] 2026-05-15T14:52:09.559108+00:00 Gemini extraction success: CCT_130_75.txt
+[INFO] 2026-05-15T14:52:10.066294+00:00 Gemini multi-document extraction started: CCT_999_26_reglas.txt, CCT_999_26_escala.txt
+[INFO] 2026-05-15T14:52:10.070421+00:00 Gemini multi-document extraction success: CCT_999_26_reglas.txt, CCT_999_26_escala.txt
+[INFO] 2026-05-15T15:05:53.386267+00:00 Gemini extraction started: cct.txt
+[INFO] 2026-05-15T15:05:53.388558+00:00 Gemini extraction success: cct.txt
+[INFO] 2026-05-15T15:05:53.994156+00:00 Gemini multi-document extraction started: CCT_130_75.txt, paritaria_2026.txt
+[INFO] 2026-05-15T15:05:53.996831+00:00 Gemini multi-document extraction success: CCT_130_75.txt, paritaria_2026.txt
+[INFO] 2026-05-15T15:05:54.574286+00:00 Gemini extraction started: CCT_130_75.txt
+[INFO] 2026-05-15T15:05:54.577180+00:00 Gemini extraction success: CCT_130_75.txt
+[INFO] 2026-05-15T15:05:54.899994+00:00 Gemini extraction started: CCT_130_75.txt
+[INFO] 2026-05-15T15:05:54.902891+00:00 Gemini extraction success: CCT_130_75.txt
+[INFO] 2026-05-15T15:05:55.177074+00:00 Gemini multi-document extraction started: CCT_999_26_reglas.txt, CCT_999_26_escala.txt
+[INFO] 2026-05-15T15:05:55.179783+00:00 Gemini multi-document extraction success: CCT_999_26_reglas.txt, CCT_999_26_escala.txt
+[INFO] 2026-05-15T15:11:32.266805+00:00 Gemini multi-document extraction started: CCT_40_1989_texto_completo.pdf, planillamayo2026.pdf, Transporte de cargas, CCT 40_1989. Convenio colectivo.pdf
+[INFO] 2026-05-15T15:12:15.231344+00:00 Gemini multi-document extraction success: CCT_40_1989_texto_completo.pdf, planillamayo2026.pdf, Transporte de cargas, CCT 40_1989. Convenio colectivo.pdf
+[INFO] 2026-05-15T15:29:22.698566+00:00 Gemini multi-document extraction started: CCT_40_1989_texto_completo.pdf, planillamayo2026.pdf, Transporte de cargas, CCT 40_1989. Convenio colectivo.pdf
+[INFO] 2026-05-15T15:30:29.680807+00:00 Gemini multi-document extraction success: CCT_40_1989_texto_completo.pdf, planillamayo2026.pdf, Transporte de cargas, CCT 40_1989. Convenio colectivo.pdf
+[INFO] 2026-05-15T15:37:21.345993+00:00 Gemini extraction started: cct.txt
+[INFO] 2026-05-15T15:37:21.364816+00:00 Gemini extraction success: cct.txt
+[INFO] 2026-05-15T15:37:24.265045+00:00 Gemini multi-document extraction started: CCT_130_75.txt, paritaria_2026.txt
+[INFO] 2026-05-15T15:37:24.271772+00:00 Gemini multi-document extraction success: CCT_130_75.txt, paritaria_2026.txt
+[INFO] 2026-05-15T15:37:25.899080+00:00 Gemini extraction started: CCT_130_75.txt
+[INFO] 2026-05-15T15:37:25.906387+00:00 Gemini extraction success: CCT_130_75.txt
+[INFO] 2026-05-15T15:37:26.511158+00:00 Gemini extraction started: CCT_130_75.txt
+[INFO] 2026-05-15T15:37:26.526319+00:00 Gemini extraction success: CCT_130_75.txt
+[INFO] 2026-05-15T15:37:28.644759+00:00 Gemini multi-document extraction started: CCT_999_26_reglas.txt, CCT_999_26_escala.txt
+[INFO] 2026-05-15T15:37:28.714644+00:00 Gemini multi-document extraction success: CCT_999_26_reglas.txt, CCT_999_26_escala.txt
+[INFO] 2026-05-15T15:39:28.533663+00:00 Gemini multi-document extraction started: CCT_40_1989_texto_completo.pdf, planillamayo2026.pdf, Transporte de cargas, CCT 40_1989. Convenio colectivo.pdf
+[INFO] 2026-05-15T15:40:19.730172+00:00 Gemini multi-document extraction success: CCT_40_1989_texto_completo.pdf, planillamayo2026.pdf, Transporte de cargas, CCT 40_1989. Convenio colectivo.pdf
+[INFO] 2026-05-15T16:01:32.268660+00:00 Gemini extraction started: cct.txt
+[INFO] 2026-05-15T16:01:32.270903+00:00 Gemini extraction success: cct.txt
+[INFO] 2026-05-15T16:01:33.038773+00:00 Gemini multi-document extraction started: CCT_130_75.txt, paritaria_2026.txt
+[INFO] 2026-05-15T16:01:33.040961+00:00 Gemini multi-document extraction success: CCT_130_75.txt, paritaria_2026.txt
+[INFO] 2026-05-15T16:01:33.343618+00:00 Gemini extraction started: CCT_130_75.txt
+[INFO] 2026-05-15T16:01:33.451102+00:00 Gemini extraction success: CCT_130_75.txt
+[INFO] 2026-05-15T16:01:33.634044+00:00 Gemini extraction started: CCT_130_75.txt
+[INFO] 2026-05-15T16:01:33.635778+00:00 Gemini extraction success: CCT_130_75.txt
+[INFO] 2026-05-15T16:01:33.799971+00:00 Gemini multi-document extraction started: CCT_999_26_reglas.txt, CCT_999_26_escala.txt
+[INFO] 2026-05-15T16:01:33.801261+00:00 Gemini multi-document extraction success: CCT_999_26_reglas.txt, CCT_999_26_escala.txt
+[INFO] 2026-05-15T16:02:19.509401+00:00 Gemini extraction started: cct.txt
+[INFO] 2026-05-15T16:02:19.511770+00:00 Gemini extraction success: cct.txt
+[INFO] 2026-05-15T16:02:20.304116+00:00 Gemini multi-document extraction started: CCT_130_75.txt, paritaria_2026.txt
+[INFO] 2026-05-15T16:02:20.307572+00:00 Gemini multi-document extraction success: CCT_130_75.txt, paritaria_2026.txt
+[INFO] 2026-05-15T16:02:20.916505+00:00 Gemini extraction started: CCT_130_75.txt
+[INFO] 2026-05-15T16:02:20.919013+00:00 Gemini extraction success: CCT_130_75.txt
+[INFO] 2026-05-15T16:02:21.166713+00:00 Gemini extraction started: CCT_130_75.txt
+[INFO] 2026-05-15T16:02:21.168880+00:00 Gemini extraction success: CCT_130_75.txt
+[INFO] 2026-05-15T16:02:21.370571+00:00 Gemini multi-document extraction started: CCT_999_26_reglas.txt, CCT_999_26_escala.txt
+[INFO] 2026-05-15T16:02:21.372495+00:00 Gemini multi-document extraction success: CCT_999_26_reglas.txt, CCT_999_26_escala.txt
+[INFO] 2026-05-15T16:06:00.266596+00:00 Gemini multi-document extraction started: Escala Salarial CCT 40_89 - Vigencia Mayo 2026.pdf, planillamayo2026.pdf, Transporte de cargas, CCT 40_1989. Convenio colectivo.pdf
+[INFO] 2026-05-15T16:06:44.993348+00:00 Gemini multi-document extraction success: Escala Salarial CCT 40_89 - Vigencia Mayo 2026.pdf, planillamayo2026.pdf, Transporte de cargas, CCT 40_1989. Convenio colectivo.pdf
+[INFO] 2026-05-15T16:20:58.700512+00:00 Gemini multi-document extraction started: CCT_40_1989_texto_completo.pdf, planillamayo2026.pdf, Transporte de cargas, CCT 40_1989. Convenio colectivo.pdf
+[INFO] 2026-05-15T16:21:38.871046+00:00 Gemini multi-document extraction success: CCT_40_1989_texto_completo.pdf, planillamayo2026.pdf, Transporte de cargas, CCT 40_1989. Convenio colectivo.pdf
+[INFO] 2026-05-15T16:23:53.339816+00:00 Gemini multi-document extraction started: planillamayo2026.pdf, Transporte de cargas, CCT 40_1989. Convenio colectivo.pdf
+[INFO] 2026-05-15T16:24:32.359097+00:00 Gemini multi-document extraction success: planillamayo2026.pdf, Transporte de cargas, CCT 40_1989. Convenio colectivo.pdf
+[INFO] 2026-05-15T16:47:20.589134+00:00 Gemini multi-document extraction started: CCT_40_1989_texto_completo.pdf, planillamayo2026.pdf
+[INFO] 2026-05-15T16:48:00.284190+00:00 Gemini multi-document extraction success: CCT_40_1989_texto_completo.pdf, planillamayo2026.pdf
+[INFO] 2026-05-15T16:48:40.729440+00:00 Gemini multi-document extraction started: CCT_40_1989_texto_completo.pdf, planillamayo2026.pdf
+[INFO] 2026-05-15T16:49:27.559508+00:00 Gemini multi-document extraction success: CCT_40_1989_texto_completo.pdf, planillamayo2026.pdf
+[INFO] 2026-05-15T16:50:03.551347+00:00 Gemini multi-document extraction started: planillamayo2026.pdf, Transporte de cargas, CCT 40_1989. Convenio colectivo.pdf
+[INFO] 2026-05-15T16:50:44.170939+00:00 Gemini multi-document extraction success: planillamayo2026.pdf, Transporte de cargas, CCT 40_1989. Convenio colectivo.pdf
+[INFO] 2026-05-15T16:51:33.516145+00:00 Gemini multi-document extraction started: CCT_40_1989_Reglas_Liquidacion.pdf, CCT_40_1989_texto_completo.pdf, planillamayo2026.pdf, Transporte de cargas, CCT 40_1989. Convenio colectivo.pdf
+[INFO] 2026-05-15T16:52:22.770223+00:00 Gemini multi-document extraction success: CCT_40_1989_Reglas_Liquidacion.pdf, CCT_40_1989_texto_completo.pdf, planillamayo2026.pdf, Transporte de cargas, CCT 40_1989. Convenio colectivo.pdf
+[INFO] 2026-05-15T16:53:54.049810+00:00 Gemini multi-document extraction started: CCT_40_1989_Reglas_Liquidacion.pdf, CCT_40_1989_texto_completo.pdf, planillamayo2026.pdf, Transporte de cargas, CCT 40_1989. Convenio colectivo.pdf
+[INFO] 2026-05-15T16:54:43.820698+00:00 Gemini multi-document extraction success: CCT_40_1989_Reglas_Liquidacion.pdf, CCT_40_1989_texto_completo.pdf, planillamayo2026.pdf, Transporte de cargas, CCT 40_1989. Convenio colectivo.pdf
+[INFO] 2026-05-15T16:59:54.915073+00:00 Gemini multi-document extraction started: CCT_40_1989_Reglas_Liquidacion.pdf, CCT_40_1989_texto_completo.pdf, Informe Normativo_ Reglas y Condiciones Generales de Trabajo - CCT 40_89 (Camioneros).pdf, planillamayo2026.pdf, Transporte de cargas, CCT 40_1989. Convenio colectivo.pdf
+[INFO] 2026-05-15T17:00:46.275880+00:00 Gemini multi-document extraction success: CCT_40_1989_Reglas_Liquidacion.pdf, CCT_40_1989_texto_completo.pdf, Informe Normativo_ Reglas y Condiciones Generales de Trabajo - CCT 40_89 (Camioneros).pdf, planillamayo2026.pdf, Transporte de cargas, CCT 40_1989. Convenio colectivo.pdf
+[INFO] 2026-05-15T17:08:00.010673+00:00 Gemini extraction started: cct.txt
+[INFO] 2026-05-15T17:08:00.015137+00:00 Gemini extraction success: cct.txt
+[INFO] 2026-05-15T17:08:01.771874+00:00 Gemini multi-document extraction started: CCT_130_75.txt, paritaria_2026.txt
+[INFO] 2026-05-15T17:08:01.776517+00:00 Gemini multi-document extraction success: CCT_130_75.txt, paritaria_2026.txt
+[INFO] 2026-05-15T17:08:03.822611+00:00 Gemini extraction started: CCT_130_75.txt
+[INFO] 2026-05-15T17:08:03.826326+00:00 Gemini extraction success: CCT_130_75.txt
+[INFO] 2026-05-15T17:08:04.717205+00:00 Gemini extraction started: CCT_130_75.txt
+[INFO] 2026-05-15T17:08:04.721860+00:00 Gemini extraction success: CCT_130_75.txt
+[INFO] 2026-05-15T17:08:05.311643+00:00 Gemini multi-document extraction started: CCT_999_26_reglas.txt, CCT_999_26_escala.txt
+[INFO] 2026-05-15T17:08:05.314437+00:00 Gemini multi-document extraction success: CCT_999_26_reglas.txt, CCT_999_26_escala.txt
+[INFO] 2026-05-15T17:09:48.301868+00:00 Gemini extraction started: cct.txt
+[INFO] 2026-05-15T17:09:48.304387+00:00 Gemini extraction success: cct.txt
+[INFO] 2026-05-15T17:09:49.415649+00:00 Gemini multi-document extraction started: CCT_130_75.txt, paritaria_2026.txt
+[INFO] 2026-05-15T17:09:49.429961+00:00 Gemini multi-document extraction success: CCT_130_75.txt, paritaria_2026.txt
+[INFO] 2026-05-15T17:09:50.950157+00:00 Gemini extraction started: CCT_130_75.txt
+[INFO] 2026-05-15T17:09:50.952918+00:00 Gemini extraction success: CCT_130_75.txt
+[INFO] 2026-05-15T17:09:51.639894+00:00 Gemini extraction started: CCT_130_75.txt
+[INFO] 2026-05-15T17:09:51.642764+00:00 Gemini extraction success: CCT_130_75.txt
+[INFO] 2026-05-15T17:09:52.234722+00:00 Gemini multi-document extraction started: CCT_999_26_reglas.txt, CCT_999_26_escala.txt
+[INFO] 2026-05-15T17:09:52.239299+00:00 Gemini multi-document extraction success: CCT_999_26_reglas.txt, CCT_999_26_escala.txt
+[INFO] 2026-05-15T17:11:57.931577+00:00 Gemini multi-document extraction started: camioneros-marzo26.pdf, CCT_40_1989_texto_completo.pdf, planillamayo2026.pdf, Transporte de cargas, CCT 40_1989. Convenio colectivo.pdf
+[INFO] 2026-05-15T17:13:08.720824+00:00 Gemini multi-document extraction success: camioneros-marzo26.pdf, CCT_40_1989_texto_completo.pdf, planillamayo2026.pdf, Transporte de cargas, CCT 40_1989. Convenio colectivo.pdf
+[INFO] 2026-05-15T17:37:08.266961+00:00 Gemini multi-document extraction started: CCT_40_1989_texto_completo.pdf, planillamayo2026.pdf, Transporte de cargas, CCT 40_1989. Convenio colectivo.pdf
+[INFO] 2026-05-15T17:38:11.446924+00:00 Gemini multi-document extraction success: CCT_40_1989_texto_completo.pdf, planillamayo2026.pdf, Transporte de cargas, CCT 40_1989. Convenio colectivo.pdf
+[INFO] 2026-05-15T17:41:53.771836+00:00 Gemini multi-document extraction started: CCT_40_1989_texto_completo.pdf, planillamayo2026.pdf, Transporte de cargas, CCT 40_1989. Convenio colectivo.pdf
+[INFO] 2026-05-15T17:43:02.652234+00:00 Gemini multi-document extraction success: CCT_40_1989_texto_completo.pdf, planillamayo2026.pdf, Transporte de cargas, CCT 40_1989. Convenio colectivo.pdf

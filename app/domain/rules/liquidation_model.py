@@ -114,7 +114,14 @@ class LiquidationModelResolver:
 
     def monthly_hours(self, agreement: Agreement) -> float:
         jornada = agreement.jornada_tiempos.jornada_estandar or {}
-        return float(jornada.get("horas_mensuales") or jornada.get("monthly_hours") or 200)
+        explicit = jornada.get("horas_mensuales") or jornada.get("monthly_hours")
+        if explicit:
+            return float(explicit)
+        daily_hours = jornada.get("maximo_horas_diarias") or jornada.get("horas_diarias") or jornada.get("daily_hours")
+        monthly_days = jornada.get("dias_mensuales") or jornada.get("monthly_days")
+        if daily_hours and monthly_days:
+            return float(daily_hours) * float(monthly_days)
+        return 200
 
     def monthly_days(self, agreement: Agreement) -> float:
         jornada = agreement.jornada_tiempos.jornada_estandar or {}
