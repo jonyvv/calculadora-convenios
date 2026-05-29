@@ -4,6 +4,7 @@ from app.application.services.convention_structuring_service import ConventionSt
 from app.application.services.document_extraction_orchestrator import DocumentExtractionOrchestrator
 from app.application.services.document_import_service import DocumentImportService
 from app.application.use_cases.activar_version_convenio import ActivarVersionConvenio
+from app.application.use_cases.actualizar_escala_salarial import ActualizarEscalaSalarial
 from app.application.use_cases.actualizar_convenio import ActualizarConvenio
 from app.application.use_cases.auditar_liquidacion import AuditarLiquidacion
 from app.application.use_cases.calcular_liquidacion import CalcularLiquidacion
@@ -67,6 +68,9 @@ class Container:
 
     def actualizar_convenio(self) -> ActualizarConvenio:
         return ActualizarConvenio(self.agreements)
+
+    def actualizar_escala_salarial(self) -> ActualizarEscalaSalarial:
+        return ActualizarEscalaSalarial(self.agreements)
 
     def eliminar_convenio(self) -> EliminarConvenio:
         return EliminarConvenio(self.agreements)

@@ -1,5 +1,33 @@
 {
   "employee_id": "1",
   "period": "2026-01",
-  "events": []
+  "events": [
+    {
+      "type": "SALARY_ITEM",
+      "subtype": "COMIDA",
+      "days": null,
+      "hours": null,
+      "quantity": 24.0,
+      "amount": null,
+      "description": "Comida (DAY)"
+    },
+    {
+      "type": "SALARY_ITEM",
+      "subtype": "VIAT_ESP",
+      "days": null,
+      "hours": null,
+      "quantity": 24.0,
+      "amount": null,
+      "description": "Viático especial (DAY)"
+    },
+    {
+      "type": "SALARY_ITEM",
+      "subtype": "PERNOCT",
+      "days": null,
+      "hours": null,
+      "quantity": 2.0,
+      "amount": null,
+      "description": "Pernoctada (NIGHT)"
+    }
+  ]
 }

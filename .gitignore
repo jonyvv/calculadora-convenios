@@ -1,2 +1,5 @@
 .env 
-storage/events
+storage
+test 
+logs
+__pycache__

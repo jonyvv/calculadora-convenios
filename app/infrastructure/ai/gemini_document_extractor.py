@@ -19,6 +19,7 @@ Extrae especialmente:
 6. Base de dias de liquidacion, divisor mensual o dias considerados para calcular jornal/valor diario/ausencias/viaticos si el convenio lo indica.
 
 Reglas criticas:
+- Si hay imagen interpreta la imagen y extrae la informacion que contenga como texto. No dejes datos afuera por ser imagen.
 - Si hay tablas, preserva la relacion fila-columna. Una fila de escala debe mantener puesto/rol/categoria + basico en la misma linea.
 - No separes importes de sus categorias.
 - No resumas tablas salariales.

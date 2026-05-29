@@ -17,77 +17,137 @@
     {
       "category_id": "OI",
       "name": "Personal De Producción - Oi",
-      "basic_salary": 7336.54
+      "basic_salary": 7336.54,
+      "valor_hora": null,
+      "valor_jornal": null,
+      "zone": null,
+      "location": null
     },
     {
       "category_id": "C",
       "name": "Personal De Producción - C",
-      "basic_salary": 7630.0
+      "basic_salary": 7630.0,
+      "valor_hora": null,
+      "valor_jornal": null,
+      "zone": null,
+      "location": null
     },
     {
       "category_id": "CA",
       "name": "Personal De Producción - Ca",
-      "basic_salary": 7973.35
+      "basic_salary": 7973.35,
+      "valor_hora": null,
+      "valor_jornal": null,
+      "zone": null,
+      "location": null
     },
     {
       "category_id": "E",
       "name": "Personal De Producción - E",
-      "basic_salary": 8372.02
+      "basic_salary": 8372.02,
+      "valor_hora": null,
+      "valor_jornal": null,
+      "zone": null,
+      "location": null
     },
     {
       "category_id": "EA",
       "name": "Personal De Producción - Ea",
-      "basic_salary": 8790.62
+      "basic_salary": 8790.62,
+      "valor_hora": null,
+      "valor_jornal": null,
+      "zone": null,
+      "location": null
     },
     {
       "category_id": "EB",
       "name": "Personal De Producción - Eb",
-      "basic_salary": 9274.1
+      "basic_salary": 9274.1,
+      "valor_hora": null,
+      "valor_jornal": null,
+      "zone": null,
+      "location": null
     },
     {
       "category_id": "OFICIAL",
       "name": "Personal De Ingeniería - Oficial",
-      "basic_salary": 8450.0
+      "basic_salary": 8450.0,
+      "valor_hora": null,
+      "valor_jornal": null,
+      "zone": null,
+      "location": null
     },
     {
       "category_id": "EA_2",
       "name": "Personal De Ingeniería - Ea",
-      "basic_salary": 9083.76
+      "basic_salary": 9083.76,
+      "valor_hora": null,
+      "valor_jornal": null,
+      "zone": null,
+      "location": null
     },
     {
       "category_id": "EB_2",
       "name": "Personal De Ingeniería - Eb",
-      "basic_salary": 9992.13
+      "basic_salary": 9992.13,
+      "valor_hora": null,
+      "valor_jornal": null,
+      "zone": null,
+      "location": null
     },
     {
       "category_id": "EC",
       "name": "Personal De Ingeniería - Ec",
-      "basic_salary": 10291.9
+      "basic_salary": 10291.9,
+      "valor_hora": null,
+      "valor_jornal": null,
+      "zone": null,
+      "location": null
     },
     {
       "category_id": "2DA",
       "name": "Personal De Administración - 2Da",
-      "basic_salary": 1467292.17
+      "basic_salary": 1467292.17,
+      "valor_hora": null,
+      "valor_jornal": null,
+      "zone": null,
+      "location": null
     },
     {
       "category_id": "3RA",
       "name": "Personal De Administración - 3Ra",
-      "basic_salary": 1511310.94
+      "basic_salary": 1511310.94,
+      "valor_hora": null,
+      "valor_jornal": null,
+      "zone": null,
+      "location": null
     },
     {
       "category_id": "4TA",
       "name": "Personal De Administración - 4Ta",
-      "basic_salary": 1571763.38
+      "basic_salary": 1571763.38,
+      "valor_hora": null,
+      "valor_jornal": null,
+      "zone": null,
+      "location": null
     },
     {
       "category_id": "5TA",
       "name": "Personal De Administración - 5Ta",
-      "basic_salary": 1650351.55
+      "basic_salary": 1650351.55,
+      "valor_hora": null,
+      "valor_jornal": null,
+      "zone": null,
+      "location": null
     },
     {
       "category_id": "6TA",
       "name": "Personal De Administración - 6Ta",
-      "basic_salary": 1741120.88
+      "basic_salary": 1741120.88,
+      "valor_hora": null,
+      "valor_jornal": null,
+      "zone": null,
+      "location": null
     }
   ],
   "salary_model": {
@@ -167,31 +227,51 @@
         "code": "JUBILACION",
         "name": "Jubilación",
         "rate": 11.0,
-        "base": "Remunerativo"
+        "base": "Remunerativo",
+        "application_type": "MANDATORY",
+        "applies_when": null,
+        "requires_employee_flag": null,
+        "source_article": null
       },
       {
         "code": "LEY_19032",
         "name": "Ley 19.032 / PAMI",
         "rate": 3.0,
-        "base": "Remunerativo"
+        "base": "Remunerativo",
+        "application_type": "MANDATORY",
+        "applies_when": null,
+        "requires_employee_flag": null,
+        "source_article": null
       },
       {
         "code": "OBRA_SOCIAL",
         "name": "Obra Social",
         "rate": 3.0,
-        "base": "Remunerativo"
+        "base": "Remunerativo",
+        "application_type": "MANDATORY",
+        "applies_when": null,
+        "requires_employee_flag": null,
+        "source_article": null
       },
       {
         "code": "APORTE_FED",
         "name": "Aporte Federativo",
         "rate": 1.0,
-        "base": "Remunerativo"
+        "base": "Remunerativo",
+        "application_type": "MANDATORY",
+        "applies_when": null,
+        "requires_employee_flag": null,
+        "source_article": null
       },
       {
         "code": "SINDICATO",
         "name": "Sindicato",
         "rate": 2.0,
-        "base": "REMUNERATIVE_TOTAL"
+        "base": "REMUNERATIVE_TOTAL",
+        "application_type": "MANDATORY",
+        "applies_when": null,
+        "requires_employee_flag": null,
+        "source_article": null
       }
     ],
     "employer_contributions": [
@@ -853,5 +933,16 @@
       "codigo": "deductions_apply_only_to_remunerative_total",
       "mensaje": "Regla de auditoria generada desde el convenio"
     }
-  ]
+  ],
+  "modelo_liquidacion": {
+    "tipo": "sueldo_base",
+    "unidad_principal": "mensual",
+    "periodicidad": "mensual",
+    "base_calculo": "salario_basico_categoria",
+    "formula_base": "salario_basico_categoria",
+    "requiere_horas_trabajadas": false,
+    "requiere_dias_trabajados": false,
+    "requiere_categoria": true,
+    "requiere_jornada": false
+  }
 }

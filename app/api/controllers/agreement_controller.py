@@ -18,6 +18,15 @@ class AgreementController:
             documents.append((file.filename or "document.txt", await file.read()))
         return self.container.importar_convenio().execute_many(documents)
 
+    async def update_salary_scale(self, agreement_id: str, file: UploadFile, version: str | None = None) -> dict:
+        content = await file.read()
+        return self.container.actualizar_escala_salarial().execute(
+            agreement_id,
+            file.filename or "tabla_salarial.txt",
+            content,
+            version,
+        )
+
     def list(self) -> list[dict]:
         return self.container.listar_convenios().execute()
 

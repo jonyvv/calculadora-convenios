@@ -52,26 +52,34 @@
           <h1>Convenios</h1>
           <p>Administra los convenios colectivos de trabajo.</p>
         </div>
-        <form id="upload-form" class="inline-upload">
-          <label class="file-button">
-            <input id="agreement-files" type="file" name="files" accept=".pdf,.doc,.docx,.txt,.xlsx,.xls" multiple>
-            Agregar archivos
-          </label>
-          <button class="primary" id="create-agreement-button">Crear convenio</button>
-        </form>
       </header>
 
-      <div class="panel">
-        <div class="upload-status" id="agreement-upload-status">
-          Selecciona uno o varios archivos del convenio: CCT, paritarias, escalas, resoluciones o acuerdos salariales.
-        </div>
-        <ol class="import-stages" id="agreement-import-stages">
-          <li data-stage="Archivo recibido">Archivo recibido</li>
-          <li data-stage="Extrayendo con Gemini">Extrayendo con Gemini</li>
-          <li data-stage="Codex estructurando">Codex estructurando</li>
-          <li data-stage="Validacion de schema">Validacion de schema</li>
-          <li data-stage="Convenio listo">Convenio listo</li>
-        </ol>
+      <div class="upload-panel">
+        <form id="upload-form" class="upload-card agreement-upload-card">
+          <div class="upload-symbol">DOC</div>
+          <div>
+            <h2>Nuevo convenio</h2>
+            <p>Sube el texto del convenio, acuerdos y anexos normativos.</p>
+            <div class="upload-actions">
+              <label class="file-button">
+                <input id="agreement-files" type="file" name="files" accept=".pdf,.doc,.docx,.txt" multiple>
+                Archivos del convenio
+              </label>
+              <button class="primary" id="create-agreement-button">Crear convenio</button>
+            </div>
+            <div class="upload-status agreement-drop-zone" id="agreement-upload-status">
+              <strong>Seleccione archivos para cargar un convenio nuevo</strong>
+              <span>Arrastra y suelta aqui o selecciona un archivo</span>
+            </div>
+            <ol class="import-stages agreement-import-stages" id="agreement-import-stages">
+              <li data-stage="Archivo recibido">Archivo recibido</li>
+              <li data-stage="Convenio listo">Convenio listo</li>
+            </ol>
+          </div>
+        </form>
+      </div>
+
+      <div class="panel agreements-panel">
         <div class="warnings-panel" id="agreement-warnings"></div>
         <div class="table-toolbar">
           <div class="search-box">
@@ -120,42 +128,61 @@
       </div>
 
       <div class="panel agreement-editor" id="agreement-friendly-editor">
-        <div class="table-toolbar">
-          <div>
-            <h2>Vista editable del convenio</h2>
-            <p>Conceptos liquidables del convenio seleccionado.</p>
+        <div class="editor-header">
+          <div class="editor-title">
+            <span class="editor-main-icon">DOC</span>
+            <div>
+              <h2>Vista editable del convenio</h2>
+              <p>Conceptos liquidables del convenio seleccionado.</p>
+            </div>
           </div>
-          <div class="actions-row">
-            <button class="secondary" id="add-category-row">Agregar puesto / rol</button>
-            <button class="secondary" id="add-remunerative-row">Agregar haber</button>
-            <button class="secondary" id="add-non-remunerative-row">Agregar no remunerativo</button>
-            <button class="secondary" id="add-deduction-row">Agregar descuento</button>
-            <button class="secondary" id="add-overtime-row">Agregar hora extra</button>
+          <div class="editor-actions">
+            <button class="secondary" id="add-category-row">+ Agregar puesto / rol</button>
+            <button class="secondary" id="add-remunerative-row">+ Agregar haber</button>
+            <button class="secondary" id="add-non-remunerative-row">+ Agregar no remunerativo</button>
+            <button class="secondary" id="add-deduction-row">% Agregar descuento</button>
+            <button class="secondary" id="add-overtime-row">+ Agregar hora extra</button>
+            <button class="secondary" id="open-salary-scale-card">Actualizar tabla salarial</button>
             <button class="primary" id="save-agreement-friendly">Guardar cambios</button>
             <button class="danger-button" id="delete-agreement-friendly">Eliminar convenio</button>
           </div>
         </div>
+        <form id="salary-scale-form" class="salary-scale-card hidden">
+          <div>
+            <h3>Actualizar tabla salarial</h3>
+            <p id="salary-scale-context">Selecciona el archivo que se va a aplicar al convenio cargado.</p>
+          </div>
+          <label class="file-button salary-scale-file-button">
+            <input id="salary-scale-file" type="file" name="file" accept=".pdf,.xlsx,.xls,.doc,.docx">
+            Seleccionar tabla salarial
+          </label>
+          <div class="salary-scale-file-preview" id="salary-scale-file-preview">Ningun archivo seleccionado.</div>
+          <div class="salary-scale-actions">
+            <button type="button" class="secondary" id="cancel-salary-scale-update">Cancelar</button>
+            <button type="submit" class="primary" id="update-salary-scale-button">Actualizar</button>
+          </div>
+        </form>
         <div class="agreement-summary" id="agreement-summary"></div>
         <div class="editor-grid">
-          <section>
-            <h3>Puestos / roles</h3>
-            <div class="table-wrap"><table><thead><tr><th>Codigo</th><th>Nombre</th><th>Zona</th><th>Basico</th><th></th></tr></thead><tbody id="editor-categories"></tbody></table></div>
+          <section class="editor-section editor-blue">
+            <h3><span>PR</span>Puestos / roles</h3>
+            <div class="table-wrap editor-table"><table><thead><tr><th>Codigo</th><th>Nombre</th><th>Zona</th><th>Basico</th><th></th></tr></thead><tbody id="editor-categories"></tbody></table></div>
           </section>
-          <section>
-            <h3>Haberes remunerativos</h3>
-            <div class="table-wrap"><table><thead><tr><th>Codigo</th><th>Nombre</th><th>Tipo</th><th>Base</th><th>Importe/%</th><th></th></tr></thead><tbody id="editor-remunerative"></tbody></table></div>
+          <section class="editor-section editor-green">
+            <h3><span>HR</span>Haberes remunerativos</h3>
+            <div class="table-wrap editor-table"><table><thead><tr><th>Codigo</th><th>Nombre</th><th>Tipo</th><th>Base</th><th>Importe/%</th><th></th></tr></thead><tbody id="editor-remunerative"></tbody></table></div>
           </section>
-          <section>
-            <h3>Haberes no remunerativos</h3>
-            <div class="table-wrap"><table><thead><tr><th>Codigo</th><th>Nombre</th><th>Tipo</th><th>Base</th><th>Importe/%</th><th></th></tr></thead><tbody id="editor-non-remunerative"></tbody></table></div>
+          <section class="editor-section editor-orange">
+            <h3><span>HN</span>Haberes no remunerativos</h3>
+            <div class="table-wrap editor-table"><table><thead><tr><th>Codigo</th><th>Nombre</th><th>Tipo</th><th>Base</th><th>Importe/%</th><th></th></tr></thead><tbody id="editor-non-remunerative"></tbody></table></div>
           </section>
-          <section>
-            <h3>Descuentos</h3>
-            <div class="table-wrap"><table><thead><tr><th>Codigo</th><th>Nombre</th><th>Alicuota</th><th>Base</th><th>Aplicacion</th><th>Condicion</th><th></th></tr></thead><tbody id="editor-deductions"></tbody></table></div>
+          <section class="editor-section editor-red">
+            <h3><span>DS</span>Descuentos</h3>
+            <div class="table-wrap editor-table"><table><thead><tr><th>Codigo</th><th>Nombre</th><th>Alicuota</th><th>Base</th><th>Aplicacion</th><th>Condicion</th><th></th></tr></thead><tbody id="editor-deductions"></tbody></table></div>
           </section>
-          <section>
-            <h3>Horas extra</h3>
-            <div class="table-wrap"><table><thead><tr><th>Codigo</th><th>Multiplicador</th><th></th></tr></thead><tbody id="editor-overtime"></tbody></table></div>
+          <section class="editor-section editor-purple">
+            <h3><span>HE</span>Horas extra</h3>
+            <div class="table-wrap editor-table"><table><thead><tr><th>Codigo</th><th>Multiplicador</th><th></th></tr></thead><tbody id="editor-overtime"></tbody></table></div>
           </section>
         </div>
       </div>
@@ -248,8 +275,7 @@
           <li data-step="2"><span>2</span>Periodo</li>
           <li data-step="3"><span>3</span>Novedades</li>
           <li data-step="4"><span>4</span>Adicionales</li>
-          <li data-step="5"><span>5</span>Horas extra</li>
-          <li data-step="6"><span>6</span>Resultado</li>
+          <li data-step="5"><span>5</span>Resultado</li>
         </ol>
 
         <form id="payroll-wizard-form">
@@ -295,9 +321,11 @@
                 <fieldset><legend>Inasistencias</legend><label>Justificadas<input id="ev-absence-justified" type="number" min="0" value="0"></label><label>Injustificadas<input id="ev-absence-unjustified" type="number" min="0" value="0"></label></fieldset>
                 <fieldset><legend>Licencias</legend><label>Enfermedad<input id="ev-leave-sickness" type="number" min="0" value="0"></label><label>Accidente<input id="ev-leave-accident" type="number" min="0" value="0"></label><label>Matrimonio<input id="ev-leave-marriage" type="number" min="0" value="0"></label><label>Examen<input id="ev-leave-exam" type="number" min="0" value="0"></label><label>Nacimiento<input id="ev-leave-birth" type="number" min="0" value="0"></label></fieldset>
                 <fieldset><legend>Feriados</legend><label>Trabajados<input id="ev-holiday-worked" type="number" min="0" value="0"></label><label>No trabajados<input id="ev-holiday-not-worked" type="number" min="0" value="0"></label></fieldset>
-                <fieldset><legend>Otros</legend><label>Horas trabajadas<input id="ev-worked-hours" type="number" min="0" value="0"></label><label>Dias trabajados<input id="ev-worked-days" type="number" min="0" value="0"></label><label>Suspensiones<input id="ev-suspensions" type="number" min="0" value="0"></label><label>Comisiones<input id="ev-commissions" type="number" min="0" value="0"></label><label>Bonos<input id="ev-bonuses" type="number" min="0" value="0"></label></fieldset>
               </div>
-              <div class="hint-box" id="event-rules-preview">Las novedades se transforman a MonthlyEvent y el motor aplica event_rules del convenio.</div>
+              <h3>Horas extraordinarias</h3>
+              <div id="overtime-rules" class="overtime-grid"></div>
+              <div class="hint-box">Valor hora = sueldo basico del puesto/rol / horas mensuales del convenio.</div>
+              <div class="hint-box" id="event-rules-preview">Reglas del convenio aplicadas a estas novedades.</div>
             </div>
           </section>
 
@@ -311,14 +339,6 @@
           </section>
 
           <section class="wizard-step" data-step-panel="5">
-            <div class="panel wizard-panel">
-              <h2>Paso 5 - Horas extraordinarias</h2>
-              <div id="overtime-rules" class="overtime-grid"></div>
-              <div class="hint-box">Valor hora = sueldo basico del puesto/rol / 200. El multiplicador sale de agreement.salary_model.overtime_rules.</div>
-            </div>
-          </section>
-
-          <section class="wizard-step" data-step-panel="6">
             <div class="payroll-layout result-layout">
               <section class="panel">
                 <div class="tabs">
@@ -357,9 +377,10 @@
                 </div>
               </aside>
             </div>
-            <div id="payroll-result" class="message-panel hidden"></div>
             <div id="wizard-audit-result" class="audit-result-panel hidden"></div>
           </section>
+
+          <div id="payroll-result" class="message-panel hidden"></div>
 
           <div class="wizard-actions">
             <button type="button" class="secondary" id="wizard-prev">Anterior</button>

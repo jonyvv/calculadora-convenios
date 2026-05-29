@@ -1,24 +1,5 @@
 {
   "employee_id": "4",
   "period": "2026-01",
-  "events": [
-    {
-      "type": "OVERTIME",
-      "subtype": "OT_50",
-      "days": null,
-      "hours": 2.0,
-      "quantity": null,
-      "amount": null,
-      "description": null
-    },
-    {
-      "type": "OVERTIME",
-      "subtype": "OT_100",
-      "days": null,
-      "hours": 2.0,
-      "quantity": null,
-      "amount": null,
-      "description": null
-    }
-  ]
+  "events": []
 }

@@ -57,6 +57,34 @@ def test_upload_multiple_agreement_files_creates_active_agreement(tmp_path, monk
     assert active.json()["metadata"]["version"] == "2026_01"
 
 
+def test_salary_scale_file_updates_active_agreement_categories(tmp_path, monkeypatch):
+    monkeypatch.setenv("APP_ENV", "test")
+    monkeypatch.setenv("STORAGE_ROOT", str(tmp_path))
+    client = TestClient(create_app())
+
+    upload = client.post("/agreements/upload", files={
+        "file": ("cct.txt", b"CCT 40/89 Categoria A basico $100.000,00 presentismo 10% jubilacion 11%", "text/plain"),
+    })
+    assert upload.status_code == 200
+
+    scale = f"""
+    category_id | puesto | basico
+    A | Administrativo A | $ 123.456,78
+    NUEVA | Categoria Nueva | $ 222.000,00
+    """.encode()
+    updated = client.post("/agreements/CCT_40_89/salary-scale", files={
+        "file": ("escala.txt", scale, "text/plain"),
+    })
+
+    assert updated.status_code == 200
+    body = updated.json()
+    assert body["summary"]["updated"] == 1
+    assert body["summary"]["added"] == 1
+    categories = {category["category_id"]: category for category in body["agreement"]["categories"]}
+    assert categories["A"]["basic_salary"] == 123456.78
+    assert categories["NUEVA"]["basic_salary"] == 222000
+
+
 def test_employee_seniority_is_calculated_from_hire_date(tmp_path, monkeypatch):
     monkeypatch.setenv("APP_ENV", "test")
     monkeypatch.setenv("STORAGE_ROOT", str(tmp_path))

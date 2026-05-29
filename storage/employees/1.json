@@ -1,11 +1,11 @@
 {
   "employee_id": "1",
   "agreement_id": "CCT_40_1989",
-  "category_id": "A_CIUDAD_AUT_NOMA_Y_PROVIN",
+  "category_id": "A_CABA_Y_PROVINCIA_DE_BUEN",
   "seniority_years": 4,
   "cuil": "20451434161",
   "hire_date": "2022-01-03",
-  "zone": "Ciudad Autónoma y Provincia de Buenos Aires",
+  "zone": "CABA y Provincia de Buenos Aires",
   "workday": "media",
   "union_affiliated": false,
   "enabled_deductions": [],

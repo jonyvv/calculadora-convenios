@@ -38,6 +38,65 @@ const canonical = (value) => String(value || "")
   .replace(/[^A-Z0-9]+/g, "_")
   .replace(/^_+|_+$/g, "");
 
+const humanLabels = {
+  OT_50: "Hora extra al 50%",
+  OT_100: "Hora extra al 100%",
+  BASIC: "Basico",
+  REMUNERATIVE_TOTAL: "Total remunerativo",
+  NON_REMUNERATIVE_TOTAL: "Total no remunerativo",
+  GROSS_SALARY: "Total de haberes",
+  NET_SALARY: "Neto a cobrar",
+  NO_INDICADO: "Sin base indicada",
+  WORKED_HOURS: "Horas trabajadas",
+  WORKED_DAYS: "Dias trabajados",
+  HORAS_TRABAJADAS: "Horas trabajadas",
+  DIAS_TRABAJADOS: "Dias trabajados",
+  ABSENCE: "Inasistencia",
+  JUSTIFIED: "Justificada",
+  UNJUSTIFIED: "Injustificada",
+  LEAVE: "Licencia",
+  SICKNESS: "Enfermedad",
+  ACCIDENT: "Accidente",
+  MARRIAGE: "Matrimonio",
+  EXAM: "Examen",
+  BIRTH: "Nacimiento",
+  HOLIDAY_WORKED: "Feriado",
+  WORKED: "Trabajado",
+  NOT_WORKED: "No trabajado",
+  SUSPENSION: "Suspension",
+  GENERAL: "General",
+  BONUS: "Bono",
+  COMMISSION: "Comision",
+  SALARY_ITEM: "Haber manual",
+  OVERTIME: "Hora extra",
+  REMUNERATIVE: "Remunerativo",
+  NON_REMUNERATIVE: "No remunerativo",
+  DEDUCTION: "Retencion",
+};
+
+const humanizeCode = (value) => {
+  const raw = String(value || "").trim();
+  if (!raw) return "";
+  const key = canonical(raw);
+  if (humanLabels[key]) return humanLabels[key];
+  return raw
+    .toLowerCase()
+    .replace(/[_-]+/g, " ")
+    .replace(/\b\w/g, (letter) => letter.toUpperCase());
+};
+
+const conceptName = (item) => item?.name || humanizeCode(item?.code);
+
+const overtimeLabel = (rule) => {
+  const code = String(rule?.code || "");
+  if (humanLabels[canonical(code)]) return humanLabels[canonical(code)];
+  const multiplier = Number(rule?.multiplier || 0);
+  if (multiplier > 1) return `Hora extra al ${Math.round((multiplier - 1) * 100)}%`;
+  return humanizeCode(code || "Hora extra");
+};
+
+const baseLabel = (value) => humanizeCode(value || "REMUNERATIVE_TOTAL");
+
 const agreementWorkdayMetrics = () => {
   const jornada = wizardState.agreement?.jornada_tiempos?.jornada_estandar || {};
   const monthlyDays = Number(jornada.dias_mensuales || jornada.monthly_days || 30);
@@ -154,10 +213,11 @@ const renderAgreements = (agreements) => {
 
   tbody.innerHTML = filtered.map((agreement) => {
     const meta = agreement.metadata;
+    const activity = meta.activity || agreement.identificacion_alcance?.ambito_aplicacion?.actividad || agreement.identificacion_alcance?.ambito_aplicacion?.activity || meta.name;
     return `
       <tr>
         <td>${meta.agreement_id}</td>
-        <td>${meta.name}</td>
+        <td>${activity || "-"}</td>
         <td>${meta.version}</td>
         <td>${meta.valid_from || "-"}</td>
         <td>${meta.valid_to || "-"}</td>
@@ -169,6 +229,11 @@ const renderAgreements = (agreements) => {
       </tr>
     `;
   }).join("");
+};
+
+const setSelectedAgreementFields = (id, version = "") => {
+  document.getElementById("agreement-id").value = id || "";
+  document.getElementById("agreement-version").value = version || "";
 };
 
 let agreementCache = [];
@@ -204,7 +269,21 @@ const populateAgreementSelects = () => {
   populateEmployeeCategorySelect();
 };
 
-const agreementById = (agreementId) => activeAgreementsById().find((agreement) => agreement.metadata?.agreement_id === agreementId);
+const agreementById = (agreementId) => {
+  const cached = activeAgreementsById().find((agreement) => agreement.metadata?.agreement_id === agreementId);
+  if (cached) return cached;
+  if (wizardState.agreement?.metadata?.agreement_id === agreementId) return wizardState.agreement;
+  return null;
+};
+
+const ensureSelectOption = (selectId, value, label = value) => {
+  const select = document.getElementById(selectId);
+  if (!select || !value) return;
+  if (![...select.options].some((option) => option.value === value)) {
+    select.insertAdjacentHTML("beforeend", `<option value="${value}">${label}</option>`);
+  }
+  select.value = value;
+};
 
 const categoryZone = (category) => category?.zone || category?.location || "";
 
@@ -255,7 +334,13 @@ const populateCategorySelect = (selectId, agreementId, selected = "", options = 
   select.innerHTML = categories.map((category) => (
     `<option value="${category.category_id}">${category.category_id} - ${category.name}${categoryZone(category) ? ` (${categoryZone(category)})` : ""}</option>`
   )).join("") || `<option value="">Sin puestos / roles</option>`;
-  if (selected && categories.some((category) => category.category_id === selected)) select.value = selected;
+  if (selected) {
+    const category = (agreement?.categories || []).find((item) => item.category_id === selected);
+    if (category && !categories.some((item) => item.category_id === selected)) {
+      select.insertAdjacentHTML("beforeend", `<option value="${category.category_id}">${category.category_id} - ${category.name}${categoryZone(category) ? ` (${categoryZone(category)})` : ""}</option>`);
+    }
+    select.value = selected;
+  }
 };
 
 const categoryLabel = (agreementId, categoryId) => {
@@ -287,6 +372,18 @@ const setImportStages = (stages = []) => {
   });
 };
 
+const setAgreementFiles = (files) => {
+  const input = document.getElementById("agreement-files");
+  const transfer = new DataTransfer();
+  Array.from(files || []).forEach((file) => transfer.items.add(file));
+  input.files = transfer.files;
+  const status = document.getElementById("agreement-upload-status");
+  status.innerHTML = input.files.length
+    ? `<strong>${input.files.length} archivo(s) seleccionado(s) para cargar un convenio nuevo.</strong><span>${Array.from(input.files).map((file) => file.name).join(", ")}</span>`
+    : "<strong>Seleccione archivos para cargar un convenio nuevo</strong><span>Arrastra y suelta aqui o selecciona un archivo</span>";
+  status.className = "upload-status agreement-drop-zone";
+};
+
 const renderWarnings = (warnings = []) => {
   const panel = document.getElementById("agreement-warnings");
   if (!warnings.length) {
@@ -300,6 +397,86 @@ const renderWarnings = (warnings = []) => {
 
 const editableInput = (field, value, type = "text") => `<input data-field="${field}" type="${type}" value="${value ?? ""}">`;
 const removeButton = () => `<button class="icon-button danger-row" data-remove-row="1">Quitar</button>`;
+const editorEmptyRow = (colspan, text) => `
+  <tr class="editor-empty-row">
+    <td colspan="${colspan}">
+      <div class="editor-empty-state"><span>BOX</span>${text}</div>
+    </td>
+  </tr>
+`;
+
+const renderAgreementSummary = (agreement) => {
+  const meta = agreement.metadata || {};
+  const salaryModel = agreement.salary_model || {};
+  const categories = agreement.categories || [];
+  const remunerative = salaryModel.remunerative_items || [];
+  const nonRemunerative = salaryModel.non_remunerative_items || [];
+  const deductions = salaryModel.deductions || [];
+  const overtime = salaryModel.overtime_rules || [];
+  const salaries = categories.map((category) => Number(category.basic_salary || 0)).filter((value) => value > 0);
+  const minSalary = salaries.length ? Math.min(...salaries) : 0;
+  const maxSalary = salaries.length ? Math.max(...salaries) : 0;
+  const zones = [...new Set(categories.map((category) => category.zone || category.location).filter(Boolean))];
+  const identity = agreement.identificacion_alcance || {};
+  const activity = meta.activity || identity.ambito_aplicacion?.activity || identity.ambito_aplicacion?.actividad || "-";
+  const jurisdiction = meta.jurisdiction || identity.ambito_aplicacion?.jurisdiction || identity.ambito_aplicacion?.jurisdiccion || "-";
+  const union = meta.union || identity.partes_signatarias?.[0] || "-";
+
+  document.getElementById("agreement-summary").innerHTML = `
+    <article class="agreement-summary-card summary-main">
+      <small>Convenio seleccionado</small>
+      <strong>${meta.agreement_id || "-"} - ${meta.name || "-"}</strong>
+      <span>Version ${meta.version || "-"} · Estado ${meta.status || "-"}</span>
+      <span>Vigencia ${meta.valid_from || "-"} a ${meta.valid_to || "sin fin informado"}</span>
+    </article>
+    <article class="agreement-summary-card">
+      <small>Actividad</small>
+      <strong>${activity}</strong>
+      <span>${jurisdiction}</span>
+    </article>
+    <article class="agreement-summary-card">
+      <small>Representacion</small>
+      <strong>${union}</strong>
+      <span>${zones.length ? `${zones.length} zona(s): ${zones.slice(0, 3).join(", ")}` : "Sin zonas declaradas"}</span>
+    </article>
+    <article class="agreement-summary-card">
+      <small>Escala salarial</small>
+      <strong>${categories.length} puesto(s)</strong>
+      <span>${salaries.length ? `${money(minSalary)} a ${money(maxSalary)}` : "Sin basicos cargados"}</span>
+    </article>
+    <article class="agreement-summary-card">
+      <small>Conceptos liquidables</small>
+      <strong>${remunerative.length + nonRemunerative.length} haber(es)</strong>
+      <span>${remunerative.length} remunerativos · ${nonRemunerative.length} no remunerativos</span>
+    </article>
+    <article class="agreement-summary-card">
+      <small>Reglas de liquidacion</small>
+      <strong>${deductions.length} descuento(s)</strong>
+      <span>${overtime.length} regla(s) de horas extra</span>
+    </article>
+  `;
+};
+
+const showAgreementEditor = () => {
+  document.getElementById("agreement-friendly-editor")?.scrollIntoView({ behavior: "smooth", block: "start" });
+};
+
+const closeSalaryScaleCard = () => {
+  document.getElementById("salary-scale-form").classList.add("hidden");
+  document.getElementById("salary-scale-file").value = "";
+  document.getElementById("salary-scale-file-preview").textContent = "Ningun archivo seleccionado.";
+};
+
+const openSalaryScaleCard = () => {
+  if (!selectedAgreement) {
+    showMessage("agreement-feedback", "Primero carga un convenio para actualizar su tabla salarial.", "warning");
+    notify("Primero carga un convenio para actualizar su tabla salarial.", "warning");
+    return;
+  }
+  const meta = selectedAgreement.metadata || {};
+  document.getElementById("salary-scale-context").textContent = `Se actualizara ${meta.agreement_id || "-"} version ${meta.version || "activa"}.`;
+  document.getElementById("salary-scale-form").classList.remove("hidden");
+};
 
 const renderAgreementEditor = (agreement) => {
   if (agreement?.detail) {
@@ -309,13 +486,8 @@ const renderAgreementEditor = (agreement) => {
   }
   selectedAgreement = agreement;
   if (!agreement) return;
-  const meta = agreement.metadata;
-  document.getElementById("agreement-summary").innerHTML = `
-    <strong>${meta.agreement_id} - ${meta.name}</strong>
-    <span>Version ${meta.version}</span>
-    <span>Estado ${meta.status || "-"}</span>
-    <span>Vigencia ${meta.valid_from || "-"} a ${meta.valid_to || "-"}</span>
-  `;
+  closeSalaryScaleCard();
+  renderAgreementSummary(agreement);
   renderCategoryRows(agreement.categories || []);
   renderSalaryRows("editor-remunerative", agreement.salary_model?.remunerative_items || []);
   renderSalaryRows("editor-non-remunerative", agreement.salary_model?.non_remunerative_items || []);
@@ -332,10 +504,13 @@ const renderCategoryRows = (rows) => {
       <td>${editableInput("basic_salary", row.basic_salary, "number")}</td>
       <td>${removeButton()}</td>
     </tr>
-  `).join("") || `<tr><td colspan="5">Sin puestos / roles</td></tr>`;
+  `).join("") || editorEmptyRow(5, "No hay puestos / roles cargados.");
 };
 
 const renderSalaryRows = (target, rows) => {
+  const emptyText = target === "editor-remunerative"
+    ? "No hay haberes remunerativos cargados."
+    : "No hay haberes no remunerativos cargados.";
   document.getElementById(target).innerHTML = rows.map((row) => `
     <tr>
       <td>${editableInput("code", row.code)}</td>
@@ -345,7 +520,7 @@ const renderSalaryRows = (target, rows) => {
       <td>${editableInput("value", row.rate ?? row.amount ?? "", "number")}</td>
       <td>${removeButton()}</td>
     </tr>
-  `).join("") || `<tr><td colspan="6">Sin conceptos</td></tr>`;
+  `).join("") || editorEmptyRow(6, emptyText);
 };
 
 const renderDeductionRows = (rows) => {
@@ -364,7 +539,7 @@ const renderDeductionRows = (rows) => {
       <td>${editableInput("applies_when", row.applies_when || "")}</td>
       <td>${removeButton()}</td>
     </tr>
-  `).join("") || `<tr><td colspan="7">Sin descuentos</td></tr>`;
+  `).join("") || editorEmptyRow(7, "No hay descuentos cargados.");
 };
 
 const renderOvertimeRows = (rows) => {
@@ -374,7 +549,7 @@ const renderOvertimeRows = (rows) => {
       <td>${editableInput("multiplier", row.multiplier, "number")}</td>
       <td>${removeButton()}</td>
     </tr>
-  `).join("") || `<tr><td colspan="3">Sin reglas de horas extra</td></tr>`;
+  `).join("") || editorEmptyRow(3, "No hay horas extra cargadas.");
 };
 
 const rowsFromTable = (target, mapper) => [...document.querySelectorAll(`#${target} tr`)]
@@ -516,13 +691,10 @@ const activeCategory = () => {
 
 const buildWizardEvents = () => {
   const events = [];
+  const fieldNumber = (id) => Number(document.getElementById(id)?.value || 0);
   const pushDays = (type, subtype, id) => {
-    const days = Number(document.getElementById(id).value || 0);
+    const days = fieldNumber(id);
     if (days > 0) events.push({ type, subtype, days });
-  };
-  const pushAmount = (subtype, id, description) => {
-    const amount = Number(document.getElementById(id).value || 0);
-    if (amount > 0) events.push({ type: "BONUS", subtype, amount, description });
   };
 
   pushDays("ABSENCE", "JUSTIFIED", "ev-absence-justified");
@@ -534,13 +706,6 @@ const buildWizardEvents = () => {
   pushDays("LEAVE", "BIRTH", "ev-leave-birth");
   pushDays("HOLIDAY_WORKED", "WORKED", "ev-holiday-worked");
   pushDays("HOLIDAY_WORKED", "NOT_WORKED", "ev-holiday-not-worked");
-  pushDays("SUSPENSION", "GENERAL", "ev-suspensions");
-  const workedHours = Number(document.getElementById("ev-worked-hours").value || 0);
-  const workedDays = Number(document.getElementById("ev-worked-days").value || 0);
-  if (workedHours > 0) events.push({ type: "WORKED_HOURS", subtype: "HORAS_TRABAJADAS", hours: workedHours });
-  if (workedDays > 0) events.push({ type: "WORKED_DAYS", subtype: "DIAS_TRABAJADOS", days: workedDays });
-  pushAmount("COMMISSION", "ev-commissions", "Comisiones");
-  pushAmount("BONUS", "ev-bonuses", "Bonos");
   const liquidationType = document.getElementById("wiz-liquidation-type").value;
   if (liquidationType && liquidationType !== "mensual") {
     events.push({
@@ -640,17 +805,22 @@ const itemAppliesToWizardEmployee = (item, category) => {
   const categoryFilters = (item.applies_to_categories || []).map(canonical).filter(Boolean);
   if (categoryFilters.length) {
     if (!category) return true;
-    const categoryValues = [category?.category_id, category?.name].map(canonical).filter(Boolean);
+    const categoryValues = [category?.category_id, category?.name, category?.zone, category?.location].map(canonical).filter(Boolean);
+    const categoryFilterText = categoryFilters.join("_");
     const appliesToAll = categoryFilters.some((filter) => ["TODO", "TODOS", "TODA", "TODAS", "ALL"].includes(filter))
       || categoryFilters.some((filter) => ["PERSONAL", "TRABAJADORES"].includes(filter))
         && categoryFilters.some((filter) => ["TODO", "TODOS", "TODA", "TODAS"].includes(filter));
     const exceptIndex = categoryFilters.findIndex((filter) => ["EXCEPTO", "EXCEPT", "SALVO"].includes(filter));
     if (exceptIndex >= 0) {
       const excludedFilters = categoryFilters.slice(exceptIndex + 1);
+      const excludedText = excludedFilters.join("_");
+      if (categoryValues.some((value) => categoryTokensMatch(excludedText, value))) return false;
       if (excludedFilters.some((filter) => categoryValues.some((value) => categoryTokensMatch(filter, value)))) return false;
       if (appliesToAll) return true;
     }
-    if (!appliesToAll && !categoryFilters.some((filter) => categoryValues.some((value) => categoryTokensMatch(filter, value)))) return false;
+    const matchesCategory = categoryValues.some((value) => categoryTokensMatch(categoryFilterText, value))
+      || categoryFilters.length <= 2 && categoryFilters.some((filter) => categoryValues.some((value) => categoryTokensMatch(filter, value)));
+    if (!appliesToAll && !matchesCategory) return false;
   }
 
   const tagFilters = (item.applies_to_tags || []).map(canonical).filter(Boolean);
@@ -702,6 +872,14 @@ const isManualSalaryItem = (item) => {
 const categoryTokensMatch = (filter, value) => {
   if (!filter || !value) return false;
   if (filter === value || filter.includes(value) || value.includes(filter)) return true;
+  const ignored = new Set(["GRUPO", "CATEGOR", "CATEGORIA", "A", "DE", "DEL", "LA", "EL", "Y", "O", "EN"]);
+  const filterTokens = filter.split("_").filter((token) => token.length > 1 && !ignored.has(token));
+  const valueTokens = value.split("_").filter((token) => token.length > 1 && !ignored.has(token));
+  if (filterTokens.length && valueTokens.length) {
+    const matched = valueTokens.filter((token) => filterTokens.includes(token)).length;
+    const required = Math.min(valueTokens.length, Math.max(2, Math.ceil(filterTokens.length * 0.45)));
+    if (matched >= required) return true;
+  }
   const equivalents = [
     ["CHOFER", "CHOFERES", "CONDUCTOR", "CONDUCTORES"],
     ["AUXILIAR", "AYUDANTE", "AYUDANTES"],
@@ -715,7 +893,7 @@ const categoryTokensMatch = (filter, value) => {
 const itemValueLabel = (item) => {
   if (item.calculation_type === "PERCENTAGE") return `${Number(item.rate || 0)}%`;
   if (item.amount !== undefined && item.amount !== null) return money(item.amount);
-  return item.calculation_type || "FORMULA";
+  return humanizeCode(item.calculation_type || "FORMULA");
 };
 
 const manualConceptCard = (item) => {
@@ -727,8 +905,8 @@ const manualConceptCard = (item) => {
   return `
     <article class="concept-card manual-concept">
       <div>
-        <strong>${item.name || item.code}</strong>
-        <small>${item.code} - ${item.type === "REMUNERATIVE" ? "Remunerativo" : "No remunerativo"}</small>
+        <strong>${conceptName(item)}</strong>
+        <small>${item.type === "REMUNERATIVE" ? "Remunerativo" : "No remunerativo"}</small>
         <small>Valor unitario: ${itemValueLabel(item)}${unit ? ` / ${unit}` : ""}</small>
         ${hasQuantity ? "<small>Activar y cargar la cantidad correspondiente</small>" : "<small>Activar para incluir este haber en la liquidacion</small>"}
       </div>
@@ -736,7 +914,7 @@ const manualConceptCard = (item) => {
         <label class="switch-control">
           <input
             data-manual-concept-toggle="${item.code}"
-            data-manual-concept-name="${item.name || item.code}"
+            data-manual-concept-name="${conceptName(item)}"
             data-manual-concept-unit="${unit || ""}"
             data-manual-concept-type="${item.type || ""}"
             type="checkbox"
@@ -748,7 +926,7 @@ const manualConceptCard = (item) => {
           <label class="manual-quantity ${enabled ? "" : "hidden"}">${label}
             <input
               data-manual-concept-quantity="${item.code}"
-              data-manual-concept-name="${item.name || item.code}"
+              data-manual-concept-name="${conceptName(item)}"
               data-manual-concept-unit="${unit || ""}"
               data-manual-concept-type="${item.type || ""}"
               type="number"
@@ -779,8 +957,8 @@ const conceptSection = (title, items, emptyText, renderer) => `
 const deductionCard = (deduction) => `
   <article class="concept-card">
     <div>
-      <strong>${deduction.name || deduction.code}</strong>
-      <small>${deduction.code} - Base: ${deduction.base || "REMUNERATIVE_TOTAL"}</small>
+      <strong>${conceptName(deduction)}</strong>
+      <small>Base: ${baseLabel(deduction.base || "REMUNERATIVE_TOTAL")}</small>
       ${deduction.applies_when ? `<small>${deduction.applies_when}</small>` : ""}
     </div>
     <span>${Number(deduction.rate || 0)}%</span>
@@ -806,8 +984,9 @@ const renderAgreementDrivenSections = () => {
     ...(salaryModel.remunerative_items || []),
     ...(salaryModel.non_remunerative_items || []),
   ].filter((item) => item.code !== "BASIC");
-  const automaticItems = allItems.filter((item) => !isManualSalaryItem(item) && itemAppliesToWizardEmployee(item, category));
-  const manualItems = allItems.filter((item) => isManualSalaryItem(item));
+  const applicableItems = allItems.filter((item) => itemAppliesToWizardEmployee(item, category));
+  const automaticItems = applicableItems.filter((item) => !isManualSalaryItem(item));
+  const manualItems = applicableItems.filter((item) => isManualSalaryItem(item));
   const visibleItems = [...automaticItems, ...manualItems];
   const automaticRemunerative = automaticItems.filter((item) => item.type === "REMUNERATIVE");
   const automaticNonRemunerative = automaticItems.filter((item) => item.type === "NON_REMUNERATIVE");
@@ -822,8 +1001,8 @@ const renderAgreementDrivenSections = () => {
       conceptSection("Haberes remunerativos automaticos", automaticRemunerative, "Sin haberes remunerativos automaticos para este convenio.", (item) => `
           <article class="concept-card">
             <div>
-              <strong>${item.name || item.code}</strong>
-              <small>${item.code}</small>
+              <strong>${conceptName(item)}</strong>
+              <small>${itemValueLabel(item)}</small>
             </div>
             <span>${itemValueLabel(item)}</span>
           </article>
@@ -832,8 +1011,8 @@ const renderAgreementDrivenSections = () => {
       conceptSection("Haberes no remunerativos automaticos", automaticNonRemunerative, "Sin haberes no remunerativos automaticos para este convenio.", (item) => `
           <article class="concept-card">
             <div>
-              <strong>${item.name || item.code}</strong>
-              <small>${item.code}</small>
+              <strong>${conceptName(item)}</strong>
+              <small>${itemValueLabel(item)}</small>
             </div>
             <span>${itemValueLabel(item)}</span>
           </article>
@@ -850,7 +1029,7 @@ const renderAgreementDrivenSections = () => {
   overtime.innerHTML = (salaryModel.overtime_rules || []).map((rule) => `
     <article class="overtime-card">
       <div>
-        <strong>${rule.code}</strong>
+        <strong>${overtimeLabel(rule)}</strong>
         <small>Valor hora: ${money(hourly)} x ${rule.multiplier}</small>
       </div>
       <label>Horas<input data-overtime-code="${rule.code}" type="number" min="0" value="0"></label>
@@ -859,34 +1038,90 @@ const renderAgreementDrivenSections = () => {
   `).join("") || `<div class="empty-state">El convenio no declara overtime_rules.</div>`;
 
   rules.textContent = (agreement.event_rules || []).length
-    ? `Reglas detectadas: ${agreement.event_rules.map((rule) => `${rule.event_type}/${rule.subtype || "*"}`).join(", ")}`
-    : "El convenio no declara event_rules.";
+    ? `Reglas detectadas: ${agreement.event_rules.map((rule) => [humanizeCode(rule.event_type), rule.subtype ? humanizeCode(rule.subtype) : "todas"].join(" / ")).join(", ")}`
+    : "El convenio no declara reglas para novedades.";
 };
 
 const loadEmployeeIntoWizard = async () => {
   const employeeId = document.getElementById("wiz-employee-id").value;
   if (!employeeId) return;
   const employee = await getJson(`/employees/${employeeId}`);
-  if (employee.detail) return;
+  if (employee.detail) {
+    wizardState.employee = null;
+    showMessage("payroll-result", "No se encontro un empleado con ese identificador.", "error");
+    notify("No se encontro un empleado con ese identificador.", "error");
+    return;
+  }
 
   wizardState.employee = employee;
+  wizardState.agreement = await getJson(`/agreements/${employee.agreement_id}`);
+  const agreementMeta = wizardState.agreement?.metadata || {};
   document.getElementById("wiz-cuil").value = employee.cuil || "";
   document.getElementById("wiz-hire-date").value = employee.hire_date || "";
-  document.getElementById("wiz-agreement-id").value = employee.agreement_id || "";
+  ensureSelectOption(
+    "wiz-agreement-id",
+    employee.agreement_id || "",
+    `${employee.agreement_id || ""}${agreementMeta.name ? ` - ${agreementMeta.name}` : ""}`,
+  );
   populateCategorySelect("wiz-category-id", employee.agreement_id, employee.category_id);
   document.getElementById("wiz-seniority").value = employee.seniority_years || 0;
   document.getElementById("wiz-zone").value = employee.zone || "";
   document.getElementById("wiz-workday").value = employee.workday || "Completa";
 
-  wizardState.agreement = await getJson(`/agreements/${employee.agreement_id}`);
-  if (!wizardState.agreement.categories.some((category) => category.category_id === employee.category_id)) {
+  if (!wizardState.agreement?.categories?.some((category) => category.category_id === employee.category_id)) {
     showMessage("payroll-result", "El puesto/rol del empleado no pertenece al convenio activo.", "error");
   }
   renderAgreementDrivenSections();
 };
 
+const employeeMissingFields = () => {
+  const missing = [];
+  if (!wizardState.employee) missing.push("empleado valido");
+  if (!document.getElementById("wiz-cuil").value.trim()) missing.push("CUIL");
+  if (!document.getElementById("wiz-hire-date").value.trim()) missing.push("fecha de ingreso");
+  const categoryId = document.getElementById("wiz-category-id").value || wizardState.employee?.category_id || "";
+  const agreementId = document.getElementById("wiz-agreement-id").value || wizardState.employee?.agreement_id || "";
+  if (!agreementId.trim()) missing.push("convenio activo");
+  if (!categoryId.trim()) missing.push("puesto / rol");
+  if (!document.getElementById("wiz-zone").value.trim()) missing.push("zona");
+  if (!document.getElementById("wiz-workday").value.trim()) missing.push("jornada");
+
+  if (wizardState.employee && agreementId && wizardState.employee.agreement_id !== agreementId) missing.push("convenio del empleado consistente");
+  if (wizardState.employee && categoryId && wizardState.employee.category_id !== categoryId) missing.push("puesto del empleado consistente");
+  if (wizardState.agreement && categoryId && !wizardState.agreement.categories.some((category) => category.category_id === categoryId)) {
+    missing.push("puesto existente en el convenio");
+  }
+
+  return [...new Set(missing)];
+};
+
+const validateEmployeeForPayroll = () => {
+  const missing = employeeMissingFields();
+  if (!missing.length) return true;
+  const message = `Completa los datos del empleado antes de seguir: ${missing.join(", ")}.`;
+  showMessage("payroll-result", message, "warning");
+  notify(message, "warning");
+  return false;
+};
+
+const syncWizardActions = () => {
+  const isLastStep = wizardState.step === 5;
+  const nextButton = document.getElementById("wizard-next");
+  const calculateButton = document.getElementById("wizard-calculate");
+  nextButton.textContent = isLastStep ? "Calcular liquidacion" : "Siguiente";
+  nextButton.classList.remove("hidden");
+  nextButton.hidden = false;
+  calculateButton.classList.add("hidden");
+  calculateButton.hidden = true;
+};
+
 const setWizardStep = (step) => {
-  wizardState.step = Math.max(1, Math.min(6, step));
+  const targetStep = Math.max(1, Math.min(5, step));
+  if (targetStep > 1 && !validateEmployeeForPayroll()) {
+    wizardState.step = 1;
+  } else {
+    wizardState.step = targetStep;
+  }
   document.querySelectorAll("[data-step-panel]").forEach((panel) => {
     panel.classList.toggle("active", Number(panel.dataset.stepPanel) === wizardState.step);
   });
@@ -896,9 +1131,8 @@ const setWizardStep = (step) => {
     item.classList.toggle("done", itemStep < wizardState.step);
   });
   document.getElementById("wizard-prev").disabled = wizardState.step === 1;
-  document.getElementById("wizard-next").classList.toggle("hidden", wizardState.step === 6);
-  document.getElementById("wizard-calculate").classList.toggle("hidden", wizardState.step !== 6);
-  if (wizardState.step === 4 || wizardState.step === 5) renderAgreementDrivenSections();
+  syncWizardActions();
+  if (wizardState.step === 3 || wizardState.step === 4) renderAgreementDrivenSections();
 };
 
 const receiptAmount = (item) => item.type === "DEDUCTION"
@@ -910,7 +1144,7 @@ const receiptGroup = (title, items) => `
     <h3>${title}</h3>
     ${items.length ? items.map((item) => {
       const value = receiptAmount(item);
-      return `<div class="${value < 0 ? "negative" : ""}"><span>${item.name}</span><strong>${money(value)}</strong></div>`;
+      return `<div class="${value < 0 ? "negative" : ""}"><span>${detailDisplayName(item)}</span><strong>${money(value)}</strong></div>`;
     }).join("") : "<small>Sin conceptos</small>"}
     <div class="receipt-total"><span>Total ${title.toLowerCase()}</span><strong>${money(items.reduce((total, item) => total + receiptAmount(item), 0))}</strong></div>
   </article>
@@ -936,6 +1170,16 @@ const overtimeByCode = () => {
   return new Map((model.overtime_rules || []).map((rule) => [rule.code, rule]));
 };
 
+const detailDisplayName = (detail) => {
+  const salaryItem = salaryItemsByCode().get(detail.code);
+  const deduction = deductionsByCode().get(detail.code);
+  const overtime = overtimeByCode().get(detail.code);
+  if (salaryItem) return conceptName(salaryItem);
+  if (deduction) return conceptName(deduction);
+  if (overtime || String(detail.code || "").startsWith("OT_")) return overtimeLabel(overtime || detail);
+  return detail.name || humanizeCode(detail.code);
+};
+
 const explainPayrollDetail = (detail) => {
   const category = activeCategory();
   const baseSalary = Number(category?.basic_salary || 0);
@@ -950,22 +1194,22 @@ const explainPayrollDetail = (detail) => {
 
   if (salaryItem) {
     const base = salaryItem.base_reference && !["", "NO_INDICADO"].includes(String(salaryItem.base_reference).toUpperCase())
-      ? salaryItem.base_reference
+      ? baseLabel(salaryItem.base_reference)
       : "Basico";
     const quantity = Number(event?.quantity || event?.days || event?.hours || 0);
     if (quantity > 0) {
       const unit = effectiveUnit(salaryItem);
       const unitValue = Math.abs(Number(detail.amount || 0)) / quantity;
-      return `${salaryItem.name || detail.name} = ${money(unitValue)} x ${quantity}${unit ? ` ${unitLabel(unit).toLowerCase()}` : ""}`;
+      return `${conceptName(salaryItem)} = ${money(unitValue)} x ${quantity}${unit ? ` ${unitLabel(unit).toLowerCase()}` : ""}`;
     }
     if (salaryItem.calculation_type === "PERCENTAGE" || salaryItem.rate !== undefined && salaryItem.rate !== null) {
-      return `${salaryItem.name || detail.name} = ${base} x ${Number(salaryItem.rate || 0)}%`;
+      return `${conceptName(salaryItem)} = ${base} x ${Number(salaryItem.rate || 0)}%`;
     }
     if (salaryItem.calculation_type === "FORMULA" && salaryItem.formula) {
-      return `${salaryItem.name || detail.name} = ${salaryItem.formula}`;
+      return `${conceptName(salaryItem)} = ${salaryItem.formula}`;
     }
     if (salaryItem.amount !== undefined && salaryItem.amount !== null) {
-      return `${salaryItem.name || detail.name} = importe fijo ${money(salaryItem.amount)}`;
+      return `${conceptName(salaryItem)} = importe fijo ${money(salaryItem.amount)}`;
     }
   }
 
@@ -974,7 +1218,7 @@ const explainPayrollDetail = (detail) => {
     const multiplier = Number(overtime?.multiplier || 1);
     const metrics = agreementWorkdayMetrics();
     const hourly = metrics.monthlyHours > 0 ? baseSalary / metrics.monthlyHours : 0;
-    return `Horas extra = ${money(hourly)} valor hora x ${multiplier} x ${hours} horas`;
+    return `${detailDisplayName(detail)} = ${money(hourly)} valor hora x ${multiplier} x ${hours} horas`;
   }
 
   if (detail.code.startsWith("HOLIDAY_WORKED")) {
@@ -991,15 +1235,15 @@ const explainPayrollDetail = (detail) => {
 
   if (deduction || detail.type === "DEDUCTION") {
     const rate = Number(deduction?.rate || 0);
-    const base = deduction?.base || "Total remunerativo";
-    return `${deduction?.name || detail.name} = ${base} x ${rate}%`;
+    const base = baseLabel(deduction?.base || "REMUNERATIVE_TOTAL");
+    return `${deduction ? conceptName(deduction) : detailDisplayName(detail)} = ${base} x ${rate}%`;
   }
 
   if (detail.type === "BONUS") {
-    return `${detail.name} = importe cargado manualmente ${money(detail.amount)}`;
+    return `${detailDisplayName(detail)} = importe cargado manualmente ${money(detail.amount)}`;
   }
 
-  return `${detail.name} = importe liquidado ${money(detail.amount)}`;
+  return `${detailDisplayName(detail)} = importe liquidado ${money(detail.amount)}`;
 };
 
 const renderPayrollResult = (payroll) => {
@@ -1037,7 +1281,7 @@ const renderPayrollResult = (payroll) => {
   ].join("");
 
   document.getElementById("formula-detail").innerHTML = details.map((detail) => (
-    `<article><strong>${detail.name}</strong><span>${explainPayrollDetail(detail)}</span><em>${money(detail.amount)}</em></article>`
+    `<article><strong>${detailDisplayName(detail)}</strong><span>${explainPayrollDetail(detail)}</span><em>${money(detail.amount)}</em></article>`
   )).join("");
 
   const gross = Number(payroll.gross_salary || 0);
@@ -1068,6 +1312,10 @@ const renderPayrollResult = (payroll) => {
 };
 
 const calculateWizardPayroll = async () => {
+  if (!validateEmployeeForPayroll()) {
+    setWizardStep(1);
+    return;
+  }
   if (!wizardState.employee) {
     showMessage("payroll-result", "Primero selecciona un empleado valido para cargar su convenio activo.", "error");
     return;
@@ -1112,11 +1360,11 @@ document.getElementById("agreements-table").addEventListener("click", async (eve
   if (viewButton) {
     const id = viewButton.dataset.viewAgreement;
     const version = viewButton.dataset.version;
-    document.getElementById("agreement-id").value = id;
-    document.getElementById("agreement-version").value = version;
+    setSelectedAgreementFields(id, version);
     const agreement = await getJson(`/agreements/${id}?version=${version}`);
     showMessage("agreement-feedback", `Convenio ${id} version ${version} cargado para edicion.`, "success");
     renderAgreementEditor(agreement);
+    showAgreementEditor();
   }
   if (activateButton) {
     const id = activateButton.dataset.activateAgreement;
@@ -1141,9 +1389,9 @@ document.getElementById("upload-form").addEventListener("submit", async (event) 
   const data = new FormData();
   Array.from(filesInput.files).forEach((file) => data.append("files", file));
 
-  status.textContent = `Extrayendo texto de ${filesInput.files.length} archivo(s) con Gemini...`;
+  status.innerHTML = `<strong>${filesInput.files.length} archivo(s) recibido(s).</strong><span>Procesando convenio...</span>`;
   status.className = "upload-status loading";
-  setImportStages([{ name: "Archivo recibido", status: "DONE" }, { name: "Extrayendo con Gemini", status: "RUNNING" }]);
+  setImportStages([{ name: "Archivo recibido", status: "DONE" }]);
   renderWarnings([]);
   button.disabled = true;
   button.textContent = "Procesando...";
@@ -1158,28 +1406,119 @@ document.getElementById("upload-form").addEventListener("submit", async (event) 
     if (!response.ok || !meta) {
       throw new Error(result.detail || "No se pudo estructurar el convenio.");
     }
-    setImportStages(result.stages || []);
+    setImportStages([{ name: "Archivo recibido", status: "DONE" }, { name: "Convenio listo", status: "DONE" }]);
     renderWarnings(result.warnings || []);
-    status.textContent = `Convenio creado: ${meta.agreement_id} version ${meta.version}. Ya esta activo para liquidar y auditar.`;
+    status.innerHTML = `<strong>Convenio creado: ${meta.agreement_id} version ${meta.version}.</strong><span>Ya esta activo para liquidar y auditar.</span>`;
     status.className = "upload-status success";
     showMessage("agreement-feedback", `Convenio ${meta.agreement_id} creado correctamente y listo para usar.`, "success");
     notify("Convenio creado correctamente.");
+    setSelectedAgreementFields(meta.agreement_id, meta.version);
     event.target.reset();
     await loadAgreements();
   } catch (error) {
     const quotaExceeded = /429|quota|rate-limit|rate limit/i.test(error.message);
-    status.textContent = quotaExceeded
-        ? "Gemini no tiene cuota disponible para este proyecto. Active USE_MOCK_GEMINI=true para desarrollo o espere/restaure cuota para usar IA real."
-        : `No se pudo crear el convenio: ${error.message}`;
+    status.innerHTML = quotaExceeded
+        ? "<strong>Gemini no tiene cuota disponible para este proyecto.</strong><span>Active USE_MOCK_GEMINI=true para desarrollo o espere/restaure cuota para usar IA real.</span>"
+        : `<strong>No se pudo crear el convenio.</strong><span>${error.message}</span>`;
     status.className = "upload-status error";
     setImportStages([
       { name: "Archivo recibido", status: "DONE" },
-      { name: "Extrayendo con Gemini", status: "ERROR" },
+      { name: "Convenio listo", status: "ERROR" },
     ]);
   } finally {
     button.disabled = false;
     button.textContent = "Crear convenio";
   }
+});
+
+document.getElementById("agreement-files").addEventListener("change", (event) => {
+  setAgreementFiles(event.target.files);
+});
+
+document.getElementById("agreement-upload-status").addEventListener("dragover", (event) => {
+  event.preventDefault();
+  event.currentTarget.classList.add("dragging");
+});
+
+document.getElementById("agreement-upload-status").addEventListener("dragleave", (event) => {
+  event.currentTarget.classList.remove("dragging");
+});
+
+document.getElementById("agreement-upload-status").addEventListener("drop", (event) => {
+  event.preventDefault();
+  event.currentTarget.classList.remove("dragging");
+  setAgreementFiles(event.dataTransfer.files);
+});
+
+document.getElementById("salary-scale-form").addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const meta = selectedAgreement?.metadata || {};
+  const agreementId = meta.agreement_id || "";
+  const version = meta.version || "";
+  const fileInput = document.getElementById("salary-scale-file");
+  const status = document.getElementById("agreement-upload-status");
+  const button = document.getElementById("update-salary-scale-button");
+  if (!agreementId) {
+    status.textContent = "Indica el convenio al que corresponde la tabla salarial.";
+    status.className = "upload-status warning";
+    return;
+  }
+  if (!fileInput.files.length) {
+    status.textContent = "Selecciona una tabla salarial para actualizar la escala.";
+    status.className = "upload-status warning";
+    return;
+  }
+
+  const data = new FormData();
+  data.append("file", fileInput.files[0]);
+  const url = `/agreements/${agreementId}/salary-scale${version ? `?version=${encodeURIComponent(version)}` : ""}`;
+  status.innerHTML = `<strong>Archivo recibido para ${agreementId}.</strong><span>Actualizando escala salarial...</span>`;
+  status.className = "upload-status loading";
+  setImportStages([{ name: "Archivo recibido", status: "DONE" }]);
+  button.disabled = true;
+  button.textContent = "Actualizando...";
+
+  try {
+    const response = await fetch(url, { method: "POST", body: data });
+    const result = await readResponse(response);
+    if (!response.ok || !result.agreement) {
+      throw new Error(result.detail || "No se pudo actualizar la escala salarial.");
+    }
+    const meta = result.agreement.metadata;
+    const summary = result.summary || {};
+    status.innerHTML = `<strong>Escala actualizada.</strong><span>${summary.updated || 0} puesto(s) modificados y ${summary.added || 0} agregado(s).</span>`;
+    status.className = "upload-status success";
+    setImportStages([
+      { name: "Archivo recibido", status: "DONE" },
+      { name: "Convenio listo", status: "DONE" },
+    ]);
+    showMessage("agreement-feedback", `Escala salarial de ${meta.agreement_id} actualizada correctamente.`, "success");
+    notify("Escala salarial actualizada correctamente.");
+    setSelectedAgreementFields(meta.agreement_id, meta.version);
+    renderAgreementEditor(result.agreement);
+    closeSalaryScaleCard();
+    setSelectedAgreementFields(meta.agreement_id, meta.version);
+    await loadAgreements();
+  } catch (error) {
+    status.innerHTML = `<strong>No se pudo actualizar la escala salarial.</strong><span>${error.message}</span>`;
+    status.className = "upload-status error";
+    setImportStages([
+      { name: "Archivo recibido", status: "DONE" },
+      { name: "Convenio listo", status: "ERROR" },
+    ]);
+  } finally {
+    button.disabled = false;
+    button.textContent = "Actualizar";
+  }
+});
+
+document.getElementById("open-salary-scale-card").addEventListener("click", openSalaryScaleCard);
+document.getElementById("cancel-salary-scale-update").addEventListener("click", closeSalaryScaleCard);
+document.getElementById("salary-scale-file").addEventListener("change", (event) => {
+  const file = event.target.files?.[0];
+  document.getElementById("salary-scale-file-preview").textContent = file
+    ? `Archivo seleccionado: ${file.name}`
+    : "Ningun archivo seleccionado.";
 });
 
 document.getElementById("load-agreement").addEventListener("click", async () => {
@@ -1193,7 +1532,9 @@ document.getElementById("load-agreement").addEventListener("click", async () => 
     return;
   }
   showMessage("agreement-feedback", `Convenio ${agreement.metadata?.agreement_id || id} cargado para edicion.`, "success");
+  setSelectedAgreementFields(agreement.metadata?.agreement_id || id, agreement.metadata?.version || version);
   renderAgreementEditor(agreement);
+  showAgreementEditor();
 });
 
 document.getElementById("activate-agreement").addEventListener("click", async () => {
@@ -1360,7 +1701,13 @@ document.getElementById("agreement-additionals").addEventListener("change", (eve
 });
 
 document.getElementById("wizard-prev").addEventListener("click", () => setWizardStep(wizardState.step - 1));
-document.getElementById("wizard-next").addEventListener("click", () => setWizardStep(wizardState.step + 1));
+document.getElementById("wizard-next").addEventListener("click", () => {
+  if (wizardState.step === 5) {
+    calculateWizardPayroll();
+    return;
+  }
+  setWizardStep(wizardState.step + 1);
+});
 document.getElementById("payroll-stepper").addEventListener("click", (event) => {
   const item = event.target.closest("[data-step]");
   if (item) setWizardStep(Number(item.dataset.step));

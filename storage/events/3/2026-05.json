@@ -1,15 +1,5 @@
 {
   "employee_id": "3",
   "period": "2026-05",
-  "events": [
-    {
-      "type": "SALARY_ITEM",
-      "subtype": "VIATICOS",
-      "days": null,
-      "hours": null,
-      "quantity": 30.0,
-      "amount": null,
-      "description": "VIATICOS (DAY)"
-    }
-  ]
+  "events": []
 }

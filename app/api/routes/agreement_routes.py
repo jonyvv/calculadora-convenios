@@ -35,6 +35,23 @@ async def upload_agreement_files(files: list[UploadFile] = File(...), container:
         raise HTTPException(status_code=500, detail=f"Unexpected agreement upload error: {exc}") from exc
 
 
+@router.post("/{agreement_id}/salary-scale")
+async def update_salary_scale(
+    agreement_id: str,
+    file: UploadFile = File(...),
+    version: str | None = Query(default=None),
+    container: Container = Depends(get_container),
+):
+    try:
+        return await AgreementController(container).update_salary_scale(agreement_id, file, version)
+    except NotFoundError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"Unexpected salary scale update error: {exc}") from exc
+
+
 @router.get("")
 def list_agreements(container: Container = Depends(get_container)):
     return AgreementController(container).list()

@@ -5,125 +5,183 @@
     "version": "2026_04",
     "valid_from": "2026-04-01",
     "valid_to": null,
-    "source_document": "2026-04-Completa.pdf, 2026-04-Reducida.pdf, 2026-04-Supervisores.pdf, CCT 281-1996.pdf, conveniotrabajo.pdf, Manual de Reglas_ Convenio Colectivo de Trabajo 281_1996 (Maestranza y Limpieza).pdf",
-    "created_at": "2026-05-19T17:30:51.182356+00:00",
+    "source_document": "2026-04-Completa.pdf, 2026-04-Reducida.pdf, 2026-04-Supervisores.pdf, CCT 281-1996.pdf",
+    "created_at": "2026-05-26T18:34:27.618404+00:00",
     "status": "ACTIVE",
-    "union": "Sindicato de Obreros de Maestranza (SOM)",
-    "activity": "Maestranza y Limpieza",
-    "jurisdiction": "Capital Federal y Provincia de Buenos Aires",
+    "union": "Sindicato de Obreros de Maestranza (SOMRA)",
+    "activity": "Maestranza y limpieza",
+    "jurisdiction": "Nacional",
     "parity_terms": []
   },
   "categories": [
     {
-      "category_id": "NO_INDICADO",
+      "category_id": "NO_INDICADO_CABA",
       "name": "Oficial",
       "basic_salary": 462137.0,
       "valor_hora": null,
-      "valor_jornal": null
+      "valor_jornal": null,
+      "zone": "CABA",
+      "location": "CABA"
     },
     {
-      "category_id": "NO_INDICADO_2",
+      "category_id": "NO_INDICADO_CABA_2",
       "name": "Oficial 1º",
       "basic_salary": 462356.0,
       "valor_hora": null,
-      "valor_jornal": null
+      "valor_jornal": null,
+      "zone": "CABA",
+      "location": "CABA"
     },
     {
-      "category_id": "NO_INDICADO_3",
+      "category_id": "NO_INDICADO_CABA_3",
       "name": "Coord. \"A\"",
       "basic_salary": 464064.0,
       "valor_hora": null,
-      "valor_jornal": null
+      "valor_jornal": null,
+      "zone": "CABA",
+      "location": "CABA"
     },
     {
-      "category_id": "NO_INDICADO_4",
+      "category_id": "NO_INDICADO_CABA_4",
       "name": "Coord. \"B\"",
       "basic_salary": 467039.0,
       "valor_hora": null,
-      "valor_jornal": null
+      "valor_jornal": null,
+      "zone": "CABA",
+      "location": "CABA"
     },
     {
-      "category_id": "NO_INDICADO_5",
+      "category_id": "NO_INDICADO_CABA_5",
       "name": "Coord. \"C\"",
       "basic_salary": 470461.0,
       "valor_hora": null,
-      "valor_jornal": null
+      "valor_jornal": null,
+      "zone": "CABA",
+      "location": "CABA"
     },
     {
-      "category_id": "NO_INDICADO_6",
+      "category_id": "NO_INDICADO_CABA_6",
       "name": "Supervisor",
       "basic_salary": 533597.0,
       "valor_hora": null,
-      "valor_jornal": null
+      "valor_jornal": null,
+      "zone": "CABA",
+      "location": "CABA"
     },
     {
-      "category_id": "NO_INDICADO_7",
+      "category_id": "NO_INDICADO_CABA_7",
       "name": "Administrativo",
       "basic_salary": 505999.0,
       "valor_hora": null,
-      "valor_jornal": null
+      "valor_jornal": null,
+      "zone": "CABA",
+      "location": "CABA"
     },
     {
-      "category_id": "NO_INDICADO_8",
+      "category_id": "NO_INDICADO_CABA_8",
       "name": "Administrativo 1º",
       "basic_salary": 525332.0,
       "valor_hora": null,
-      "valor_jornal": null
+      "valor_jornal": null,
+      "zone": "CABA",
+      "location": "CABA"
     },
     {
-      "category_id": "NO_INDICADO_9",
+      "category_id": "NO_INDICADO_CABA_9",
       "name": "Oficial",
       "basic_salary": 231578.0,
       "valor_hora": null,
-      "valor_jornal": null
+      "valor_jornal": null,
+      "zone": "CABA",
+      "location": "CABA"
     },
     {
-      "category_id": "NO_INDICADO_10",
+      "category_id": "NO_INDICADO_CABA_10",
       "name": "Oficial 1º",
       "basic_salary": 231754.0,
       "valor_hora": null,
-      "valor_jornal": null
+      "valor_jornal": null,
+      "zone": "CABA",
+      "location": "CABA"
     },
     {
-      "category_id": "NO_INDICADO_11",
+      "category_id": "NO_INDICADO_CABA_11",
       "name": "Coord. \"A\"",
       "basic_salary": 232667.0,
       "valor_hora": null,
-      "valor_jornal": null
+      "valor_jornal": null,
+      "zone": "CABA",
+      "location": "CABA"
     },
     {
-      "category_id": "NO_INDICADO_12",
+      "category_id": "NO_INDICADO_CABA_12",
       "name": "Coord. \"B\"",
       "basic_salary": 234106.0,
       "valor_hora": null,
-      "valor_jornal": null
+      "valor_jornal": null,
+      "zone": "CABA",
+      "location": "CABA"
     },
     {
-      "category_id": "NO_INDICADO_13",
+      "category_id": "NO_INDICADO_CABA_13",
       "name": "Coord. \"C\"",
       "basic_salary": 235813.0,
       "valor_hora": null,
-      "valor_jornal": null
+      "valor_jornal": null,
+      "zone": "CABA",
+      "location": "CABA"
     },
     {
-      "category_id": "NO_INDICADO_14",
+      "category_id": "NO_INDICADO_CABA_14",
       "name": "Administrativo",
       "basic_salary": 254428.0,
       "valor_hora": null,
-      "valor_jornal": null
+      "valor_jornal": null,
+      "zone": "CABA",
+      "location": "CABA"
     },
     {
-      "category_id": "NO_INDICADO_15",
+      "category_id": "NO_INDICADO_CABA_15",
       "name": "Administrativo 1º",
       "basic_salary": 264476.0,
       "valor_hora": null,
-      "valor_jornal": null
+      "valor_jornal": null,
+      "zone": "CABA",
+      "location": "CABA"
     }
   ],
   "salary_model": {
     "remunerative_items": [
       {
-        "code": "ZONA_FRIA",
+        "code": "ADIC_SALUD",
+        "name": "ADICIONAL SALUD",
+        "type": "REMUNERATIVE",
+        "calculation_type": "PERCENTAGE",
+        "base_reference": "SUELDO BASICO + ANTIGUEDAD",
+        "amount": null,
+        "rate": 12.0,
+        "formula": "SUELDO BASICO + ANTIGUEDAD * 12.0%",
+        "applies_to_categories": [],
+        "applies_to_tags": [],
+        "input_mode": "AUTO",
+        "unit": null
+      },
+      {
+        "code": "ADIC_EQUIPO",
+        "name": "ADICIONAL TRABAJO POR EQUIPO",
+        "type": "REMUNERATIVE",
+        "calculation_type": "PERCENTAGE",
+        "base_reference": "SUELDO BASICO + ANTIGUEDAD",
+        "amount": null,
+        "rate": 13.0,
+        "formula": "SUELDO BASICO + ANTIGUEDAD * 13.0%",
+        "applies_to_categories": [],
+        "applies_to_tags": [],
+        "input_mode": "AUTO",
+        "unit": null
+      },
+      {
+        "code": "ADIC_ZONA",
         "name": "ADICIONAL ZONA FRIA",
         "type": "REMUNERATIVE",
         "calculation_type": "PERCENTAGE",
@@ -135,91 +193,48 @@
         "applies_to_tags": [],
         "input_mode": "AUTO",
         "unit": null
-      },
-      {
-        "code": "ADIC_SALUD",
-        "name": "ADICIONAL SALUD",
-        "type": "REMUNERATIVE",
-        "calculation_type": "PERCENTAGE",
-        "base_reference": "BASICO + ANTIGUEDAD",
-        "amount": null,
-        "rate": 12.0,
-        "formula": "BASICO + ANTIGUEDAD * 12.0%",
-        "applies_to_categories": [],
-        "applies_to_tags": [],
-        "input_mode": "AUTO",
-        "unit": null
-      },
-      {
-        "code": "ADIC_EQUIPO",
-        "name": "ADICIONAL TRABAJO EQUIPO",
-        "type": "REMUNERATIVE",
-        "calculation_type": "PERCENTAGE",
-        "base_reference": "SUELDO CATEGORIA + ANTIGUEDAD",
-        "amount": null,
-        "rate": 13.0,
-        "formula": "SUELDO CATEGORIA + ANTIGUEDAD * 13.0%",
-        "applies_to_categories": [],
-        "applies_to_tags": [],
-        "input_mode": "AUTO",
-        "unit": null
       }
     ],
-    "non_remunerative_items": [
-      {
-        "code": "AGREEMENT_SUM",
-        "name": "Acuerdo no remunerativo",
-        "type": "NON_REMUNERATIVE",
-        "calculation_type": "FIXED",
-        "base_reference": "",
-        "amount": 0.0,
-        "rate": null,
-        "formula": "0",
-        "applies_to_categories": [],
-        "applies_to_tags": [],
-        "input_mode": "AUTO",
-        "unit": null
-      }
-    ],
+    "non_remunerative_items": [],
     "deductions": [
-      {
-        "code": "JUBILACION",
-        "name": "JUBILACION",
-        "rate": 11.0,
-        "base": "TOTAL BRUTO",
-        "application_type": "MANDATORY",
-        "applies_when": "TODOS",
-        "requires_employee_flag": null,
-        "source_article": null
-      },
-      {
-        "code": "LEY_19032",
-        "name": "LEY 19.032 / PAMI",
-        "rate": 3.0,
-        "base": "TOTAL BRUTO",
-        "application_type": "MANDATORY",
-        "applies_when": "TODOS",
-        "requires_employee_flag": null,
-        "source_article": null
-      },
-      {
-        "code": "OBRA_SOCIAL",
-        "name": "OBRA SOCIAL",
-        "rate": 3.0,
-        "base": "TOTAL BRUTO",
-        "application_type": "MANDATORY",
-        "applies_when": "TODOS",
-        "requires_employee_flag": null,
-        "source_article": null
-      },
       {
         "code": "CUOTA_SINDICAL",
         "name": "CUOTA SINDICAL",
         "rate": 2.5,
         "base": "TOTAL BRUTO",
         "application_type": "EMPLOYEE_OPT_IN",
-        "applies_when": "AFILIADOS AL SINDICATO",
+        "applies_when": "PERSONAL AFILIADO",
         "requires_employee_flag": "union_affiliated",
+        "source_article": null
+      },
+      {
+        "code": "OBRA_SOCIAL",
+        "name": "Obra social",
+        "rate": 3.0,
+        "base": "REMUNERATIVE_TOTAL",
+        "application_type": "MANDATORY",
+        "applies_when": null,
+        "requires_employee_flag": null,
+        "source_article": null
+      },
+      {
+        "code": "JUBILACION",
+        "name": "Jubilacion",
+        "rate": 11.0,
+        "base": "REMUNERATIVE_TOTAL",
+        "application_type": "MANDATORY",
+        "applies_when": null,
+        "requires_employee_flag": null,
+        "source_article": null
+      },
+      {
+        "code": "LEY_19032",
+        "name": "Ley 19.032",
+        "rate": 3.0,
+        "base": "REMUNERATIVE_TOTAL",
+        "application_type": "MANDATORY",
+        "applies_when": null,
+        "requires_employee_flag": null,
         "source_article": null
       }
     ],
@@ -230,12 +245,7 @@
         "base": "REMUNERATIVE_TOTAL"
       }
     ],
-    "fiscal_shields": [
-      {
-        "code": "NON_REMUNERATIVE_LIMIT",
-        "description": "Conceptos no remunerativos detectados"
-      }
-    ],
+    "fiscal_shields": [],
     "overtime_rules": [
       {
         "code": "OT_50",
@@ -247,20 +257,7 @@
       }
     ]
   },
-  "event_rules": [
-    {
-      "event_type": "LEAVE",
-      "subtype": "VACATION",
-      "effects": []
-    },
-    {
-      "event_type": "OVERTIME",
-      "subtype": null,
-      "effects": [
-        "PAY_OVERTIME"
-      ]
-    }
-  ],
+  "event_rules": [],
   "audit_rules": [
     {
       "rule": "overtime_must_match_declared_multiplier"
@@ -271,7 +268,7 @@
   ],
   "identificacion_alcance": {
     "partes_signatarias": [
-      "Sindicato de Obreros de Maestranza (SOM)"
+      "Sindicato de Obreros de Maestranza (SOMRA)"
     ],
     "vigencia": {
       "desde": "2026-04-01",
@@ -279,86 +276,116 @@
       "paritarias": []
     },
     "ambito_aplicacion": {
-      "actividad": "Maestranza y Limpieza",
-      "jurisdiccion": "Capital Federal y Provincia de Buenos Aires",
-      "territorio": "Capital Federal y Provincia de Buenos Aires",
-      "rama": "Maestranza y Limpieza"
+      "actividad": "Maestranza y limpieza",
+      "jurisdiccion": "Nacional",
+      "territorio": "Nacional",
+      "rama": "Maestranza y limpieza"
     },
     "categorias_profesionales": [
       {
-        "codigo": "NO_INDICADO",
+        "codigo": "NO_INDICADO_CABA",
         "nombre": "Oficial",
-        "salario_basico": 462137.0
+        "salario_basico": 462137.0,
+        "zona_geografica": "CABA",
+        "ubicacion": "CABA"
       },
       {
-        "codigo": "NO_INDICADO_2",
+        "codigo": "NO_INDICADO_CABA_2",
         "nombre": "Oficial 1º",
-        "salario_basico": 462356.0
+        "salario_basico": 462356.0,
+        "zona_geografica": "CABA",
+        "ubicacion": "CABA"
       },
       {
-        "codigo": "NO_INDICADO_3",
+        "codigo": "NO_INDICADO_CABA_3",
         "nombre": "Coord. \"A\"",
-        "salario_basico": 464064.0
+        "salario_basico": 464064.0,
+        "zona_geografica": "CABA",
+        "ubicacion": "CABA"
       },
       {
-        "codigo": "NO_INDICADO_4",
+        "codigo": "NO_INDICADO_CABA_4",
         "nombre": "Coord. \"B\"",
-        "salario_basico": 467039.0
+        "salario_basico": 467039.0,
+        "zona_geografica": "CABA",
+        "ubicacion": "CABA"
       },
       {
-        "codigo": "NO_INDICADO_5",
+        "codigo": "NO_INDICADO_CABA_5",
         "nombre": "Coord. \"C\"",
-        "salario_basico": 470461.0
+        "salario_basico": 470461.0,
+        "zona_geografica": "CABA",
+        "ubicacion": "CABA"
       },
       {
-        "codigo": "NO_INDICADO_6",
+        "codigo": "NO_INDICADO_CABA_6",
         "nombre": "Supervisor",
-        "salario_basico": 533597.0
+        "salario_basico": 533597.0,
+        "zona_geografica": "CABA",
+        "ubicacion": "CABA"
       },
       {
-        "codigo": "NO_INDICADO_7",
+        "codigo": "NO_INDICADO_CABA_7",
         "nombre": "Administrativo",
-        "salario_basico": 505999.0
+        "salario_basico": 505999.0,
+        "zona_geografica": "CABA",
+        "ubicacion": "CABA"
       },
       {
-        "codigo": "NO_INDICADO_8",
+        "codigo": "NO_INDICADO_CABA_8",
         "nombre": "Administrativo 1º",
-        "salario_basico": 525332.0
+        "salario_basico": 525332.0,
+        "zona_geografica": "CABA",
+        "ubicacion": "CABA"
       },
       {
-        "codigo": "NO_INDICADO_9",
+        "codigo": "NO_INDICADO_CABA_9",
         "nombre": "Oficial",
-        "salario_basico": 231578.0
+        "salario_basico": 231578.0,
+        "zona_geografica": "CABA",
+        "ubicacion": "CABA"
       },
       {
-        "codigo": "NO_INDICADO_10",
+        "codigo": "NO_INDICADO_CABA_10",
         "nombre": "Oficial 1º",
-        "salario_basico": 231754.0
+        "salario_basico": 231754.0,
+        "zona_geografica": "CABA",
+        "ubicacion": "CABA"
       },
       {
-        "codigo": "NO_INDICADO_11",
+        "codigo": "NO_INDICADO_CABA_11",
         "nombre": "Coord. \"A\"",
-        "salario_basico": 232667.0
+        "salario_basico": 232667.0,
+        "zona_geografica": "CABA",
+        "ubicacion": "CABA"
       },
       {
-        "codigo": "NO_INDICADO_12",
+        "codigo": "NO_INDICADO_CABA_12",
         "nombre": "Coord. \"B\"",
-        "salario_basico": 234106.0
+        "salario_basico": 234106.0,
+        "zona_geografica": "CABA",
+        "ubicacion": "CABA"
       },
       {
-        "codigo": "NO_INDICADO_13",
+        "codigo": "NO_INDICADO_CABA_13",
         "nombre": "Coord. \"C\"",
-        "salario_basico": 235813.0
+        "salario_basico": 235813.0,
+        "zona_geografica": "CABA",
+        "ubicacion": "CABA"
       },
       {
-        "codigo": "NO_INDICADO_14",
+        "codigo": "NO_INDICADO_CABA_14",
         "nombre": "Administrativo",
-        "salario_basico": 254428.0
+        "salario_basico": 254428.0,
+        "zona_geografica": "CABA",
+        "ubicacion": "CABA"
       },
       {
-        "codigo": "NO_INDICADO_15",
+        "codigo": "NO_INDICADO_CABA_15",
         "nombre": "Administrativo 1º",
-        "salario_basico": 264476.0
+        "salario_basico": 264476.0,
+        "zona_geografica": "CABA",
+        "ubicacion": "CABA"
       }
     ]
   },
@@ -375,7 +402,7 @@
         "excepciones": [],
         "fuente_articulo": "escala_salarial",
         "requiere_validacion": false,
-        "observaciones": "Categoria NO_INDICADO"
+        "observaciones": "Categoria NO_INDICADO_CABA - zona geografica: CABA"
       },
       {
         "nombre": "Salario basico - Oficial 1º",
@@ -388,7 +415,7 @@
         "excepciones": [],
         "fuente_articulo": "escala_salarial",
         "requiere_validacion": false,
-        "observaciones": "Categoria NO_INDICADO_2"
+        "observaciones": "Categoria NO_INDICADO_CABA_2 - zona geografica: CABA"
       },
       {
         "nombre": "Salario basico - Coord. \"A\"",
@@ -401,7 +428,7 @@
         "excepciones": [],
         "fuente_articulo": "escala_salarial",
         "requiere_validacion": false,
-        "observaciones": "Categoria NO_INDICADO_3"
+        "observaciones": "Categoria NO_INDICADO_CABA_3 - zona geografica: CABA"
       },
       {
         "nombre": "Salario basico - Coord. \"B\"",
@@ -414,7 +441,7 @@
         "excepciones": [],
         "fuente_articulo": "escala_salarial",
         "requiere_validacion": false,
-        "observaciones": "Categoria NO_INDICADO_4"
+        "observaciones": "Categoria NO_INDICADO_CABA_4 - zona geografica: CABA"
       },
       {
         "nombre": "Salario basico - Coord. \"C\"",
@@ -427,7 +454,7 @@
         "excepciones": [],
         "fuente_articulo": "escala_salarial",
         "requiere_validacion": false,
-        "observaciones": "Categoria NO_INDICADO_5"
+        "observaciones": "Categoria NO_INDICADO_CABA_5 - zona geografica: CABA"
       },
       {
         "nombre": "Salario basico - Supervisor",
@@ -440,7 +467,7 @@
         "excepciones": [],
         "fuente_articulo": "escala_salarial",
         "requiere_validacion": false,
-        "observaciones": "Categoria NO_INDICADO_6"
+        "observaciones": "Categoria NO_INDICADO_CABA_6 - zona geografica: CABA"
       },
       {
         "nombre": "Salario basico - Administrativo",
@@ -453,7 +480,7 @@
         "excepciones": [],
         "fuente_articulo": "escala_salarial",
         "requiere_validacion": false,
-        "observaciones": "Categoria NO_INDICADO_7"
+        "observaciones": "Categoria NO_INDICADO_CABA_7 - zona geografica: CABA"
       },
       {
         "nombre": "Salario basico - Administrativo 1º",
@@ -466,7 +493,7 @@
         "excepciones": [],
         "fuente_articulo": "escala_salarial",
         "requiere_validacion": false,
-        "observaciones": "Categoria NO_INDICADO_8"
+        "observaciones": "Categoria NO_INDICADO_CABA_8 - zona geografica: CABA"
       },
       {
         "nombre": "Salario basico - Oficial",
@@ -479,7 +506,7 @@
         "excepciones": [],
         "fuente_articulo": "escala_salarial",
         "requiere_validacion": false,
-        "observaciones": "Categoria NO_INDICADO_9"
+        "observaciones": "Categoria NO_INDICADO_CABA_9 - zona geografica: CABA"
       },
       {
         "nombre": "Salario basico - Oficial 1º",
@@ -492,7 +519,7 @@
         "excepciones": [],
         "fuente_articulo": "escala_salarial",
         "requiere_validacion": false,
-        "observaciones": "Categoria NO_INDICADO_10"
+        "observaciones": "Categoria NO_INDICADO_CABA_10 - zona geografica: CABA"
       },
       {
         "nombre": "Salario basico - Coord. \"A\"",
@@ -505,7 +532,7 @@
         "excepciones": [],
         "fuente_articulo": "escala_salarial",
         "requiere_validacion": false,
-        "observaciones": "Categoria NO_INDICADO_11"
+        "observaciones": "Categoria NO_INDICADO_CABA_11 - zona geografica: CABA"
       },
       {
         "nombre": "Salario basico - Coord. \"B\"",
@@ -518,7 +545,7 @@
         "excepciones": [],
         "fuente_articulo": "escala_salarial",
         "requiere_validacion": false,
-        "observaciones": "Categoria NO_INDICADO_12"
+        "observaciones": "Categoria NO_INDICADO_CABA_12 - zona geografica: CABA"
       },
       {
         "nombre": "Salario basico - Coord. \"C\"",
@@ -531,7 +558,7 @@
         "excepciones": [],
         "fuente_articulo": "escala_salarial",
         "requiere_validacion": false,
-        "observaciones": "Categoria NO_INDICADO_13"
+        "observaciones": "Categoria NO_INDICADO_CABA_13 - zona geografica: CABA"
       },
       {
         "nombre": "Salario basico - Administrativo",
@@ -544,7 +571,7 @@
         "excepciones": [],
         "fuente_articulo": "escala_salarial",
         "requiere_validacion": false,
-        "observaciones": "Categoria NO_INDICADO_14"
+        "observaciones": "Categoria NO_INDICADO_CABA_14 - zona geografica: CABA"
       },
       {
         "nombre": "Salario basico - Administrativo 1º",
@@ -557,7 +584,7 @@
         "excepciones": [],
         "fuente_articulo": "escala_salarial",
         "requiere_validacion": false,
-        "observaciones": "Categoria NO_INDICADO_15"
+        "observaciones": "Categoria NO_INDICADO_CABA_15 - zona geografica: CABA"
       }
     ],
     "adicionales_fijos": [],
@@ -573,15 +600,15 @@
         "excepciones": [],
         "fuente_articulo": "salary_model",
         "requiere_validacion": false,
-        "observaciones": "ZONA_FRIA"
+        "observaciones": "ADIC_ZONA"
       }
     ],
     "antiguedad": [
       {
         "nombre": "ADICIONAL SALUD",
         "tipo": "remunerativo",
-        "formula": "BASICO + ANTIGUEDAD * 12.0%",
-        "base_calculo": "BASICO + ANTIGUEDAD",
+        "formula": "SUELDO BASICO + ANTIGUEDAD * 12.0%",
+        "base_calculo": "SUELDO BASICO + ANTIGUEDAD",
         "porcentaje": 12.0,
         "importe_fijo": null,
         "condiciones": [],
@@ -591,10 +618,10 @@
         "observaciones": "ADIC_SALUD"
       },
       {
-        "nombre": "ADICIONAL TRABAJO EQUIPO",
+        "nombre": "ADICIONAL TRABAJO POR EQUIPO",
         "tipo": "remunerativo",
-        "formula": "SUELDO CATEGORIA + ANTIGUEDAD * 13.0%",
-        "base_calculo": "SUELDO CATEGORIA + ANTIGUEDAD",
+        "formula": "SUELDO BASICO + ANTIGUEDAD * 13.0%",
+        "base_calculo": "SUELDO BASICO + ANTIGUEDAD",
         "porcentaje": 13.0,
         "importe_fijo": null,
         "condiciones": [],
@@ -607,63 +634,10 @@
     "presentismo_asistencia": [],
     "titulos_tecnicos_profesionales": [],
     "remuneraciones_por_rendimiento": [],
-    "beneficios_no_remunerativos": [
-      {
-        "nombre": "Acuerdo no remunerativo",
-        "tipo": "no_remunerativo",
-        "formula": "importe_fijo",
-        "base_calculo": "BASIC",
-        "porcentaje": null,
-        "importe_fijo": 0.0,
-        "condiciones": [],
-        "excepciones": [],
-        "fuente_articulo": "salary_model",
-        "requiere_validacion": false,
-        "observaciones": "AGREEMENT_SUM"
-      }
-    ],
+    "beneficios_no_remunerativos": [],
     "viaticos": [],
     "asignaciones_familiares": [],
     "descuentos": [
-      {
-        "nombre": "JUBILACION",
-        "tipo": "descuento",
-        "formula": "TOTAL BRUTO * 11.0%",
-        "base_calculo": "TOTAL BRUTO",
-        "porcentaje": 11.0,
-        "importe_fijo": null,
-        "condiciones": [],
-        "excepciones": [],
-        "fuente_articulo": "retenciones_deducciones",
-        "requiere_validacion": true,
-        "observaciones": "JUBILACION"
-      },
-      {
-        "nombre": "LEY 19.032 / PAMI",
-        "tipo": "descuento",
-        "formula": "TOTAL BRUTO * 3.0%",
-        "base_calculo": "TOTAL BRUTO",
-        "porcentaje": 3.0,
-        "importe_fijo": null,
-        "condiciones": [],
-        "excepciones": [],
-        "fuente_articulo": "retenciones_deducciones",
-        "requiere_validacion": true,
-        "observaciones": "LEY_19032"
-      },
-      {
-        "nombre": "OBRA SOCIAL",
-        "tipo": "descuento",
-        "formula": "TOTAL BRUTO * 3.0%",
-        "base_calculo": "TOTAL BRUTO",
-        "porcentaje": 3.0,
-        "importe_fijo": null,
-        "condiciones": [],
-        "excepciones": [],
-        "fuente_articulo": "retenciones_deducciones",
-        "requiere_validacion": true,
-        "observaciones": "OBRA_SOCIAL"
-      },
       {
         "nombre": "CUOTA SINDICAL",
         "tipo": "descuento",
@@ -676,6 +650,45 @@
         "fuente_articulo": "retenciones_deducciones",
         "requiere_validacion": true,
         "observaciones": "CUOTA_SINDICAL"
+      },
+      {
+        "nombre": "Obra social",
+        "tipo": "descuento",
+        "formula": "REMUNERATIVE_TOTAL * 3.0%",
+        "base_calculo": "REMUNERATIVE_TOTAL",
+        "porcentaje": 3.0,
+        "importe_fijo": null,
+        "condiciones": [],
+        "excepciones": [],
+        "fuente_articulo": "retenciones_deducciones",
+        "requiere_validacion": true,
+        "observaciones": "OBRA_SOCIAL"
+      },
+      {
+        "nombre": "Jubilacion",
+        "tipo": "descuento",
+        "formula": "REMUNERATIVE_TOTAL * 11.0%",
+        "base_calculo": "REMUNERATIVE_TOTAL",
+        "porcentaje": 11.0,
+        "importe_fijo": null,
+        "condiciones": [],
+        "excepciones": [],
+        "fuente_articulo": "retenciones_deducciones",
+        "requiere_validacion": true,
+        "observaciones": "JUBILACION"
+      },
+      {
+        "nombre": "Ley 19.032",
+        "tipo": "descuento",
+        "formula": "REMUNERATIVE_TOTAL * 3.0%",
+        "base_calculo": "REMUNERATIVE_TOTAL",
+        "porcentaje": 3.0,
+        "importe_fijo": null,
+        "condiciones": [],
+        "excepciones": [],
+        "fuente_articulo": "retenciones_deducciones",
+        "requiere_validacion": true,
+        "observaciones": "LEY_19032"
       }
     ]
   },
@@ -849,7 +862,7 @@
     {
       "tipo": "convenio_colectivo",
       "referencia": "CCT_281_1996",
-      "documento": "2026-04-Completa.pdf, 2026-04-Reducida.pdf, 2026-04-Supervisores.pdf, CCT 281-1996.pdf, conveniotrabajo.pdf, Manual de Reglas_ Convenio Colectivo de Trabajo 281_1996 (Maestranza y Limpieza).pdf"
+      "documento": "2026-04-Completa.pdf, 2026-04-Reducida.pdf, 2026-04-Supervisores.pdf, CCT 281-1996.pdf"
     },
     {
       "tipo": "ley",
@@ -868,6 +881,10 @@
     {
       "codigo": "deductions_apply_only_to_remunerative_total",
       "mensaje": "Regla de auditoria generada desde el convenio"
+    },
+    {
+      "codigo": "EVENT_RULES_EMPTY",
+      "mensaje": "No se detectaron reglas de novedades; revisar licencias, ausencias y feriados."
     }
   ],
   "modelo_liquidacion": {

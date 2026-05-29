@@ -1,11 +1,13 @@
 {
   "employee_id": "2",
-  "agreement_id": "CCT_775_2019",
-  "category_id": "A",
-  "seniority_years": 11,
+  "agreement_id": "CCT_281_1996",
+  "category_id": "NO_INDICADO_CABA_2",
+  "seniority_years": 10,
   "cuil": "20441434161",
   "hire_date": "2015-12-10",
-  "zone": "",
+  "zone": "CABA",
   "workday": "completa",
+  "union_affiliated": false,
+  "enabled_deductions": [],
   "active": true
 }

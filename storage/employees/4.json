@@ -1,11 +1,11 @@
 {
   "employee_id": "4",
   "agreement_id": "CCT_130_75",
-  "category_id": "B",
+  "category_id": "A_TODO_EL_PAIS",
   "seniority_years": 3,
   "cuil": "20451434162",
   "hire_date": "2023-01-01",
-  "zone": "",
+  "zone": "TODO_EL_PAIS",
   "workday": "completa",
   "union_affiliated": true,
   "enabled_deductions": [],
